@@ -1,0 +1,14 @@
+<div class="product-list">
+  <div class="product-card" *ngFor="let product of products">
+    <div class="product-top">
+      <strong>{{ product.name }}</strong>
+      <span class="badge">{{ product.badge }}</span>
+    </div>
+    <p>{{ product.price }}</p>
+    <small>{{ product.stock }}</small>
+    <div class="product-actions">
+      <button>Order Now</button>
+      <button>Sample</button>
+    </div>
+  </div>
+</div>

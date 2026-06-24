@@ -1,0 +1,46 @@
+<ion-content class="products-page">
+  <ion-text *ngIf="loading" class="loading">
+    <ion-spinner></ion-spinner>
+    <p>Loading products...</p>
+  </ion-text>
+
+  <ion-text *ngIf="error" color="danger" class="error">
+    <p>{{ error }}</p>
+  </ion-text>
+
+  <ion-grid *ngIf="products.length > 0">
+    <ion-row>
+      <ion-col *ngFor="let product of products" sizeMd="6" sizeLg="4" class="ion-padding">
+        <ion-card class="product-card">
+          <ion-card-header>
+            <ion-card-title>{{ product.name }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p><strong>SKU:</strong> {{ product.sku }}</p>
+            <p><strong>MRP:</strong> ₹{{ product.mrp }}</p>
+            <p><strong>Pack Size:</strong> {{ product.packSize }}</p>
+            <p><strong>GST:</strong> {{ product.gst }}%</p>
+
+            <p *ngIf="product.benefits?.length">
+              <strong>Benefits:</strong> {{ product.benefits.join(', ') }}
+            </p>
+
+            <ion-button expand="block" color="primary" routerLink="/home/products/{{ product._id }}">
+              View Details
+            </ion-button>
+
+            <ion-button expand="block" fill="outline" color="primary">
+              <ion-icon slot="start" name="cartOutline"></ion-icon>
+              Add to Cart
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div *ngIf="products.length === 0 && !loading" class="no-products">
+    <p>No products available</p>
+  </div>
+</ion-content>

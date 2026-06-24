@@ -1,0 +1,49 @@
+.register-container {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.register-card {
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+ion-card-header {
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+ion-card-title {
+  color: white;
+}
+
+form {
+  padding: 1rem 0;
+}
+
+ion-item {
+  margin-bottom: 0.5rem;
+  --border-color: #ddd;
+}
+
+.error-text,
+.success-text {
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+ion-button {
+  margin-top: 1.5rem;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.login-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}

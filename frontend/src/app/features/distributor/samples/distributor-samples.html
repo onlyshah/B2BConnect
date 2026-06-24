@@ -1,0 +1,22 @@
+<div class="card">
+  <div class="card-header">
+    <div>
+      <p class="eyebrow">Sample management</p>
+      <h3>Samples pending approval</h3>
+    </div>
+    <a class="primary-link" routerLink="/distributor/analytics">View analytics</a>
+  </div>
+
+  <div *ngIf="loading">Loading samples...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="list" *ngIf="!loading && !error">
+    <div class="list-item" *ngFor="let item of samples">
+      <div>
+        <strong>{{ item.productName || item.name || 'Sample' }}</strong>
+        <p>{{ item.retailerName || 'Retailer' }}</p>
+      </div>
+      <span class="pill">{{ item.status || 'pending' }}</span>
+    </div>
+  </div>
+</div>

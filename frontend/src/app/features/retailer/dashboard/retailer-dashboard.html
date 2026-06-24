@@ -1,0 +1,30 @@
+<div class="dashboard-grid">
+  <ui-card title="Today’s retail hub" subtitle="Order faster, discover smarter, stay connected." class="hero-card">
+    <div slot="actions">
+      <ui-button variant="secondary" [routerLink]="['/retailer/products']">Browse Products</ui-button>
+    </div>
+    <p class="hero-copy">Browse products, request samples, follow offers and keep your store moving.</p>
+  </ui-card>
+
+  <div *ngIf="loading" class="loading-state">Loading dashboard data…</div>
+  <div *ngIf="error" class="error-state">{{ error }}</div>
+
+  <section class="kpi-grid" *ngIf="kpis.length && !loading">
+    <ui-stat-card *ngFor="let item of kpis" [label]="item.label" [value]="item.value"></ui-stat-card>
+  </section>
+
+  <ui-card title="Quick actions">
+    <div class="action-list">
+      <a *ngFor="let action of quickActions" [routerLink]="action.route" class="action-pill">{{ action.label }}</a>
+    </div>
+  </ui-card>
+
+  <ui-card title="Explore">
+    <div class="section-grid">
+      <a *ngFor="let item of sections" [routerLink]="item.route" class="section-card">
+        <h4>{{ item.title }}</h4>
+        <p>{{ item.subtitle }}</p>
+      </a>
+    </div>
+  </ui-card>
+</div>

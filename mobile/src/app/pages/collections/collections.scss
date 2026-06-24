@@ -1,0 +1,115 @@
+.form-section {
+  padding: 16px;
+  margin-bottom: 16px;
+
+  ion-card {
+    margin: 0;
+
+    ion-card-header {
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    ion-card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    ion-card-content {
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        ion-input,
+        ion-select {
+          margin-bottom: 8px;
+        }
+
+        .form-actions {
+          display: flex;
+          gap: 8px;
+          margin-top: 12px;
+
+          ion-button {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+ion-segment {
+  margin: 16px;
+}
+
+ion-card {
+  margin: 16px;
+
+  ion-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+
+    ion-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .status {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+
+      &.status-recorded {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      &.status-verified {
+        background: #cfe2ff;
+        color: #084298;
+      }
+
+      &.status-reconciled {
+        background: #d1e7dd;
+        color: #0f5132;
+      }
+    }
+  }
+
+  ion-card-content {
+    .collection-details {
+      font-size: 14px;
+      line-height: 1.6;
+
+      p {
+        margin: 8px 0;
+        color: #555;
+
+        strong {
+          color: #333;
+        }
+      }
+    }
+  }
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 16px;
+}

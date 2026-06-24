@@ -1,0 +1,22 @@
+<div class="card">
+  <div class="card-header">
+    <div>
+      <p class="eyebrow">Collection management</p>
+      <h3>Collections and payments</h3>
+    </div>
+    <a class="primary-link" routerLink="/distributor/outstanding">View outstanding</a>
+  </div>
+
+  <div *ngIf="loading">Loading collections...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="list" *ngIf="!loading && !error">
+    <div class="list-item" *ngFor="let item of collections">
+      <div>
+        <strong>{{ item.retailerName || 'Retailer' }}</strong>
+        <p>{{ item.referenceId || 'Collection' }}</p>
+      </div>
+      <span class="pill">₹{{ item.amountCollected || 0 }}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<div class="invoice-list">
+  <div class="invoice-card" *ngFor="let invoice of invoices">
+    <strong>{{ invoice.id }}</strong>
+    <p>{{ invoice.amount }}</p>
+    <small>{{ invoice.status }}</small>
+  </div>
+</div>

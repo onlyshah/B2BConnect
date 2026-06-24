@@ -1,0 +1,25 @@
+<div class="dashboard-grid">
+  <section class="hero-card">
+    <div>
+      <p class="eyebrow">Field execution</p>
+      <h2>Plan your route, visit retailers, capture orders and report faster.</h2>
+    </div>
+    <a routerLink="/salesman/route" class="primary-btn">Open Route</a>
+  </section>
+
+  <section class="kpi-grid">
+    <div class="kpi-card" *ngFor="let item of kpis">
+      <strong>{{ item.value }}</strong>
+      <span>{{ item.label }}</span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h3>Quick actions</h3>
+    </div>
+    <div class="action-list">
+      <a *ngFor="let action of quickActions" [routerLink]="action.route" class="action-pill">{{ action.label }}</a>
+    </div>
+  </section>
+</div>

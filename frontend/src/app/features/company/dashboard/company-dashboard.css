@@ -1,0 +1,4 @@
+.company-dashboard { padding: 16px; }
+.kpis { display:flex; gap:12px; margin-bottom:12px; }
+.kpi { background:#f3f4f6; padding:12px; border-radius:8px; }
+.quick-actions button { margin-right:8px; }

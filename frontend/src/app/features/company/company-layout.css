@@ -1,0 +1,46 @@
+.company-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.company-sidebar {
+  width: 240px;
+  background: #1f2937;
+  color: #fff;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.company-brand {
+  margin-bottom: 1rem;
+}
+
+.company-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.company-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: #e5e7eb;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.company-nav-item:hover,
+.company-nav-item.active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.company-main {
+  flex: 1;
+  padding: 1.5rem;
+  background: #f3f4f6;
+}

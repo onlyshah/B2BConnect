@@ -1,0 +1,35 @@
+<div class="orders-container">
+  <h2>My Orders</h2>
+
+  <div *ngIf="loading" class="loading">Loading orders...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <table *ngIf="orders.length > 0" class="orders-table">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{ order._id }}</td>
+        <td>{{ order.items.length }} items</td>
+        <td>₹{{ order.total }}</td>
+        <td>
+          <span class="status-badge" [style.backgroundColor]="getStatusColor(order.status)">
+            {{ order.status }}
+          </span>
+        </td>
+        <td>{{ order.createdAt | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="orders.length === 0 && !loading" class="no-orders">
+    No orders yet
+  </div>
+</div>

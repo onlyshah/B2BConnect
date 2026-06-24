@@ -1,0 +1,7 @@
+<div class="retailer-list">
+  <div class="retailer-card" *ngFor="let retailer of retailers">
+    <strong>{{ retailer.name }}</strong>
+    <p>{{ retailer.address }}</p>
+    <small>Outstanding: {{ retailer.outstanding }}</small>
+  </div>
+</div>

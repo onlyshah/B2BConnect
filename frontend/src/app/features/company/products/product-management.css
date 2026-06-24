@@ -1,0 +1,3 @@
+.product-management{ padding:16px }
+.product-management table{ width:100%; border-collapse: collapse }
+.product-management th, .product-management td{ border:1px solid #ddd; padding:8px }

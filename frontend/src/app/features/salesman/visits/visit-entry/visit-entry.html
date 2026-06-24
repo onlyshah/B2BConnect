@@ -1,0 +1,113 @@
+<div class="visit-entry-container">
+  <h2>{{ isEditMode ? 'Edit Visit' : 'Record New Visit' }}</h2>
+
+  <form [formGroup]="visitForm" (ngSubmit)="onSubmit()" class="visit-form">
+    <div class="form-section">
+      <h3>Visit Details</h3>
+
+      <div class="form-group">
+        <label for="retailer">Retailer *</label>
+        <input
+          id="retailer"
+          type="text"
+          formControlName="retailer"
+          placeholder="Select retailer"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="distributor">Distributor *</label>
+        <input
+          id="distributor"
+          type="text"
+          formControlName="distributor"
+          placeholder="Select distributor"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="visitDate">Visit Date *</label>
+          <input
+            id="visitDate"
+            type="date"
+            formControlName="visitDate"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="purpose">Purpose of Visit *</label>
+          <select formControlName="purpose" class="form-control">
+            <option *ngFor="let purpose of visitPurposes" [value]="purpose">
+              {{ purpose }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Observations</h3>
+
+      <div class="form-group">
+        <label for="discussionNotes">Discussion Notes</label>
+        <textarea
+          id="discussionNotes"
+          formControlName="discussionNotes"
+          placeholder="Enter discussion notes"
+          rows="4"
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="retailerInterest">Retailer Interest</label>
+          <select formControlName="retailerInterest" class="form-control">
+            <option *ngFor="let interest of retailerInterests" [value]="interest">
+              {{ interest }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="visitOutcome">Visit Outcome *</label>
+          <select formControlName="visitOutcome" class="form-control">
+            <option *ngFor="let outcome of visitOutcomes" [value]="outcome">
+              {{ outcome }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Follow-Up</h3>
+
+      <div class="form-group">
+        <label for="followUpDate">Follow-Up Date</label>
+        <input
+          id="followUpDate"
+          type="date"
+          formControlName="followUpDate"
+          class="form-control"
+        />
+      </div>
+    </div>
+
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+    <div *ngIf="success" class="success-message">{{ success }}</div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="visitForm.invalid || loading" class="btn btn-primary">
+        {{ loading ? 'Saving...' : 'Save Visit' }}
+      </button>
+      <button type="button" routerLink="/salesman/visits" class="btn btn-secondary">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

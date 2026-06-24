@@ -1,0 +1,7 @@
+<div class="followup-list">
+  <div class="followup-card" *ngFor="let followup of followups">
+    <strong>{{ followup.retailer }}</strong>
+    <p>{{ followup.type }}</p>
+    <small>Due {{ followup.due }}</small>
+  </div>
+</div>

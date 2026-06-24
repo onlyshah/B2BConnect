@@ -1,0 +1,26 @@
+<div class="company-dashboard">
+  <h2>Company Dashboard</h2>
+
+  <section *ngIf="loading" class="loading-state">
+    <p>Loading company overview...</p>
+  </section>
+
+  <section *ngIf="error && !loading" class="error-state">
+    <p>{{ error }}</p>
+  </section>
+
+  <section *ngIf="summary && !loading" class="kpis">
+    <div class="kpi">Total Products: {{ summary.products || 0 }}</div>
+    <div class="kpi">Total Distributors: {{ summary.distributors || 0 }}</div>
+    <div class="kpi">Active Retailers: {{ summary.retailers?.active || 0 }}</div>
+    <div class="kpi">Active Campaigns: {{ summary.campaigns?.active || 0 }}</div>
+    <div class="kpi">Active Schemes: {{ summary.schemes?.active || 0 }}</div>
+  </section>
+
+  <div class="quick-actions" *ngIf="!loading">
+    <button routerLink="/company/products">Add Product</button>
+    <button routerLink="/company/distributors">Approve Distributor</button>
+    <button routerLink="/company/campaigns">Launch Campaign</button>
+    <button routerLink="/company/analytics">View Analytics</button>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h3>{{ userRole | uppercase }}</h3>
+      <span class="user-name" *ngIf="currentUser">{{ currentUser.name }}</span>
+    </div>
+    <nav class="menu">
+      <a 
+        *ngFor="let item of menuItems" 
+        [routerLink]="item.route" 
+        routerLinkActive="active" 
+        class="menu-item"
+        [class.restricted]="item.permission && !hasPermission(item.permission)">
+        <span class="icon">{{ item.icon }}</span>
+        <span class="label">{{ item.label }}</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="dashboard-content">
+    <!-- Page Header -->
+    <section class="page-header">
+      <div>
+        <h1>Welcome, {{ currentUser?.name || 'User' }}!</h1>
+        <p class="role-subtitle">
+          <span *ngIf="userRole === 'super-admin'">Platform Administrator - Manage all companies and users</span>
+          <span *ngIf="userRole === 'company-admin'">Company Administrator - Manage company products, campaigns, and distributors</span>
+          <span *ngIf="userRole === 'distributor-admin'">Distributor Administrator - Manage orders, inventory, and retailers</span>
+          <span *ngIf="userRole === 'salesman'">Sales Executive - Track visits and build retailer relationships</span>
+          <span *ngIf="userRole === 'retailer'">Retailer - Browse products and place orders</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Metrics Grid -->
+    <section class="metrics-section" *ngIf="!loadingSummary && metrics.length > 0">
+      <div class="metrics-grid">
+        <app-metric-card 
+          *ngFor="let metric of metrics" 
+          [metric]="metric"
+          [color]="getMetricColor(metric)">
+        </app-metric-card>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <section class="loading-state" *ngIf="loadingSummary">
+      <div class="spinner"></div>
+      <p>Loading dashboard data...</p>
+    </section>
+
+    <!-- Error State -->
+    <section class="error-state" *ngIf="summaryError && !loadingSummary">
+      <span class="error-icon">⚠️</span>
+      <p>{{ summaryError }}</p>
+      <button class="retry-btn" (click)="ngOnInit()">Retry</button>
+    </section>
+
+    <!-- Content Outlet -->
+    <router-outlet></router-outlet>
+  </main>
+</div>

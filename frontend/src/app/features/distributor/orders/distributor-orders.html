@@ -1,0 +1,22 @@
+<div class="card">
+  <div class="card-header">
+    <div>
+      <p class="eyebrow">Order management</p>
+      <h3>Retailer and salesman orders</h3>
+    </div>
+    <a class="primary-link" routerLink="/distributor/inventory">Manage inventory</a>
+  </div>
+
+  <div *ngIf="loading">Loading orders...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="list" *ngIf="!loading && !error">
+    <div class="list-item" *ngFor="let order of orders">
+      <div>
+        <strong>{{ order.orderNumber || 'Order' }}</strong>
+        <p>{{ order.retailerName || 'Retailer' }}</p>
+      </div>
+      <span class="pill">{{ order.status || 'pending' }}</span>
+    </div>
+  </div>
+</div>

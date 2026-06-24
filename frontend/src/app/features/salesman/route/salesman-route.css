@@ -1,0 +1,5 @@
+.route-card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06); }
+.route-card h3 { margin-top: 0; }
+.stop { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+.stop p { margin: 4px 0 0; color: #64748b; }
+.stop span { background: #fff7ed; color: #b45309; padding: 6px 8px; border-radius: 999px; font-size: 0.8rem; }

@@ -1,0 +1,16 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-salesman-demos',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './salesman-demos.html',
+  styleUrls: ['./salesman-demos.css']
+})
+export class SalesmanDemosComponent {
+  demos = [
+    { retailer: 'Jay Ambe Super', title: 'Product Demo', status: 'Scheduled' },
+    { retailer: 'Metro Convenience', title: 'Launch Activity', status: 'Completed' }
+  ];
+}

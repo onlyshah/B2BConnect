@@ -1,0 +1,15 @@
+<div class="company-profile">
+  <h3>Company Profile</h3>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <label>Company Name<input formControlName="name" /></label>
+    <label>Brand Name<input formControlName="brand" /></label>
+    <label>GSTIN<input formControlName="gstin" /></label>
+    <label>PAN<input formControlName="pan" /></label>
+    <label>Website<input formControlName="website" /></label>
+    <label>Email<input formControlName="email" /></label>
+    <label>Mobile<input formControlName="mobile" /></label>
+    <label>Support Contact<input formControlName="supportContact" /></label>
+    <label>Address<textarea formControlName="address"></textarea></label>
+    <button type="submit">Save</button>
+  </form>
+</div>

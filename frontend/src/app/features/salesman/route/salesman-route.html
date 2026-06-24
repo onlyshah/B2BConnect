@@ -1,0 +1,10 @@
+<div class="route-card">
+  <h3>Today's route</h3>
+  <div class="stop" *ngFor="let stop of routeStops">
+    <div>
+      <strong>{{ stop.retailer }}</strong>
+      <p>Expected visit time {{ stop.time }}</p>
+    </div>
+    <span>{{ stop.priority }}</span>
+  </div>
+</div>

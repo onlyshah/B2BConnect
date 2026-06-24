@@ -1,0 +1,41 @@
+<div class="distributor-shell">
+  <aside class="sidebar">
+    <div class="brand-block">
+      <div class="brand-badge">D</div>
+      <div>
+        <h2>Distributor OS</h2>
+        <p>Operational control center</p>
+      </div>
+    </div>
+
+    <nav class="nav-list">
+      <ng-container *ngFor="let item of navItems">
+        <a *ngIf="canShow(item)" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/distributor' }">
+          <span class="nav-icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      </ng-container>
+    </nav>
+  </aside>
+
+  <main class="content-area">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Distributor Workspace</p>
+        <h1>Business operations made simple</h1>
+      </div>
+      <a class="ghost-link" routerLink="/distributor/profile">Profile</a>
+    </header>
+
+    <section class="page-body">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>
+
+<nav class="mobile-nav">
+  <a *ngFor="let item of mobileNavItems" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/distributor' }">
+    <span>{{ item.icon }}</span>
+    <small>{{ item.label }}</small>
+  </a>
+</nav>

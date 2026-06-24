@@ -1,0 +1,17 @@
+<div class="company-shell">
+  <aside class="company-sidebar">
+    <div class="company-brand">
+      <h3>Company Admin</h3>
+    </div>
+    <nav>
+      <a *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active" class="company-nav-item">
+        <span class="icon">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="company-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

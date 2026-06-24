@@ -1,0 +1,7 @@
+<div class="visit-list">
+  <div class="visit-card" *ngFor="let visit of visits">
+    <strong>{{ visit.retailer }}</strong>
+    <p>{{ visit.note }}</p>
+    <small>{{ visit.status }}</small>
+  </div>
+</div>

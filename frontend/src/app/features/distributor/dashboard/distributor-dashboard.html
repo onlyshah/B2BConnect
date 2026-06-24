@@ -1,0 +1,36 @@
+<div class="dashboard-page">
+  <div class="hero-card">
+    <div>
+      <p class="eyebrow">Distributor dashboard</p>
+      <h2>Retail network operations at a glance</h2>
+      <p>Monitor retailers, orders, inventory and collections from one live workspace.</p>
+    </div>
+    <a class="primary-action" routerLink="/distributor/orders">Review orders</a>
+  </div>
+
+  <div class="metrics-grid" *ngIf="!loading">
+    <app-metric-card *ngFor="let metric of metrics" [metric]="metric"></app-metric-card>
+  </div>
+
+  <div class="card" *ngIf="loading">Loading distributor metrics...</div>
+  <div class="card error" *ngIf="error">{{ error }}</div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>Recent Orders</h3>
+      <a routerLink="/distributor/orders">View all</a>
+    </div>
+    <div class="order-list" *ngIf="recentOrders.length; else emptyState">
+      <div class="order-row" *ngFor="let order of recentOrders">
+        <div>
+          <strong>{{ order.retailerName || 'Retailer' }}</strong>
+          <p>{{ order.orderNumber || 'Order' }}</p>
+        </div>
+        <span class="pill">{{ order.status || 'pending' }}</span>
+      </div>
+    </div>
+    <ng-template #emptyState>
+      <p class="muted">No recent orders available yet.</p>
+    </ng-template>
+  </div>
+</div>

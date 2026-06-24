@@ -1,0 +1,65 @@
+<div class="auth-shell">
+  <div class="auth-panel">
+    <div class="brand-panel">
+      <div class="brand-logo">B2B</div>
+      <h1>Welcome to B2BConnect</h1>
+      <p>
+        One login for Distributor, Retailer, Salesman and Company.
+        Secure access to orders, products, visits, and reports.
+      </p>
+      <ul>
+        <li>Single shared sign-in for all user roles</li>
+        <li>Fast access to dashboard and orders</li>
+        <li>Secure token-based authentication</li>
+      </ul>
+    </div>
+
+    <div class="form-panel">
+      <div class="form-header">
+        <h2>Sign in</h2>
+        <p>Common login for all users</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            class="form-control"
+          />
+          <span *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error">
+            Valid email is required
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="Enter your password"
+            class="form-control"
+          />
+          <span *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
+            Password must be at least 6 characters
+          </span>
+        </div>
+
+        <button type="submit" [disabled]="loginForm.invalid || loading" class="btn-primary">
+          {{ loading ? 'Signing in...' : 'Sign in' }}
+        </button>
+
+        <p class="error" *ngIf="error">{{ error }}</p>
+      </form>
+
+      <div class="helper-row">
+        <span>Don’t have an account?</span>
+        <a routerLink="/register">Choose registration option</a>
+      </div>
+    </div>
+  </div>
+</div>

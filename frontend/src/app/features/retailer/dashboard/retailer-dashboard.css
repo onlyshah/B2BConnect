@@ -1,0 +1,13 @@
+.dashboard-grid { display: grid; gap: 16px; }
+.hero-card { background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: #fff; padding: 18px; border-radius: 20px; }
+.hero-copy { margin: 8px 0 0; opacity: 0.95; }
+.kpi-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.action-list { display: flex; flex-wrap: wrap; gap: 10px; }
+.action-pill, .section-card { text-decoration: none; color: inherit; }
+.action-pill { background: var(--surface); padding: 10px 12px; border-radius: 999px; font-size: 0.9rem; border: 1px solid var(--border); }
+.section-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.section-card { border: 1px solid var(--border); border-radius: 14px; padding: 12px; background: var(--surface); }
+.section-card h4 { margin: 0 0 4px; }
+.section-card p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+@media (min-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .section-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .kpi-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

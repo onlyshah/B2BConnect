@@ -1,0 +1,3 @@
+.company-profile { padding: 16px; }
+.company-profile label { display:block; margin-bottom:8px; }
+.company-profile input, .company-profile textarea { width:100%; padding:8px; }

@@ -1,0 +1,15 @@
+<div class="product-editor">
+  <h4>{{ product?._id ? 'Edit Product' : 'New Product' }}</h4>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <label>Name<input formControlName="name" /></label>
+    <label>SKU<input formControlName="sku" /></label>
+    <label>MRP<input type="number" formControlName="mrp" /></label>
+    <label>GST<input type="number" formControlName="gst" /></label>
+    <label>Brand<input formControlName="brand" /></label>
+    <label>Pack Size<input formControlName="packSize" /></label>
+    <label>Weight<input formControlName="weight" /></label>
+    <label>Status<select formControlName="launchStatus"><option value="draft">Draft</option><option value="live">Live</option><option value="archived">Archived</option></select></label>
+    <label>Image<input type="file" (change)="onFileSelected($event)" /></label>
+    <button type="submit">Save</button>
+  </form>
+</div>

@@ -1,0 +1,15 @@
+{
+  "appId": "com.b2bconnect.app",
+  "appName": "B2BConnect",
+  "webDir": "dist/app",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "StatusBar": {
+      "style": "dark"
+    },
+    "BackgroundColor": {
+      "default": "#ffffff"
+    }
+  },
+  "cordova": {}
+}

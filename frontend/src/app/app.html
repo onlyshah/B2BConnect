@@ -1,0 +1,36 @@
+<ion-app>
+  <ion-header *ngIf="isLoggedIn">
+    <ion-toolbar color="primary">
+      <ion-title>{{ title }}</ion-title>
+      <ion-buttons slot="end">
+        <span class="user-greeting" *ngIf="user">👋 {{ user.name }}</span>
+        <ion-button fill="clear" (click)="logout()">Logout</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content [fullscreen]="true">
+    <div class="app-shell">
+      <main class="app-content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </ion-content>
+
+  <div class="loading-overlay" *ngIf="isLoading" aria-live="polite">
+    <div class="loading-panel">
+      <div class="spinner"></div>
+      <span>Loading workspace data...</span>
+    </div>
+  </div>
+
+  <div class="toast-container" *ngIf="toasts.length" aria-live="polite">
+    <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type">
+      <div class="toast-content">
+        <strong *ngIf="toast.title">{{ toast.title }}</strong>
+        <span>{{ toast.message }}</span>
+      </div>
+      <button type="button" class="toast-close" (click)="closeToast(toast.id)" *ngIf="toast.closeable !== false">×</button>
+    </div>
+  </div>
+</ion-app>

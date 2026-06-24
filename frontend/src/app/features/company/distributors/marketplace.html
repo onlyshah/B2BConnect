@@ -1,0 +1,24 @@
+<div class="distributor-marketplace">
+  <h3>Distributor Marketplace</h3>
+  <p>List of distributor applications awaiting approval</p>
+
+  <div *ngIf="loading">Loading...</div>
+
+  <table *ngIf="!loading && distributors.length > 0">
+    <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let d of distributors">
+        <td>{{d.name}}</td>
+        <td>{{d.email}}</td>
+        <td>{{d.phone}}</td>
+        <td>{{d.status}}</td>
+        <td>
+          <button *ngIf="d.status === 'pending'" (click)="approve(d._id)">Approve</button>
+          <button *ngIf="d.status === 'pending'" (click)="reject(d._id)">Reject</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && distributors.length === 0">No pending applications</div>
+</div>

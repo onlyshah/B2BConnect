@@ -1,0 +1,6 @@
+.stories-stack { display: grid; gap: 12px; }
+.story-card { background: white; border-radius: 16px; padding: 14px; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06); }
+.story-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.story-head span { color: #0f766e; font-size: 0.8rem; }
+.story-actions { display: flex; gap: 8px; margin-top: 8px; }
+.story-actions button { border: none; border-radius: 999px; padding: 8px 10px; background: #f8fafc; }

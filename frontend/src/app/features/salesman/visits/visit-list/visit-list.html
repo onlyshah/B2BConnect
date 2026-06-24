@@ -1,0 +1,51 @@
+<div class="visit-list-container">
+  <div class="header">
+    <h2>Visit Management</h2>
+    <a routerLink="/salesman/visits/new" class="btn btn-primary">+ New Visit</a>
+  </div>
+
+  <div class="filters">
+    <select [(ngModel)]="filterStatus" (change)="onFilterChange()">
+      <option *ngFor="let status of statusOptions" [value]="status">
+        {{ status | titlecase }}
+      </option>
+    </select>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading visits...</div>
+
+  <table *ngIf="!loading && visits.length > 0" class="visits-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Retailer</th>
+        <th>Purpose</th>
+        <th>Outcome</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let visit of visits">
+        <td>{{ visit.visitDate | date: 'dd-MMM-yyyy' }}</td>
+        <td>{{ visit.retailer?.name }}</td>
+        <td>{{ visit.purpose }}</td>
+        <td>{{ visit.visitOutcome }}</td>
+        <td>
+          <span class="badge" [style.backgroundColor]="getStatusBadge(visit.status)">
+            {{ visit.status }}
+          </span>
+        </td>
+        <td>
+          <a [routerLink]="'/salesman/visits/' + visit._id" class="link">View</a>
+          |
+          <a [routerLink]="'/salesman/visits/' + visit._id + '/edit'" class="link">Edit</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && visits.length === 0" class="no-data">
+    No visits found. <a routerLink="/salesman/visits/new">Create a new visit</a>
+  </div>
+</div>

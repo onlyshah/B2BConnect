@@ -1,0 +1,15 @@
+<div class="stories-stack">
+  <div class="story-card" *ngFor="let story of stories">
+    <div class="story-head">
+      <strong>{{ story.title }}</strong>
+      <span>{{ story.type }}</span>
+    </div>
+    <p>{{ story.body }}</p>
+    <div class="story-actions">
+      <button>View</button>
+      <button>Like</button>
+      <button>Order</button>
+    </div>
+    <small>{{ story.likes }} likes</small>
+  </div>
+</div>

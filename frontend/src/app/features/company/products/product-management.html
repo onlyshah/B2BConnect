@@ -1,0 +1,24 @@
+<div class="product-management">
+  <h3>Products</h3>
+  <button (click)="loadProducts()">Refresh</button>
+  <button (click)="createProduct()">Add Product</button>
+
+  <app-product-editor *ngIf="showEditor" [product]="selectedProduct" (saved)="onSaved()"></app-product-editor>
+
+  <div *ngIf="loading">Loading...</div>
+
+  <table *ngIf="!loading && products.length > 0">
+    <thead><tr><th>Name</th><th>SKU</th><th>Brand</th><th>MRP</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let p of products">
+        <td>{{p.name}}</td>
+        <td>{{p.sku}}</td>
+        <td>{{p.brand || '-'}}</td>
+        <td>{{p.mrp || '-'}}</td>
+        <td><button type="button" (click)="editProduct(p)">Edit</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && products.length === 0">No products yet</div>
+</div>

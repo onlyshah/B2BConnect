@@ -1,0 +1,39 @@
+<div class="super-shell">
+  <aside class="sidebar">
+    <div class="brand-block">
+      <div class="brand-badge">SA</div>
+      <div>
+        <h2>Super Admin</h2>
+        <p>Platform operations center</p>
+      </div>
+    </div>
+
+    <nav class="nav-list">
+      <a *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/super-admin' }">
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="content-area">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Platform administration</p>
+        <h1>Govern companies, subscriptions, approvals and support</h1>
+      </div>
+      <a class="ghost-link" routerLink="/super-admin/settings">Settings</a>
+    </header>
+
+    <section class="page-body">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>
+
+<nav class="mobile-nav">
+  <a *ngFor="let item of mobileNavItems" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/super-admin' }">
+    <span>{{ item.icon }}</span>
+    <small>{{ item.label }}</small>
+  </a>
+</nav>

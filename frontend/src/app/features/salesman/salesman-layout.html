@@ -1,0 +1,39 @@
+<div class="salesman-shell">
+  <aside class="sidebar">
+    <div class="brand-block">
+      <div class="brand-badge">S</div>
+      <div>
+        <h2>Salesman App</h2>
+        <p>Field force automation</p>
+      </div>
+    </div>
+
+    <nav class="nav-list">
+      <a *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/salesman' }">
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="content-area">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Sales execution workspace</p>
+        <h1>Visit, order, follow up and report</h1>
+      </div>
+      <a class="ghost-link" routerLink="/salesman/profile">Profile</a>
+    </header>
+
+    <section class="page-body">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>
+
+<nav class="mobile-nav">
+  <a *ngFor="let item of mobileNavItems" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/salesman' }">
+    <span>{{ item.icon }}</span>
+    <small>{{ item.label }}</small>
+  </a>
+</nav>

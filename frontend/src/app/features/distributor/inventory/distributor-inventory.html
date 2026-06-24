@@ -1,0 +1,22 @@
+<div class="card">
+  <div class="card-header">
+    <div>
+      <p class="eyebrow">Inventory operations</p>
+      <h3>Stock and replenishment</h3>
+    </div>
+    <a class="primary-link" routerLink="/distributor/orders">Create replenishment</a>
+  </div>
+
+  <div *ngIf="loading">Loading inventory...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="list" *ngIf="!loading && !error">
+    <div class="list-item" *ngFor="let item of inventory">
+      <div>
+        <strong>{{ item.productName || item.name || 'Inventory item' }}</strong>
+        <p>{{ item.batch || 'Available' }}</p>
+      </div>
+      <span class="pill">{{ item.stock || 0 }} in stock</span>
+    </div>
+  </div>
+</div>
