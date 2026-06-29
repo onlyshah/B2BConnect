@@ -1,4 +1,24 @@
-.company-dashboard { padding: 16px; }
-.kpis { display:flex; gap:12px; margin-bottom:12px; }
-.kpi { background:#f3f4f6; padding:12px; border-radius:8px; }
-.quick-actions button { margin-right:8px; }
+.company-dashboard { display: flex; flex-direction: column; gap: 16px; }
+.hero-card { display: flex; justify-content: space-between; gap: 16px; padding: 20px; background: linear-gradient(135deg, #0f172a, #1e293b); color: white; border-radius: 18px; }
+.hero-card h2 { margin: 4px 0 6px; font-size: 24px; }
+.hero-card p { margin: 0; color: #cbd5e1; }
+.eyebrow { text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.72rem; color: #cbd5e1; margin: 0 0 4px; }
+.hero-actions { display: flex; gap: 10px; align-self: flex-start; flex-wrap: wrap; }
+.primary-action, .secondary-action { text-decoration: none; padding: 10px 14px; border-radius: 999px; font-weight: 700; }
+.primary-action { background: white; color: #0f172a; }
+.secondary-action { background: rgba(255,255,255,0.14); color: white; }
+.metrics-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.card-header a { text-decoration: none; color: #2563eb; font-weight: 600; }
+.content-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; }
+.action-list { display: flex; flex-direction: column; gap: 10px; }
+.action-item { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 12px; color: #0f172a; text-decoration: none; }
+.row-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+.row-item:last-child { border-bottom: none; }
+.row-item p { margin: 2px 0 0; color: #64748b; }
+.pill { background: #eff6ff; color: #1d4ed8; border-radius: 999px; padding: 4px 10px; text-transform: capitalize; }
+.muted { color: #64748b; }
+.error { color: #dc2626; }
+@media (max-width: 900px) { .metrics-grid, .content-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .hero-card { flex-direction: column; } .hero-actions { width: 100%; } .hero-actions a { flex: 1; text-align: center; } }

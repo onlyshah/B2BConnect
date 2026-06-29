@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SalesmanReportsComponent {
   reports = [
-    { title: 'Daily Report', value: 'Submitted' },
-    { title: 'Weekly Report', value: 'Pending' }
+    { title: 'Daily Report', value: 'Submitted', detail: '4 visits • 2 orders' },
+    { title: 'Weekly Report', value: 'Pending', detail: 'Target review due' }
   ];
 }

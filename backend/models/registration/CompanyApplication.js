@@ -6,6 +6,7 @@ const companyApplicationSchema = new mongoose.Schema({
   businessType: { type: String, required: true },
   gstin: { type: String, required: true, unique: true, index: true },
   panNumber: { type: String, required: true, unique: true },
+  aadhaarNumber: { type: String, required: true },
   ownerName: { type: String, required: true },
   mobileNumber: { type: String, required: true },
   email: { type: String, required: true, lowercase: true, index: true },

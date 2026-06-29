@@ -16,31 +16,31 @@ export const appRoutes: Routes = [
     path: 'company/dashboard',
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['company-admin'] },
-    redirectTo: 'company'
+    loadChildren: () => import('./features/company/company.routes').then(m => m.companyRoutes)
   },
   {
     path: 'distributor/dashboard',
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['distributor-admin'] },
-    redirectTo: 'distributor'
+    loadChildren: () => import('./features/distributor/distributor.routes').then(m => m.distributorRoutes)
   },
   {
     path: 'retailer/dashboard',
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['retailer'] },
-    redirectTo: 'retailer'
+    loadChildren: () => import('./features/retailer/retailer.routes').then(m => m.retailerRoutes)
   },
   {
     path: 'salesman/dashboard',
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['salesman'] },
-    redirectTo: 'salesman'
+    loadChildren: () => import('./features/salesman/salesman.routes').then(m => m.salesmanRoutes)
   },
   {
     path: 'super-admin/dashboard',
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['super-admin'] },
-    redirectTo: 'super-admin'
+    loadChildren: () => import('./features/super-admin/super-admin.routes').then(m => m.superAdminRoutes)
   },
   {
     path: 'company',

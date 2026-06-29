@@ -1,7 +1,20 @@
-<div class="visit-list">
-  <div class="visit-card" *ngFor="let visit of visits">
-    <strong>{{ visit.retailer }}</strong>
-    <p>{{ visit.note }}</p>
-    <small>{{ visit.status }}</small>
-  </div>
+<div class="visit-shell">
+  <section class="visit-card">
+    <div class="panel-header">
+      <h3>Visit queue</h3>
+      <button class="pill-btn">+ New visit</button>
+    </div>
+    <div class="visit-list">
+      <div class="visit-item" *ngFor="let visit of visits">
+        <div>
+          <strong>{{ visit.retailer }}</strong>
+          <p>{{ visit.note }}</p>
+        </div>
+        <div class="visit-meta">
+          <span class="time">{{ visit.time }}</span>
+          <span class="status">{{ visit.status }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

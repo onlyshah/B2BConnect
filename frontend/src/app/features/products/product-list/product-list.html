@@ -24,13 +24,13 @@
       </div>
 
       <div class="product-actions">
-        <button class="btn-view">View Details</button>
-        <button class="btn-order">Order Now</button>
+        <button class="btn-view" [routerLink]="['/dashboard/products', product._id]">View Details</button>
+        <button class="btn-order" [routerLink]="['/dashboard/orders/new']" [queryParams]="{ productId: product._id, sku: product.sku }">Order Now</button>
       </div>
     </div>
   </div>
 
   <div *ngIf="products.length === 0 && !loading" class="no-products">
-    No products available
+    No products available yet. Create a product first or contact your admin.
   </div>
 </div>

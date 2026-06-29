@@ -4,11 +4,13 @@ import { RouterModule } from '@angular/router';
 import { SalesmanService } from '../../../services/salesman.service';
 import { VisitService } from '../../../services/visit.service';
 import { DashboardService } from '../../../services/dashboard.service';
+import { SalesmanCheckinComponent } from './salesman-checkin/salesman-checkin';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-salesman-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SalesmanCheckinComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
@@ -30,7 +32,8 @@ export class SalesmanDashboardComponent implements OnInit {
   constructor(
     private salesmanService: SalesmanService,
     private visitService: VisitService,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -38,8 +41,8 @@ export class SalesmanDashboardComponent implements OnInit {
   }
 
   loadDashboard() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const salesmanId = user.salesmanId;
+    const user = this.authService.getCurrentUserSync();
+    const salesmanId = user?.salesmanId;
 
     if (!salesmanId) {
       this.error = 'Salesman profile not available.';
@@ -61,8 +64,8 @@ export class SalesmanDashboardComponent implements OnInit {
   }
 
   loadTodayStats() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const salesmanId = user.salesmanId;
+    const user = this.authService.getCurrentUserSync();
+    const salesmanId = user?.salesmanId;
 
     this.visitService.getTodayVisits(salesmanId).subscribe({
       next: (visits) => {

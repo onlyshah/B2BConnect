@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SalesmanFollowupsComponent {
   followups = [
-    { retailer: 'Jay Ambe Super', type: 'Payment', due: 'Today' },
-    { retailer: 'Metro Convenience', type: 'Sample', due: 'Tomorrow' }
+    { retailer: 'Jay Ambe Super', type: 'Payment', due: 'Today', priority: 'High' },
+    { retailer: 'Metro Convenience', type: 'Sample', due: 'Tomorrow', priority: 'Medium' }
   ];
 }

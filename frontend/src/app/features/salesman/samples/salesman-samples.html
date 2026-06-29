@@ -1,7 +1,17 @@
-<div class="sample-list">
-  <div class="sample-card" *ngFor="let sample of samples">
-    <strong>{{ sample.product }}</strong>
-    <p>{{ sample.retailer }}</p>
-    <small>{{ sample.status }}</small>
-  </div>
+<div class="sample-shell">
+  <section class="sample-card">
+    <div class="panel-header">
+      <h3>Sample requests</h3>
+      <button class="pill-btn">+ Request sample</button>
+    </div>
+    <div class="sample-list">
+      <div class="sample-item" *ngFor="let sample of samples">
+        <div>
+          <strong>{{ sample.product }}</strong>
+          <p>{{ sample.retailer }} • {{ sample.qty }}</p>
+        </div>
+        <span class="status">{{ sample.status }}</span>
+      </div>
+    </div>
+  </section>
 </div>

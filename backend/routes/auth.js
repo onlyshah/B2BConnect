@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Retailer = require('../models/Retailer');
-const { ensureTenant } = require('../middleware/auth');
+const Attendance = require('../models/Attendance');
+const { authenticate, ensureTenant } = require('../middleware/auth');
 
 // Import registration routes
 const registrationRoutes = require('./auth/registration');
@@ -49,6 +50,33 @@ router.post('/login', async (req, res) => {
     refreshToken,
     user: { id: user._id, name: user.name, email: user.email, role: user.role, tenantId: user.tenantId }
   });
+});
+
+router.get('/me', authenticate, ensureTenant, async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.auth.userId, tenantId: req.tenantId }).select('-passwordHash -__v');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        tenantId: user.tenantId,
+        companyId: user.companyId,
+        distributorId: user.distributorId,
+        retailerId: user.retailerId,
+        salesmanId: user.salesmanId,
+        permissions: user.permissions || []
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 router.post('/register-retailer', ensureTenant, async (req, res) => {
@@ -116,12 +144,32 @@ router.post('/logout', async (req, res) => {
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findOne({ _id: decoded.userId, tenantId: decoded.tenantId });
+    if (!user || decoded.tokenVersion !== user.refreshTokenVersion) {
+      return res.status(401).json({ message: 'Invalid refresh token' });
+    }
+
+    if (user.role === 'salesman' && user.salesmanId) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const activeAttendance = await Attendance.findOne({
+        salesman: user.salesmanId,
+        tenantId: user.tenantId,
+        attendanceDate: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) },
+        checkInTime: { $exists: true },
+        checkOutTime: { $exists: false }
+      });
+      if (activeAttendance) {
+        return res.status(400).json({ message: 'Cannot logout while attendance is active. Please check out first.' });
+      }
+    }
+
     await User.findOneAndUpdate(
-      { _id: decoded.userId, tenantId: decoded.tenantId },
+      { _id: user._id, tenantId: user.tenantId },
       { $inc: { refreshTokenVersion: 1 }, updatedAt: new Date() }
     );
   } catch (err) {
-    // Logout should be idempotent from the client perspective.
+    return res.status(401).json({ message: 'Invalid refresh token' });
   }
 
   res.json({ message: 'Logged out' });

@@ -13,6 +13,7 @@ export class DashboardService {
   }
 
   getOrders(): Observable<any> {
+    // Orders list lives at /orders
     return this.apiService.get(API_ENDPOINTS.DASHBOARD.GET_ORDERS).pipe(map((r: ApiResponse) => r.data));
   }
 
@@ -33,10 +34,19 @@ export class DashboardService {
   }
 
   getMetrics(): Observable<any> {
+    // Use analytics summary endpoint for metrics
     return this.apiService.get(API_ENDPOINTS.DASHBOARD.GET_METRICS).pipe(map((r: ApiResponse) => r.data));
   }
 
   getCharts(): Observable<any> {
     return this.apiService.get(API_ENDPOINTS.DASHBOARD.GET_CHARTS).pipe(map((r: ApiResponse) => r.data));
+  }
+
+  getSalesPerformance(filters?: any): Observable<any> {
+    return this.apiService.get(API_ENDPOINTS.ANALYTICS.GET_SALES, filters).pipe(map((r: ApiResponse) => r.data));
+  }
+
+  getInventoryPerformance(filters?: any): Observable<any> {
+    return this.apiService.get(API_ENDPOINTS.ANALYTICS.GET_INVENTORY, filters).pipe(map((r: ApiResponse) => r.data));
   }
 }

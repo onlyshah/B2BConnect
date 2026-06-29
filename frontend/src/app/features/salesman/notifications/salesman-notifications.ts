@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SalesmanNotificationsComponent {
   notifications = [
-    { title: 'Visit Reminder', detail: '3 retailers pending today' },
-    { title: 'Sample Approval', detail: 'Your sample request is approved' }
+    { title: 'Visit Reminder', detail: '3 retailers pending today', time: '10 mins ago' },
+    { title: 'Sample Approval', detail: 'Your sample request is approved', time: '1 hour ago' }
   ];
 }

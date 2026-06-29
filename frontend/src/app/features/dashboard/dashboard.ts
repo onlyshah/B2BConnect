@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { catchError, finalize, takeUntil } from 'rxjs/operators';
 import { DashboardSummary } from '../../models';
 import { MvpWorkflowService } from '../../services/mvp-workflow.service';
+import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
 import { MetricCardComponent, MetricData } from '../../shared/components/metric-card';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
@@ -40,11 +41,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   summaryError: string | null = null;
 
   metrics: MetricData[] = [];
+  chartBars: Array<{ label: string; value: number; color: string }> = [];
+  salesSeries: number[] = [];
+  inventorySeries: Array<{ label: string; stock: number; reorderLevel: number }> = [];
+  trendPoints = '';
+  chartMax = 1;
+  svgWidth = 360;
+  svgHeight = 180;
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private workflowService: MvpWorkflowService,
+    private dashboardService: DashboardService,
     private authService: AuthService
   ) {}
 
@@ -154,17 +163,45 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadDashboardData() {
-    this.workflowService.getDashboardSummary()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (summary: DashboardSummary) => {
-          this.summary = summary;
-          this.buildMetrics();
-          this.loadingSummary = false;
-        },
-        error: () => {
+    this.loadingSummary = true;
+    this.summaryError = null;
+
+    forkJoin({
+      summary: this.workflowService.getDashboardSummary().pipe(
+        catchError((err) => {
+          console.error('Dashboard summary failed', err);
           this.summaryError = 'Summary unavailable';
+          return of(null);
+        })
+      ),
+      sales: this.dashboardService.getSalesPerformance().pipe(
+        catchError((err) => {
+          console.error('Sales performance failed', err);
+          return of(null);
+        })
+      ),
+      inventory: this.dashboardService.getInventoryPerformance().pipe(
+        catchError((err) => {
+          console.error('Inventory performance failed', err);
+          return of(null);
+        })
+      )
+    })
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
           this.loadingSummary = false;
+        })
+      )
+      .subscribe({
+        next: ({ summary, sales, inventory }) => {
+          this.summary = summary ?? this.summary;
+          this.buildMetrics();
+          this.buildCharts(sales, inventory);
+
+          if (!this.summaryError) {
+            this.summaryError = null;
+          }
         }
       });
   }
@@ -208,5 +245,62 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const role = (this.userRole || 'retailer').replace(/_/g, '-');
     this.metrics = metricsMap[role] || metricsMap['retailer'];
+  }
+
+  private buildCharts(sales: any, inventory: any): void {
+    const summary = this.summary;
+    const baseBars = summary
+      ? [
+          { label: 'Products', value: summary.products || 0, color: '#2563eb' },
+          { label: 'Distributors', value: summary.distributors || 0, color: '#0f766e' },
+          { label: 'Retailers', value: summary.retailers?.active || 0, color: '#7c3aed' },
+          { label: 'Pending Orders', value: summary.orders?.pending || 0, color: '#ea580c' },
+          { label: 'Low Stock', value: summary.inventory?.lowStock || 0, color: '#dc2626' },
+          { label: 'Open Invoices', value: summary.finance?.openInvoices || 0, color: '#0891b2' }
+        ]
+      : [];
+
+    this.chartBars = baseBars;
+    this.chartMax = Math.max(1, ...baseBars.map((bar) => bar.value));
+
+    const salesOrders = Array.isArray(sales?.orders) ? sales.orders : [];
+    const salesValues = salesOrders
+      .slice(0, 6)
+      .map((order: any) => Number(order.totalAmount ?? order.total ?? 0))
+      .filter((value: number) => Number.isFinite(value) && value >= 0);
+    this.salesSeries = salesValues.length ? salesValues : baseBars.map((bar) => bar.value);
+    this.trendPoints = this.buildPolylinePoints(this.salesSeries);
+
+    const inventoryItems = Array.isArray(inventory?.topItems) ? inventory.topItems : [];
+    this.inventorySeries = inventoryItems.slice(0, 6).map((item: any, index: number) => ({
+      label: item.productId?.name || item.name || `Item ${index + 1}`,
+      stock: Number(item.stockOnHand ?? item.stock ?? item.quantity ?? 0),
+      reorderLevel: Number(item.reorderLevel ?? item.minStock ?? 0)
+    }));
+  }
+
+  private buildPolylinePoints(values: number[]): string {
+    if (!values.length) {
+      return '';
+    }
+
+    const max = Math.max(...values, 1);
+    const step = values.length === 1 ? this.svgWidth / 2 : this.svgWidth / (values.length - 1);
+
+    return values
+      .map((value, index) => {
+        const x = Math.round(step * index);
+        const y = Math.round(this.svgHeight - (value / max) * (this.svgHeight - 24) - 12);
+        return `${x},${y}`;
+      })
+      .join(' ');
+  }
+
+  getBarWidth(value: number): number {
+    if (!value) {
+      return 4;
+    }
+
+    return Math.max(4, (value / this.chartMax) * 100);
   }
 }

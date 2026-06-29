@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bcryptjs = require('bcryptjs');
 const crypto = require('crypto');
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const RegistrationRequest = require('../../models/registration/RegistrationRequest');
 const CompanyApplication = require('../../models/registration/CompanyApplication');
 const DistributorApplication = require('../../models/registration/DistributorApplication');
@@ -33,8 +36,30 @@ const validateGSTIN = (gstin) => {
 
 // PAN validation helper
 const validatePAN = (pan) => {
-  return /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan);
+  return /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(String(pan).replace(/\s+/g, '').toUpperCase());
 };
+
+// Aadhaar validation helper
+const validateAadhaar = (aadhaar) => {
+  return /^\d{12}$/.test(String(aadhaar).replace(/\s+/g, ''));
+};
+
+const normalizeIdentityValue = (value) => String(value || '').replace(/\s+/g, '').toUpperCase();
+
+const uploadDir = path.join(__dirname, '..', '..', 'uploads', 'salesman-applications');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const timestamp = Date.now();
+    const ext = path.extname(file.originalname);
+    const safeName = file.fieldname + '-' + timestamp + ext;
+    cb(null, safeName);
+  }
+});
+
+const upload = multer({ storage });
 
 /**
  * @route   POST /api/auth/register/company
@@ -44,16 +69,16 @@ const validatePAN = (pan) => {
 router.post('/register/company', async (req, res) => {
   try {
     const { 
-      companyName, businessType, gstin, panNumber, ownerName, 
+      companyName, businessType, gstin, panNumber, aadhaarNumber, ownerName, 
       mobileNumber, email, website, address, state, city, 
       pincode, password, confirmPassword 
     } = req.body;
 
     // Validation
-    if (!companyName || !businessType || !gstin || !panNumber || !ownerName || 
+    if (!companyName || !businessType || !gstin || !panNumber || !aadhaarNumber || !ownerName || 
         !mobileNumber || !email || !address || !state || !city || !pincode || 
         !password || !confirmPassword) {
-      return res.status(400).json({ error: 'All required fields must be provided' });
+      return res.status(400).json({ error: 'All required fields including Aadhaar and PAN must be provided' });
     }
 
     if (!validateEmail(email)) {
@@ -74,6 +99,10 @@ router.post('/register/company', async (req, res) => {
 
     if (!validateGSTIN(gstin)) {
       return res.status(400).json({ error: 'Invalid GSTIN format' });
+    }
+
+    if (!validateAadhaar(aadhaarNumber)) {
+      return res.status(400).json({ error: 'Invalid Aadhaar number' });
     }
 
     if (!validatePAN(panNumber)) {
@@ -109,7 +138,8 @@ router.post('/register/company', async (req, res) => {
       companyName,
       businessType,
       gstin,
-      panNumber,
+      panNumber: normalizeIdentityValue(panNumber),
+      aadhaarNumber: normalizeIdentityValue(aadhaarNumber),
       ownerName,
       mobileNumber,
       email: email.toLowerCase(),
@@ -144,15 +174,14 @@ router.post('/register/company', async (req, res) => {
 router.post('/register/distributor', async (req, res) => {
   try {
     const {
-      businessName, gstin, panNumber, ownerName, mobileNumber, email,
-      address, state, city, pincode, warehouseCapacity, password,
-      confirmPassword, companyIds = []
+      businessName, gstin, panNumber, aadhaarNumber, ownerName, mobileNumber, email,
+      address, state, city, pincode, warehouseCapacity, password, confirmPassword, companyIds = []
     } = req.body;
 
     // Validation
-    if (!businessName || !gstin || !panNumber || !ownerName || !mobileNumber ||
+    if (!businessName || !gstin || !panNumber || !aadhaarNumber || !ownerName || !mobileNumber ||
         !email || !address || !state || !city || !pincode || !password || !confirmPassword) {
-      return res.status(400).json({ error: 'All required fields must be provided' });
+      return res.status(400).json({ error: 'All required fields including Aadhaar and PAN must be provided' });
     }
 
     if (!validateEmail(email)) {
@@ -173,6 +202,10 @@ router.post('/register/distributor', async (req, res) => {
 
     if (!validateGSTIN(gstin)) {
       return res.status(400).json({ error: 'Invalid GSTIN format' });
+    }
+
+    if (!validateAadhaar(aadhaarNumber)) {
+      return res.status(400).json({ error: 'Invalid Aadhaar number' });
     }
 
     if (!validatePAN(panNumber)) {
@@ -222,7 +255,8 @@ router.post('/register/distributor', async (req, res) => {
       registrationRequestId: regRequest._id,
       businessName,
       gstin,
-      panNumber,
+      panNumber: normalizeIdentityValue(panNumber),
+      aadhaarNumber: normalizeIdentityValue(aadhaarNumber),
       ownerName,
       mobileNumber,
       email: email.toLowerCase(),
@@ -256,19 +290,27 @@ router.post('/register/distributor', async (req, res) => {
  * @desc    Register new salesman
  * @access  Public
  */
-router.post('/register/salesman', async (req, res) => {
+router.post('/register/salesman', upload.fields([
+  { name: 'cv', maxCount: 1 },
+  { name: 'aadhaarDocument', maxCount: 1 },
+  { name: 'panDocument', maxCount: 1 }
+]), async (req, res) => {
   try {
     const {
       fullName, mobileNumber, email, dateOfBirth, address, state,
       city, pincode, experience, previousCompany, password,
-      confirmPassword, companyIds = []
+      confirmPassword, companyIds = [], aadhaarNumber, panNumber
     } = req.body;
+
+    const cvFile = req.files?.cv?.[0];
+    const aadhaarDocumentFile = req.files?.aadhaarDocument?.[0];
+    const panDocumentFile = req.files?.panDocument?.[0];
 
     // Validation
     if (!fullName || !mobileNumber || !email || !dateOfBirth ||
         !address || !state || !city || !pincode || experience === undefined ||
-        !password || !confirmPassword) {
-      return res.status(400).json({ error: 'All required fields must be provided' });
+        !password || !confirmPassword || !aadhaarNumber || !panNumber || !cvFile) {
+      return res.status(400).json({ error: 'All required fields and CV upload must be provided' });
     }
 
     if (!validateEmail(email)) {
@@ -315,9 +357,15 @@ router.post('/register/salesman', async (req, res) => {
     const passwordHash = await bcryptjs.hash(password, 10);
 
     // Prepare applied companies
+    const parsedCompanyIds = Array.isArray(companyIds)
+      ? companyIds
+      : typeof companyIds === 'string' && companyIds
+        ? companyIds.split(',').map((id) => id.trim()).filter(Boolean)
+        : [];
+
     const appliedCompanies = [];
-    if (companyIds && companyIds.length > 0) {
-      for (const companyId of companyIds) {
+    if (parsedCompanyIds.length > 0) {
+      for (const companyId of parsedCompanyIds) {
         const company = await Company.findById(companyId);
         if (company) {
           appliedCompanies.push({
@@ -342,7 +390,24 @@ router.post('/register/salesman', async (req, res) => {
       pincode,
       experience: parseInt(experience),
       previousCompany,
+      aadhaarNumber: normalizeIdentityValue(aadhaarNumber),
+      panNumber: normalizeIdentityValue(panNumber),
       passwordHash,
+      cv: {
+        filename: cvFile.filename,
+        url: `/uploads/salesman-applications/${cvFile.filename}`,
+        uploadedAt: new Date()
+      },
+      aadhaarDocument: aadhaarDocumentFile ? {
+        filename: aadhaarDocumentFile.filename,
+        url: `/uploads/salesman-applications/${aadhaarDocumentFile.filename}`,
+        uploadedAt: new Date()
+      } : undefined,
+      panDocument: panDocumentFile ? {
+        filename: panDocumentFile.filename,
+        url: `/uploads/salesman-applications/${panDocumentFile.filename}`,
+        uploadedAt: new Date()
+      } : undefined,
       appliedCompanies,
       overallStatus: 'pending-company-approval'
     });
@@ -370,17 +435,17 @@ router.post('/register/salesman', async (req, res) => {
 router.post('/register/retailer', async (req, res) => {
   try {
     const {
-      storeName, ownerName, mobileNumber, email, gstin, address,
+      storeName, ownerName, mobileNumber, email, gstin, panNumber, aadhaarNumber, address,
       state, city, pincode, storeCategory, password, confirmPassword,
       latitude, longitude, distributorId
     } = req.body;
 
     // Validation
-    if (!storeName || !ownerName || !mobileNumber || !email ||
+    if (!storeName || !ownerName || !mobileNumber || !email || !panNumber || !aadhaarNumber ||
         !address || !state || !city || !pincode || !storeCategory ||
         !password || !confirmPassword || latitude === undefined || 
         longitude === undefined) {
-      return res.status(400).json({ error: 'All required fields must be provided' });
+      return res.status(400).json({ error: 'All required fields including Aadhaar and PAN must be provided' });
     }
 
     if (!validateEmail(email)) {
@@ -397,6 +462,14 @@ router.post('/register/retailer', async (req, res) => {
 
     if (!validatePassword(password)) {
       return res.status(400).json({ error: 'Password must be at least 8 characters with uppercase, number and special character' });
+    }
+
+    if (!validateAadhaar(aadhaarNumber)) {
+      return res.status(400).json({ error: 'Invalid Aadhaar number' });
+    }
+
+    if (!validatePAN(panNumber)) {
+      return res.status(400).json({ error: 'Invalid PAN format' });
     }
 
     // Check if email already exists
@@ -439,6 +512,8 @@ router.post('/register/retailer', async (req, res) => {
       mobileNumber,
       email: email.toLowerCase(),
       gstin,
+      panNumber: normalizeIdentityValue(panNumber),
+      aadhaarNumber: normalizeIdentityValue(aadhaarNumber),
       address,
       state,
       city,

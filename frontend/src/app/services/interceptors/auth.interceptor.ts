@@ -3,7 +3,7 @@
  * Automatically attaches JWT token to all HTTP requests
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injector, Injectable } from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -15,16 +15,16 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  private injector = inject(Injector);
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token = this.authService.getToken();
+    const authService = this.injector.get(AuthService);
+    const token = authService.getToken();
 
     if (token) {
-      // Clone request and add authorization header
       req = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,

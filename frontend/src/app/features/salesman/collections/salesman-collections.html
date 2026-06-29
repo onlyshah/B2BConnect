@@ -1,7 +1,20 @@
-<div class="collection-list">
-  <div class="collection-card" *ngFor="let item of collections">
-    <strong>{{ item.retailer }}</strong>
-    <p>{{ item.amount }}</p>
-    <small>{{ item.mode }}</small>
-  </div>
+<div class="collection-shell">
+  <section class="collection-card">
+    <div class="panel-header">
+      <h3>Collections</h3>
+      <button class="pill-btn">+ Record payment</button>
+    </div>
+    <div class="collection-list">
+      <div class="collection-item" *ngFor="let item of collections">
+        <div>
+          <strong>{{ item.retailer }}</strong>
+          <p>{{ item.mode }}</p>
+        </div>
+        <div class="collection-meta">
+          <span class="amount">{{ item.amount }}</span>
+          <span class="status">{{ item.status }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

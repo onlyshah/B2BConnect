@@ -1,7 +1,0 @@
-node_modules/
-dist/
-android/
-ios/
-.angular/
-*.log
-.DS_Store

@@ -1,7 +1,28 @@
-<div class="retailer-list">
-  <div class="retailer-card" *ngFor="let retailer of retailers">
-    <strong>{{ retailer.name }}</strong>
-    <p>{{ retailer.address }}</p>
-    <small>Outstanding: {{ retailer.outstanding }}</small>
-  </div>
+<div class="retailer-shell">
+  <section class="retailer-card" *ngIf="loading">
+    <p class="muted">Loading assigned retailers...</p>
+  </section>
+
+  <section class="retailer-card" *ngIf="error && !loading">
+    <p class="error">{{ error }}</p>
+  </section>
+
+  <section class="retailer-card" *ngIf="!loading">
+    <div class="panel-header">
+      <h3>Assigned retailers</h3>
+      <a class="pill-btn" routerLink="/register/retailer">Add retailer lead</a>
+    </div>
+    <div class="retailer-list">
+      <div class="retailer-row" *ngFor="let retailer of retailers">
+        <div>
+          <strong>{{ retailer.name }}</strong>
+          <p>{{ retailer.address }} • Last visit {{ retailer.lastVisit }}</p>
+        </div>
+        <div class="retailer-meta">
+          <span class="pill">{{ retailer.status }}</span>
+          <span class="outstanding">{{ retailer.outstanding }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

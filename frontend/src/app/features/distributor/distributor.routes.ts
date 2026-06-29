@@ -10,6 +10,7 @@ import { DistributorSamplesComponent } from './samples/distributor-samples';
 import { DistributorAnalyticsComponent } from './analytics/distributor-analytics';
 import { DistributorSettingsComponent } from './settings/distributor-settings';
 import { DistributorModulePageComponent } from './module/distributor-module';
+import { OrderCreateComponent } from '../orders/order-create/order-create';
 
 export const distributorRoutes: Routes = [
   {
@@ -18,6 +19,7 @@ export const distributorRoutes: Routes = [
     children: [
       { path: '', component: DistributorDashboardComponent },
       { path: 'retailers', component: DistributorRetailersComponent },
+      { path: 'orders/new', component: OrderCreateComponent },
       { path: 'orders', component: DistributorOrdersComponent },
       { path: 'inventory', component: DistributorInventoryComponent },
       { path: 'pricing', component: DistributorPricingComponent },

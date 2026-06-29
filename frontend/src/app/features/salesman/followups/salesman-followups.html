@@ -1,7 +1,20 @@
-<div class="followup-list">
-  <div class="followup-card" *ngFor="let followup of followups">
-    <strong>{{ followup.retailer }}</strong>
-    <p>{{ followup.type }}</p>
-    <small>Due {{ followup.due }}</small>
-  </div>
+<div class="followup-shell">
+  <section class="followup-card">
+    <div class="panel-header">
+      <h3>Follow-ups</h3>
+      <button class="pill-btn">+ Add task</button>
+    </div>
+    <div class="followup-list">
+      <div class="followup-item" *ngFor="let followup of followups">
+        <div>
+          <strong>{{ followup.retailer }}</strong>
+          <p>{{ followup.type }}</p>
+        </div>
+        <div class="followup-meta">
+          <span class="priority">{{ followup.priority }}</span>
+          <span class="due">Due {{ followup.due }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

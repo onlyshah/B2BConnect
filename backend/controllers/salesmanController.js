@@ -1,4 +1,10 @@
 const Salesman = require('../models/Salesman');
+const mongoose = require('mongoose');
+const Visit = require('../models/Visit');
+const Order = require('../models/Order');
+const Attendance = require('../models/Attendance');
+const CollectionRecord = require('../models/CollectionRecord');
+const User = require('../models/User');
 
 // Get all salesmen
 const getSalesmen = async (req, res) => {
@@ -133,19 +139,90 @@ const assignTerritory = async (req, res) => {
   }
 };
 
-// Get salesman performance
+// Get salesman performance (aggregated from visits, orders, attendance, collections)
 const getPerformance = async (req, res) => {
   try {
-    const salesman = await Salesman.findOne({
-      _id: req.params.salesmanId,
-      tenantId: req.tenantId,
-    });
+    const salesmanId = req.params.salesmanId;
+    const tenantId = req.tenantId;
 
+    const salesman = await Salesman.findOne({ _id: salesmanId, tenantId });
     if (!salesman) {
       return res.status(404).json({ success: false, message: 'Salesman not found' });
     }
 
-    res.json({ success: true, data: salesman.metrics });
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const endOfToday = new Date(startOfToday);
+    endOfToday.setDate(endOfToday.getDate() + 1);
+
+    const startOfMonth = new Date(startOfToday.getFullYear(), startOfToday.getMonth(), 1);
+
+    // Visits
+    const todaysVisitsCount = await Visit.countDocuments({
+      tenantId,
+      salesman: salesmanId,
+      visitDate: { $gte: startOfToday, $lt: endOfToday }
+    });
+
+    const monthlyVisitsCount = await Visit.countDocuments({
+      tenantId,
+      salesman: salesmanId,
+      visitDate: { $gte: startOfMonth }
+    });
+
+    // Orders generated via visits -> orderGenerated
+    const ordersAgg = await Visit.aggregate([
+      { $match: { tenantId: mongoose.Types.ObjectId(tenantId), salesman: mongoose.Types.ObjectId(salesmanId), orderGenerated: { $exists: true, $ne: null } } },
+      { $lookup: { from: 'orders', localField: 'orderGenerated', foreignField: '_id', as: 'order' } },
+      { $unwind: { path: '$order', preserveNullAndEmptyArrays: false } },
+      { $group: { _id: null, ordersCount: { $sum: 1 }, revenue: { $sum: { $ifNull: ['$order.total', 0] } } } }
+    ]);
+
+    const ordersCount = (ordersAgg[0] && ordersAgg[0].ordersCount) || 0;
+    const ordersRevenue = (ordersAgg[0] && ordersAgg[0].revenue) || 0;
+
+    // Collections: find user(s) mapped to this salesman and sum CollectionRecord.amountCollected
+    const salesmanUsers = await User.find({ tenantId, salesmanId: salesmanId }, { _id: 1 }).lean();
+    const userIds = salesmanUsers.map((u) => u._id);
+
+    let collectionsTotal = 0;
+    if (userIds.length > 0) {
+      const collAgg = await CollectionRecord.aggregate([
+        { $match: { tenantId: mongoose.Types.ObjectId(tenantId), collectedBy: { $in: userIds } } },
+        { $group: { _id: null, totalCollected: { $sum: '$amountCollected' } } }
+      ]);
+      collectionsTotal = (collAgg[0] && collAgg[0].totalCollected) || 0;
+    }
+
+    // Attendance today
+    const attendanceToday = await Attendance.findOne({
+      tenantId,
+      salesman: salesmanId,
+      attendanceDate: { $gte: startOfToday, $lt: endOfToday }
+    }).lean();
+
+    const performance = {
+      salesmanId,
+      name: `${salesman.firstName} ${salesman.lastName}`,
+      todaysVisits: todaysVisitsCount,
+      monthlyVisits: monthlyVisitsCount,
+      ordersCount,
+      ordersRevenue,
+      collectionsTotal,
+      attendanceToday: attendanceToday ? {
+        status: attendanceToday.status,
+        checkInTime: attendanceToday.checkInTime,
+        checkOutTime: attendanceToday.checkOutTime,
+        workingHours: attendanceToday.workingHours || 0,
+        completedVisits: attendanceToday.completedVisits || 0
+      } : null,
+      targets: {
+        dailyVisitTarget: salesman.dailyVisitTarget || 0,
+        monthlyOrderTarget: salesman.monthlyOrderTarget || 0
+      }
+    };
+
+    res.json({ success: true, data: performance });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

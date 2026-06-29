@@ -54,6 +54,7 @@ const seedInvoices = require('./seeders/invoices');
 const seedRegistrations = require('./seeders/registrations');
 const seedVisits = require('./seeders/visits');
 const seedActivity = require('./seeders/activity');
+const seedAttendance = require('./seeders/attendance');
 
 async function runSeeder() {
   const startTime = Date.now();
@@ -140,13 +141,18 @@ async function runSeeder() {
     const visits = await seedVisits();
     console.log('✓ Visits created\n');
 
-    // Step 15: Activity and engagement data
-    console.log('📝 Step 15: Creating Activity and Engagement Data...');
+    // Step 15: Attendance
+    console.log('📝 Step 15: Creating Attendance Records...');
+    const attendance = await seedAttendance();
+    console.log('✓ Attendance records created\n');
+
+    // Step 16: Activity and engagement data
+    console.log('📝 Step 16: Creating Activity and Engagement Data...');
     const activity = await seedActivity();
     console.log('✓ Activity data created\n');
 
-    // Step 16: Registration Applications
-    console.log('📝 Step 16: Creating Registration Applications...');
+    // Step 17: Registration Applications
+    console.log('📝 Step 17: Creating Registration Applications...');
     const registrations = await seedRegistrations();
     console.log('✓ Registration applications created\n');
 

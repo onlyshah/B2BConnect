@@ -12,7 +12,24 @@ const salesmanApplicationSchema = new mongoose.Schema({
   pincode: { type: String, required: true },
   experience: { type: Number, required: true }, // Years
   previousCompany: String,
+  aadhaarNumber: { type: String, required: true },
+  panNumber: { type: String, required: true },
   passwordHash: { type: String, required: true },
+  cv: {
+    filename: String,
+    url: String,
+    uploadedAt: Date
+  },
+  aadhaarDocument: {
+    filename: String,
+    url: String,
+    uploadedAt: Date
+  },
+  panDocument: {
+    filename: String,
+    url: String,
+    uploadedAt: Date
+  },
   appliedCompanies: [{
     companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
     companyName: String,

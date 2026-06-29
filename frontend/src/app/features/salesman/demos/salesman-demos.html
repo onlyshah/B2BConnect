@@ -1,7 +1,17 @@
-<div class="demo-list">
-  <div class="demo-card" *ngFor="let demo of demos">
-    <strong>{{ demo.title }}</strong>
-    <p>{{ demo.retailer }}</p>
-    <small>{{ demo.status }}</small>
-  </div>
+<div class="demo-shell">
+  <section class="demo-card">
+    <div class="panel-header">
+      <h3>Demo calendar</h3>
+      <button class="pill-btn">+ Schedule demo</button>
+    </div>
+    <div class="demo-list">
+      <div class="demo-item" *ngFor="let demo of demos">
+        <div>
+          <strong>{{ demo.title }}</strong>
+          <p>{{ demo.retailer }} • {{ demo.agenda }}</p>
+        </div>
+        <span class="status">{{ demo.status }}</span>
+      </div>
+    </div>
+  </section>
 </div>

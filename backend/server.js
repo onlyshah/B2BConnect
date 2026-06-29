@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -8,6 +9,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI, {
@@ -56,6 +58,7 @@ app.use('/api/performance', require('./routes/performance'));
 app.use('/api/followups', require('./routes/followups'));
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/collections', require('./routes/collections'));
+app.use('/api/attendance', require('./routes/attendance'));
 
 // Dashboard Route
 app.use('/api/dashboard', require('./routes/dashboard'));

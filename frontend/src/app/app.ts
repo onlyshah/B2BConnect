@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
+import { RouterModule, Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from './services/auth.service';
 import { ResponseHandlerService, Toast } from './services/response-handler.service';
@@ -48,8 +48,15 @@ export class AppComponent implements OnInit {
       this.toasts = toasts;
     });
 
+    this.authService.initializeAuthState();
+
     this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+      if (
+        event instanceof NavigationStart ||
+        event instanceof NavigationEnd ||
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError
+      ) {
         setTimeout(() => this.responseHandler.setLoading(false), 0);
       }
     });
@@ -66,10 +73,8 @@ export class AppComponent implements OnInit {
         this.isLoggedIn = false;
         this.router.navigate(['/login']);
       },
-      error: () => {
-        this.user = null;
-        this.isLoggedIn = false;
-        this.router.navigate(['/login']);
+      error: (error) => {
+        this.responseHandler.showError(error?.error?.message || 'Unable to logout right now. Please close location first.');
       }
     });
   }

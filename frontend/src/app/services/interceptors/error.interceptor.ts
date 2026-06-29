@@ -3,7 +3,7 @@
  * Handles API errors globally and manages error responses
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injector, Injectable } from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -18,10 +18,15 @@ import { ResponseHandlerService } from '../response-handler.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(
-    private authService: AuthService,
-    private responseHandler: ResponseHandlerService
-  ) {}
+  private injector = inject(Injector);
+
+  private get authService(): AuthService {
+    return this.injector.get(AuthService);
+  }
+
+  private get responseHandler(): ResponseHandlerService {
+    return this.injector.get(ResponseHandlerService);
+  }
 
   intercept(
     req: HttpRequest<any>,

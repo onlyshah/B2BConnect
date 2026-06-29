@@ -3,7 +3,7 @@
  * Automatically attaches tenant ID to all HTTP requests
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injector, Injectable } from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -15,16 +15,16 @@ import { AuthService } from '../auth.service';
 
 @Injectable()
 export class TenantInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  private injector = inject(Injector);
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const user = this.authService.getCurrentUserSync();
+    const authService = this.injector.get(AuthService);
+    const user = authService.getCurrentUserSync();
 
     if (user && user.tenantId) {
-      // Add tenant ID as header
       req = req.clone({
         setHeaders: {
           'X-Tenant-ID': user.tenantId,

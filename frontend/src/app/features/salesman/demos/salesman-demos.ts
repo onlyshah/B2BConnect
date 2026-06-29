@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SalesmanDemosComponent {
   demos = [
-    { retailer: 'Jay Ambe Super', title: 'Product Demo', status: 'Scheduled' },
-    { retailer: 'Metro Convenience', title: 'Launch Activity', status: 'Completed' }
+    { retailer: 'Jay Ambe Super', title: 'Product Demo', status: 'Scheduled', agenda: 'New launch' },
+    { retailer: 'Metro Convenience', title: 'Launch Activity', status: 'Completed', agenda: 'Sampling' }
   ];
 }

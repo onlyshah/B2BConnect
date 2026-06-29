@@ -1,12 +1,21 @@
-<div class="order-list">
-  <div class="order-card" *ngFor="let order of orders">
-    <div>
-      <strong>{{ order.id }}</strong>
-      <p>{{ order.retailer }}</p>
+<div class="order-shell">
+  <section class="order-card">
+    <div class="panel-header">
+      <h3>Orders</h3>
+      <a class="pill-btn" routerLink="/salesman/orders/new">+ Create order</a>
     </div>
-    <div class="meta">
-      <span>{{ order.amount }}</span>
-      <small>{{ order.status }}</small>
+    <div class="order-list">
+      <div class="order-item" *ngFor="let order of orders">
+        <div>
+          <strong>{{ order.id }}</strong>
+          <p>{{ order.retailer }}</p>
+        </div>
+        <div class="order-meta">
+          <span class="amount">{{ order.amount }}</span>
+          <span class="status">{{ order.status }}</span>
+          <span class="delivery">{{ order.delivery }}</span>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 </div>

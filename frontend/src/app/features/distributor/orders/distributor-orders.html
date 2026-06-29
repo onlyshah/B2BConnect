@@ -4,7 +4,10 @@
       <p class="eyebrow">Order management</p>
       <h3>Retailer and salesman orders</h3>
     </div>
-    <a class="primary-link" routerLink="/distributor/inventory">Manage inventory</a>
+    <div class="header-actions">
+      <a class="primary-link" routerLink="/distributor/orders/new">Create order</a>
+      <a class="primary-link secondary" routerLink="/distributor/inventory">Manage inventory</a>
+    </div>
   </div>
 
   <div *ngIf="loading">Loading orders...</div>

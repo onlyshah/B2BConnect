@@ -140,6 +140,64 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
                     placeholder="ABC Company">
                 </div>
               </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label class="block text-white font-medium mb-2">Aadhaar Number *</label>
+                  <input 
+                    type="text" 
+                    formControlName="aadhaarNumber"
+                    class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                    placeholder="123412341234">
+                  <span *ngIf="isFieldInvalid('aadhaarNumber')" class="text-red-400 text-sm mt-1 block">Valid Aadhaar required</span>
+                </div>
+
+                <div>
+                  <label class="block text-white font-medium mb-2">PAN Number *</label>
+                  <input 
+                    type="text" 
+                    formControlName="panNumber"
+                    class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                    placeholder="ABCDE1234F">
+                  <span *ngIf="isFieldInvalid('panNumber')" class="text-red-400 text-sm mt-1 block">Valid PAN required</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                  <label class="block text-white font-medium mb-2">Upload CV *</label>
+                  <input 
+                    type="file" 
+                    accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    (change)="handleFileInput($event, 'cv')"
+                    class="w-full text-sm text-white file:bg-emerald-600 file:text-white file:px-4 file:py-2 file:rounded-lg file:border-0 bg-slate-700 border border-slate-600 rounded-lg">
+                  <span *ngIf="!cvFile && form.touched" class="text-red-400 text-sm mt-1 block">CV is required</span>
+                </div>
+
+                <div>
+                  <label class="block text-white font-medium mb-2">Upload Aadhaar *</label>
+                  <input 
+                    type="file" 
+                    accept="image/*,application/pdf"
+                    (change)="handleFileInput($event, 'aadhaarDocument')"
+                    class="w-full text-sm text-white file:bg-emerald-600 file:text-white file:px-4 file:py-2 file:rounded-lg file:border-0 bg-slate-700 border border-slate-600 rounded-lg">
+                  <span *ngIf="!aadhaarDocumentFile && form.touched" class="text-red-400 text-sm mt-1 block">Aadhaar doc required</span>
+                </div>
+
+                <div>
+                  <label class="block text-white font-medium mb-2">Upload PAN *</label>
+                  <input 
+                    type="file" 
+                    accept="image/*,application/pdf"
+                    (change)="handleFileInput($event, 'panDocument')"
+                    class="w-full text-sm text-white file:bg-emerald-600 file:text-white file:px-4 file:py-2 file:rounded-lg file:border-0 bg-slate-700 border border-slate-600 rounded-lg">
+                  <span *ngIf="!panDocumentFile && form.touched" class="text-red-400 text-sm mt-1 block">PAN doc required</span>
+                </div>
+              </div>
+
+              <div *ngIf="cvParseMessage" class="mb-6 p-4 bg-slate-700 border border-slate-600 rounded-lg text-gray-300">
+                {{ cvParseMessage }}
+              </div>
             </div>
 
             <!-- Apply to Companies -->
@@ -228,6 +286,10 @@ export class SalesmanRegistrationComponent implements OnInit {
   companySearchControl = new FormBuilder().control('');
   filteredCompanies: Company[] = [];
   selectedCompanies: Company[] = [];
+  cvFile: File | null = null;
+  aadhaarDocumentFile: File | null = null;
+  panDocumentFile: File | null = null;
+  cvParseMessage = '';
   isLoading = false;
   successMessage = '';
   errorMessage = '';
@@ -248,6 +310,8 @@ export class SalesmanRegistrationComponent implements OnInit {
       pincode: ['', Validators.required],
       experience: [0, Validators.required],
       previousCompany: [''],
+      aadhaarNumber: ['', [Validators.required, Validators.pattern(/^\d{12}$/)]],
+      panNumber: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
       selectedCompanyIds: [[]]
@@ -269,6 +333,57 @@ export class SalesmanRegistrationComponent implements OnInit {
         this.filteredCompanies = result.companies || [];
       }
     });
+  }
+
+  handleFileInput(event: Event, field: 'cv' | 'aadhaarDocument' | 'panDocument'): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+    if (field === 'cv') {
+      this.cvFile = file;
+      this.cvParseMessage = this.parseCvForProfile(file);
+    } else if (field === 'aadhaarDocument') {
+      this.aadhaarDocumentFile = file;
+    } else if (field === 'panDocument') {
+      this.panDocumentFile = file;
+    }
+  }
+
+  private parseCvForProfile(file: File): string {
+    const fileName = file.name.toLowerCase();
+    if (!fileName.match(/\.(txt|md|doc|docx|pdf)$/)) {
+      return 'CV uploaded successfully. Manual profile verification is required.';
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = typeof reader.result === 'string' ? reader.result : '';
+      const normalizedText = text.replace(/\s+/g, ' ').trim();
+      const emailMatch = normalizedText.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+      const phoneMatch = normalizedText.match(/(?:\+?\d[\d\s()-]{8,}\d)/);
+      const nameMatch = normalizedText.match(/([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/);
+
+      if (emailMatch || phoneMatch || nameMatch) {
+        this.form.patchValue({
+          email: emailMatch?.[0] || this.form.value.email,
+          mobileNumber: phoneMatch ? phoneMatch[0].replace(/\D/g, '').slice(-10) : this.form.value.mobileNumber,
+          fullName: nameMatch?.[0] || this.form.value.fullName
+        });
+        this.cvParseMessage = 'Profile details were auto-filled from the uploaded CV where possible.';
+      } else {
+        this.cvParseMessage = 'CV uploaded successfully. Manual profile verification is required.';
+      }
+    };
+
+    reader.onerror = () => {
+      this.cvParseMessage = 'CV uploaded successfully. Manual profile verification is required.';
+    };
+
+    reader.readAsText(file);
+    return 'Reading CV for profile details...';
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -299,18 +414,29 @@ export class SalesmanRegistrationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.form.valid || this.selectedCompanies.length === 0) {
-      this.errorMessage = 'Please fill all required fields and select at least one company';
+    if (!this.form.valid || this.selectedCompanies.length === 0 || !this.cvFile || !this.aadhaarDocumentFile || !this.panDocumentFile) {
+      this.errorMessage = 'Please fill all required fields, upload CV, Aadhaar, PAN and select at least one company';
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
 
-    const formData = {
-      ...this.form.value,
-      companyIds: this.selectedCompanies.map(c => c._id)
-    };
+    const formData = new FormData();
+    Object.keys(this.form.value).forEach((key) => {
+      const value = this.form.value[key];
+      if (value !== null && value !== undefined) {
+        if (Array.isArray(value)) {
+          value.forEach((item: any) => formData.append(key, item));
+        } else {
+          formData.append(key, value);
+        }
+      }
+    });
+    formData.append('companyIds', this.selectedCompanies.map(c => c._id).join(','));
+    if (this.cvFile) formData.append('cv', this.cvFile);
+    if (this.aadhaarDocumentFile) formData.append('aadhaarDocument', this.aadhaarDocumentFile);
+    if (this.panDocumentFile) formData.append('panDocument', this.panDocumentFile);
 
     this.registrationService.registerSalesman(formData).subscribe({
       next: (response) => {
@@ -321,7 +447,7 @@ export class SalesmanRegistrationComponent implements OnInit {
         }, 3000);
       },
       error: (error) => {
-        this.errorMessage = error.error?.error || 'Registration failed';
+        this.errorMessage = error.error?.error || error.error?.message || 'Registration failed';
         this.isLoading = false;
       }
     });

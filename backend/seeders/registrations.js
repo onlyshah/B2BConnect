@@ -129,7 +129,14 @@ const seedRegistrations = async () => {
       pincode: '682001',
       experience: 3,
       previousCompany: 'Retail Solutions India',
+      aadhaarNumber: '123412341234',
+      panNumber: 'ABCDE1234F',
       passwordHash: hashedPassword,
+      cv: {
+        filename: 'seed-cv.txt',
+        url: '/uploads/salesman-applications/seed-cv.txt',
+        uploadedAt: new Date()
+      }
     });
     created.push(salesmanApp);
 

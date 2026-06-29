@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { VisitService } from '../../../services/visit.service';
+import { VisitService } from '../../../../services/visit.service';
 
 @Component({
   selector: 'app-visit-entry',
@@ -76,10 +76,10 @@ export class VisitEntryComponent implements OnInit {
   loadVisit() {
     if (this.visitId) {
       this.visitService.getVisit(this.visitId).subscribe({
-        next: (visit) => {
+        next: (visit: any) => {
           this.visitForm.patchValue(visit);
         },
-        error: (err) => {
+        error: (_err: unknown) => {
           this.error = 'Failed to load visit';
         }
       });
@@ -97,14 +97,14 @@ export class VisitEntryComponent implements OnInit {
       : this.visitService.createVisit(data);
 
     request.subscribe({
-      next: (response) => {
+      next: (_response: unknown) => {
         this.loading = false;
         this.success = this.isEditMode ? 'Visit updated' : 'Visit recorded';
         setTimeout(() => {
           this.router.navigate(['/salesman/visits']);
         }, 2000);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         this.error = err.error?.message || 'Failed to save visit';
       }

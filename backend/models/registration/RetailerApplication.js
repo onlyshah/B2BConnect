@@ -7,6 +7,8 @@ const retailerApplicationSchema = new mongoose.Schema({
   mobileNumber: { type: String, required: true },
   email: { type: String, required: true, lowercase: true, unique: true, index: true },
   gstin: String,
+  panNumber: { type: String, required: true },
+  aadhaarNumber: { type: String, required: true },
   address: { type: String, required: true },
   state: { type: String, required: true, index: true },
   city: { type: String, required: true, index: true },

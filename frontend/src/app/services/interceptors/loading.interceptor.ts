@@ -24,6 +24,23 @@ export class LoadingInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    // Exclude authentication endpoints from global loading to avoid
+    // spinner getting stuck during token refresh/login flows
+    try {
+      const urlLower = (req.url || '').toLowerCase();
+      if (urlLower.includes('/auth/') || urlLower.includes('/auth')) {
+        return next.handle(req);
+      }
+
+      // Keep the global overlay focused on mutating actions.
+      // Dashboard/data pages already manage their own loading states.
+      if (req.method === 'GET') {
+        return next.handle(req);
+      }
+    } catch (e) {
+      // if anything unexpected, fall back to normal behavior
+    }
+
     this.requestCounter++;
     this.responseHandler.setLoading(true);
 

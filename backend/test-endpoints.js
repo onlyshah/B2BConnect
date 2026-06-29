@@ -24,9 +24,18 @@ async function testEndpoint(method, path, body = null) {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
+        let parsed = null;
+        if (data) {
+          try {
+            parsed = JSON.parse(data);
+          } catch (e) {
+            // Not JSON (maybe HTML or plaintext). Return raw body.
+            parsed = data;
+          }
+        }
         resolve({
           status: res.statusCode,
-          body: data ? JSON.parse(data) : null
+          body: parsed
         });
       });
     });

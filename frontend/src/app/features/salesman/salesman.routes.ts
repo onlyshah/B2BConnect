@@ -5,6 +5,7 @@ import { SalesmanRouteComponent } from './route/salesman-route';
 import { SalesmanRetailersComponent } from './retailers/salesman-retailers';
 import { SalesmanOrdersComponent } from './orders/salesman-orders';
 import { SalesmanVisitsComponent } from './visits/salesman-visits';
+import { VisitEntryComponent } from './visits/visit-entry/visit-entry';
 import { SalesmanFollowupsComponent } from './followups/salesman-followups';
 import { SalesmanSamplesComponent } from './samples/salesman-samples';
 import { SalesmanDemosComponent } from './demos/salesman-demos';
@@ -17,6 +18,7 @@ import { SalesmanReportsComponent } from './reports/salesman-reports';
 import { SalesmanNotificationsComponent } from './notifications/salesman-notifications';
 import { SalesmanProfileComponent } from './profile/salesman-profile';
 import { SalesmanSettingsComponent } from './settings/salesman-settings';
+import { OrderCreateComponent } from '../orders/order-create/order-create';
 
 export const salesmanRoutes: Routes = [
   {
@@ -26,7 +28,9 @@ export const salesmanRoutes: Routes = [
       { path: '', component: SalesmanDashboardComponent },
       { path: 'route', component: SalesmanRouteComponent },
       { path: 'retailers', component: SalesmanRetailersComponent },
+      { path: 'orders/new', component: OrderCreateComponent },
       { path: 'orders', component: SalesmanOrdersComponent },
+      { path: 'visits/new', component: VisitEntryComponent },
       { path: 'visits', component: SalesmanVisitsComponent },
       { path: 'followups', component: SalesmanFollowupsComponent },
       { path: 'samples', component: SalesmanSamplesComponent },

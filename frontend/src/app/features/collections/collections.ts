@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CollectionService } from '../../services/collection.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-collections',
@@ -23,7 +24,8 @@ export class CollectionsComponent implements OnInit {
 
   constructor(
     private collectionService: CollectionService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private authService: AuthService
   ) {
     this.formData = this.fb.group({
       retailer: ['', Validators.required],
@@ -57,7 +59,7 @@ export class CollectionsComponent implements OnInit {
     
     const data = {
       ...this.formData.value,
-      distributor: localStorage.getItem('distributorId')
+      distributor: this.authService.getCurrentUserSync()?.distributorId || null
     };
 
     this.collectionService.recordCollection(data).subscribe({

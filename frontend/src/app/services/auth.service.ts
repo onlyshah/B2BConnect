@@ -32,6 +32,9 @@ export interface UserProfile {
   role: string;
   tenantId: string;
   companyId?: string;
+  distributorId?: string;
+  retailerId?: string;
+  salesmanId?: string;
   permissions?: string[];
 }
 
@@ -58,40 +61,66 @@ export class AuthService {
   constructor(
     private apiService: ApiService,
     private storageService: StorageService
-  ) {
-    this.initializeAuthState();
-  }
+  ) {}
 
   /**
    * Initialize auth state from stored data
    */
-  private initializeAuthState(): void {
+  public initializeAuthState(): void {
     const user = this.getUserFromStorage();
     const token = this.getToken();
     const refreshToken = this.getRefreshToken();
 
-    if (user && token && !this.isTokenExpired(token)) {
-      this.currentUserSubject.next(user);
-      this.isAuthenticatedSubject.next(true);
-      return;
-    }
+    if (token && !this.isTokenExpired(token)) {
+      if (user) {
+        this.currentUserSubject.next(user);
+        this.isAuthenticatedSubject.next(true);
+        return;
+      }
 
-    if (user && refreshToken) {
-      this.refreshToken().subscribe({
+      this.getCurrentUser().subscribe({
         next: () => {
-          this.currentUserSubject.next(user);
           this.isAuthenticatedSubject.next(true);
         },
         error: () => {
-          this.currentUserSubject.next(null);
-          this.isAuthenticatedSubject.next(false);
+          if (refreshToken) {
+            this.refreshToken().subscribe({
+              next: () => {
+                const storedUser = this.getUserFromStorage();
+                if (storedUser) {
+                  this.currentUserSubject.next(storedUser);
+                }
+                this.isAuthenticatedSubject.next(true);
+              },
+              error: () => {
+                this.clearAuthData();
+              }
+            });
+          } else {
+            this.clearAuthData();
+          }
         }
       });
       return;
     }
 
-    this.currentUserSubject.next(null);
-    this.isAuthenticatedSubject.next(false);
+    if (refreshToken) {
+      this.refreshToken().subscribe({
+        next: () => {
+          const storedUser = this.getUserFromStorage();
+          if (storedUser) {
+            this.currentUserSubject.next(storedUser);
+          }
+          this.isAuthenticatedSubject.next(true);
+        },
+        error: () => {
+          this.clearAuthData();
+        }
+      });
+      return;
+    }
+
+    this.clearAuthData();
   }
 
   /**
@@ -123,9 +152,14 @@ export class AuthService {
    * Logout user
    */
   logout(): Observable<any> {
-    this.clearAuthData();
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.clearAuthData();
+      return of({ message: 'Logged out' });
+    }
 
-    return this.apiService.post(API_ENDPOINTS.AUTH.LOGOUT).pipe(
+    return this.apiService.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken }).pipe(
+      tap(() => this.clearAuthData()),
       map((response) => response?.data ?? response),
       catchError((error) => {
         return throwError(() => error);

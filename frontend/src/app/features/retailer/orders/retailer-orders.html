@@ -1,4 +1,7 @@
 <div class="order-list">
+  <div class="order-actions">
+    <a class="pill-btn" routerLink="/retailer/orders/new">+ Create order</a>
+  </div>
   <div class="order-card" *ngFor="let order of orders">
     <div>
       <strong>{{ order.id }}</strong>

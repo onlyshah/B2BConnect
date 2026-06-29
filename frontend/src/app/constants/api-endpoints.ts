@@ -233,14 +233,17 @@ export const API_ENDPOINTS = {
   // Dashboard Endpoints
   DASHBOARD: {
     BASE: '/dashboard',
+    // summary is implemented in backend (analyticsController.getSummary)
     GET_SUMMARY: '/dashboard/summary',
-    GET_ORDERS: '/dashboard/orders',
-    GET_INVENTORY: '/dashboard/inventory',
-    GET_PAYMENTS: '/dashboard/payments',
-    GET_COLLECTIONS: '/dashboard/collections',
-    GET_VISITS: '/dashboard/visits',
-    GET_METRICS: '/dashboard/metrics',
-    GET_CHARTS: '/dashboard/charts',
+    // map dashboard collection endpoints to existing resource routes
+    GET_ORDERS: '/orders',
+    GET_INVENTORY: '/inventory',
+    GET_PAYMENTS: '/payments',
+    GET_COLLECTIONS: '/collections',
+    GET_VISITS: '/visits',
+    // metrics and charts live under analytics
+    GET_METRICS: '/analytics/summary',
+    GET_CHARTS: '/analytics/sales-performance',
   },
 
   // Analytics Endpoints
@@ -250,6 +253,7 @@ export const API_ENDPOINTS = {
     GET_PERFORMANCE: '/analytics/performance',
     GET_TRENDS: '/analytics/trends',
     GET_REPORTS: '/analytics/reports',
+    GET_INVENTORY: '/analytics/inventory-performance',
     EXPORT_REPORT: '/analytics/export',
   },
 

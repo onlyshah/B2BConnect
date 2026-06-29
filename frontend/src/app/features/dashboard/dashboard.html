@@ -43,6 +43,68 @@
       </div>
     </section>
 
+    <section class="insights-grid" *ngIf="!loadingSummary">
+      <article class="insight-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Portfolio mix</p>
+            <h3>Operational mix</h3>
+          </div>
+        </div>
+        <div class="bar-list" *ngIf="chartBars.length; else noBars">
+          <div class="bar-row" *ngFor="let bar of chartBars">
+            <div class="bar-label">{{ bar.label }}</div>
+            <div class="bar-track">
+              <span class="bar-fill" [style.width.%]="getBarWidth(bar.value)" [style.background]="bar.color"></span>
+            </div>
+            <div class="bar-value">{{ bar.value }}</div>
+          </div>
+        </div>
+        <ng-template #noBars>
+          <p class="muted">No summary data available yet.</p>
+        </ng-template>
+      </article>
+
+      <article class="insight-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Sales pulse</p>
+            <h3>Recent order activity</h3>
+          </div>
+        </div>
+        <div class="chart-frame" *ngIf="trendPoints; else noTrend">
+          <svg [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight" preserveAspectRatio="none" class="trend-chart">
+            <line x1="0" [attr.y1]="svgHeight - 1" [attr.x2]="svgWidth" [attr.y2]="svgHeight - 1" class="axis"></line>
+            <polyline [attr.points]="trendPoints" class="trend-line"></polyline>
+          </svg>
+        </div>
+        <ng-template #noTrend>
+          <p class="muted">Sales performance is not available yet.</p>
+        </ng-template>
+      </article>
+
+      <article class="insight-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Inventory health</p>
+            <h3>Stock pressure</h3>
+          </div>
+        </div>
+        <div class="inventory-list" *ngIf="inventorySeries.length; else noInventory">
+          <div class="inventory-row" *ngFor="let item of inventorySeries">
+            <div class="inventory-name">{{ item.label }}</div>
+            <div class="inventory-meta">
+              <span>{{ item.stock }} on hand</span>
+              <span>{{ item.reorderLevel }} reorder</span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noInventory>
+          <p class="muted">Inventory health will appear once analytics returns data.</p>
+        </ng-template>
+      </article>
+    </section>
+
     <!-- Loading State -->
     <section class="loading-state" *ngIf="loadingSummary">
       <div class="spinner"></div>

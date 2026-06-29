@@ -1,14 +1,40 @@
-<div class="product-list">
-  <div class="product-card" *ngFor="let product of products">
-    <div class="product-top">
-      <strong>{{ product.name }}</strong>
-      <span class="badge">{{ product.badge }}</span>
+<div class="retailer-products-shell">
+  <section class="hero-card">
+    <div>
+      <p class="eyebrow">Retail catalog</p>
+      <h2>Available products</h2>
+      <p class="muted">Live product data from the company catalog with direct order action.</p>
     </div>
-    <p>{{ product.price }}</p>
-    <small>{{ product.stock }}</small>
-    <div class="product-actions">
-      <button>Order Now</button>
-      <button>Sample</button>
-    </div>
-  </div>
+    <a class="cta" routerLink="/retailer/orders/new">Create order</a>
+  </section>
+
+  <section class="panel" *ngIf="loading">
+    <p class="muted">Loading products...</p>
+  </section>
+
+  <section class="panel error" *ngIf="error && !loading">
+    <p>{{ error }}</p>
+  </section>
+
+  <section class="grid" *ngIf="!loading">
+    <article class="product-card" *ngFor="let product of products">
+      <div class="product-top">
+        <strong>{{ product.name }}</strong>
+        <span class="badge">{{ stockStatus(product) }}</span>
+      </div>
+      <p class="sku">{{ product.sku || 'SKU unavailable' }}</p>
+      <div class="price-row">
+        <span>{{ formatPrice(product.mrp || 0) }}</span>
+        <small>GST {{ product.gst || 0 }}%</small>
+      </div>
+      <div class="actions">
+        <a class="link" [routerLink]="routeToOrder(product)" [queryParams]="{ productId: product._id }">Order now</a>
+        <a class="link secondary" routerLink="/retailer/samples">Request sample</a>
+      </div>
+    </article>
+  </section>
+
+  <section class="panel" *ngIf="!loading && products.length === 0">
+    <p class="muted">No products found in the catalog.</p>
+  </section>
 </div>

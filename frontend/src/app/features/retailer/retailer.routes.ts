@@ -13,6 +13,7 @@ import { RetailerRewardsComponent } from './rewards/retailer-rewards';
 import { RetailerSupportComponent } from './support/retailer-support';
 import { RetailerNotificationsComponent } from './notifications/retailer-notifications';
 import { RetailerSettingsComponent } from './settings/retailer-settings';
+import { OrderCreateComponent } from '../orders/order-create/order-create';
 
 export const retailerRoutes: Routes = [
   {
@@ -22,6 +23,7 @@ export const retailerRoutes: Routes = [
       { path: '', component: RetailerDashboardComponent },
       { path: 'stories', component: RetailerStoriesComponent },
       { path: 'products', component: RetailerProductsComponent },
+      { path: 'orders/new', component: OrderCreateComponent },
       { path: 'orders', component: RetailerOrdersComponent },
       { path: 'offers', component: RetailerOffersComponent },
       { path: 'samples', component: RetailerSamplesComponent },

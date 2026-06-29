@@ -1,26 +1,76 @@
 <div class="company-dashboard">
-  <h2>Company Dashboard</h2>
+  <section class="hero-card">
+    <div>
+      <p class="eyebrow">Company workspace</p>
+      <h2>Operational summary for your network</h2>
+      <p>Track distributor health, retailer approvals, stock pressure, and campaign readiness in one place.</p>
+    </div>
+    <div class="hero-actions">
+      <a class="primary-action" routerLink="/company/distributors">Review distributors</a>
+      <a class="secondary-action" routerLink="/company/analytics">Open analytics</a>
+    </div>
+  </section>
 
-  <section *ngIf="loading" class="loading-state">
+  <section *ngIf="loading" class="card">
     <p>Loading company overview...</p>
   </section>
 
-  <section *ngIf="error && !loading" class="error-state">
+  <section *ngIf="error && !loading" class="card error">
     <p>{{ error }}</p>
   </section>
 
-  <section *ngIf="summary && !loading" class="kpis">
-    <div class="kpi">Total Products: {{ summary.products || 0 }}</div>
-    <div class="kpi">Total Distributors: {{ summary.distributors || 0 }}</div>
-    <div class="kpi">Active Retailers: {{ summary.retailers?.active || 0 }}</div>
-    <div class="kpi">Active Campaigns: {{ summary.campaigns?.active || 0 }}</div>
-    <div class="kpi">Active Schemes: {{ summary.schemes?.active || 0 }}</div>
+  <section *ngIf="!loading" class="metrics-grid">
+    <app-metric-card *ngFor="let metric of metrics" [metric]="metric"></app-metric-card>
   </section>
 
-  <div class="quick-actions" *ngIf="!loading">
-    <button routerLink="/company/products">Add Product</button>
-    <button routerLink="/company/distributors">Approve Distributor</button>
-    <button routerLink="/company/campaigns">Launch Campaign</button>
-    <button routerLink="/company/analytics">View Analytics</button>
+  <div class="content-grid" *ngIf="!loading">
+    <section class="card">
+      <div class="card-header">
+        <h3>Immediate actions</h3>
+        <a routerLink="/company/retailers">Manage retailers</a>
+      </div>
+      <div class="action-list">
+        <a class="action-item" routerLink="/company/products">Review products</a>
+        <a class="action-item" routerLink="/company/distributors">Approve distributors</a>
+        <a class="action-item" routerLink="/company/campaigns">Launch campaigns</a>
+        <a class="action-item" routerLink="/company/analytics">Open analytics</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h3>Pending retailer approvals</h3>
+      </div>
+      <div *ngIf="pendingRetailers.length; else noPendingRetailers">
+        <div class="row-item" *ngFor="let retailer of pendingRetailers">
+          <div>
+            <strong>{{ retailer.name || retailer.retailerName || 'Retailer' }}</strong>
+            <p>{{ retailer.phone || retailer.contactNumber || 'Awaiting review' }}</p>
+          </div>
+          <span class="pill">{{ retailer.status || 'pending' }}</span>
+        </div>
+      </div>
+      <ng-template #noPendingRetailers>
+        <p class="muted">No pending retailer approvals right now.</p>
+      </ng-template>
+    </section>
   </div>
+
+  <section class="card" *ngIf="!loading">
+    <div class="card-header">
+      <h3>Low stock alerts</h3>
+    </div>
+    <div *ngIf="lowStockItems.length; else noLowStock">
+      <div class="row-item" *ngFor="let item of lowStockItems">
+        <div>
+          <strong>{{ item.product?.name || item.name || 'Inventory item' }}</strong>
+          <p>{{ item.sku || item.product?.sku || 'SKU unavailable' }}</p>
+        </div>
+        <span class="pill">{{ item.stockOnHand ?? item.stock ?? item.quantity ?? 0 }} in stock</span>
+      </div>
+    </div>
+    <ng-template #noLowStock>
+      <p class="muted">Inventory looks healthy across the current network.</p>
+    </ng-template>
+  </section>
 </div>

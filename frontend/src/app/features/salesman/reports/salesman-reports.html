@@ -1,6 +1,17 @@
-<div class="report-list">
-  <div class="report-card" *ngFor="let report of reports">
-    <strong>{{ report.title }}</strong>
-    <p>{{ report.value }}</p>
-  </div>
+<div class="report-shell">
+  <section class="report-card">
+    <div class="panel-header">
+      <h3>Reports</h3>
+      <button class="pill-btn">+ Export</button>
+    </div>
+    <div class="report-list">
+      <div class="report-item" *ngFor="let report of reports">
+        <div>
+          <strong>{{ report.title }}</strong>
+          <p>{{ report.detail }}</p>
+        </div>
+        <span class="status">{{ report.value }}</span>
+      </div>
+    </div>
+  </section>
 </div>

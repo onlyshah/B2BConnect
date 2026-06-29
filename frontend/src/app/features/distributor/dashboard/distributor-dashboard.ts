@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 import { DashboardService } from '../../../services/dashboard.service';
 import { RetailerService } from '../../../services/retailer.service';
 import { OrderService } from '../../../services/order.service';
@@ -19,6 +19,8 @@ import { MetricCardComponent, MetricData } from '../../../shared/components/metr
 export class DistributorDashboardComponent implements OnInit {
   metrics: MetricData[] = [];
   recentOrders: any[] = [];
+  recentRetailers: any[] = [];
+  lowStockItems: any[] = [];
   loading = true;
   error: string | null = null;
 
@@ -58,10 +60,30 @@ export class DistributorDashboardComponent implements OnInit {
     };
 
     forkJoin({
-      summary: this.dashboardService.getSummary(),
-      retailers: this.retailerService.getRetailers(),
-      orders: this.orderService.getOrders(),
-      inventory: this.inventoryService.getInventory()
+      summary: this.dashboardService.getSummary().pipe(
+        catchError((err) => {
+          console.error('Distributor summary load failed', err);
+          return of({});
+        })
+      ),
+      retailers: this.retailerService.getRetailers().pipe(
+        catchError((err) => {
+          console.error('Distributor retailers load failed', err);
+          return of([]);
+        })
+      ),
+      orders: this.orderService.getOrders().pipe(
+        catchError((err) => {
+          console.error('Distributor orders load failed', err);
+          return of([]);
+        })
+      ),
+      inventory: this.inventoryService.getInventory().pipe(
+        catchError((err) => {
+          console.error('Distributor inventory load failed', err);
+          return of([]);
+        })
+      )
     }).pipe(finalize(() => {
       this.loading = false;
     })).subscribe({
@@ -71,8 +93,8 @@ export class DistributorDashboardComponent implements OnInit {
         const orderList = toArray(orders);
         const inventoryList = toArray(inventory);
 
-        const activeRetailers = retailerList.filter((item: any) => ['approved', 'active', 'verified'].includes(item.status)).length;
-        const pendingOrders = orderList.filter((item: any) => ['pending', 'requested', 'processing'].includes(item.status)).length;
+        const activeRetailers = retailerList.filter((item: any) => ['approved', 'active', 'verified'].includes((item.status || '').toLowerCase())).length;
+        const pendingOrders = orderList.filter((item: any) => ['pending', 'requested', 'processing'].includes((item.status || '').toLowerCase())).length;
         const inventoryValue = inventoryList.reduce((acc: number, item: any) => {
           const stock = item.stockOnHand ?? item.stock ?? item.quantity ?? 0;
           const price = item.price ?? item.unitPrice ?? item.product?.price ?? item.productId?.mrp ?? 0;
@@ -90,6 +112,13 @@ export class DistributorDashboardComponent implements OnInit {
           retailerName: order.retailerName ?? order.retailer?.name ?? 'Retailer',
           orderNumber: order.orderNumber ?? order._id?.slice(-6).toUpperCase() ?? 'Order'
         }));
+        this.recentRetailers = retailerList.slice(0, 5).map((retailer: any) => ({
+          ...retailer,
+          name: retailer.name || retailer.retailerName || 'Retailer'
+        }));
+        this.lowStockItems = inventoryList
+          .filter((item: any) => (item.stockOnHand ?? item.stock ?? item.quantity ?? 0) <= (item.reorderLevel ?? item.minStock ?? 0))
+          .slice(0, 5);
         this.error = null;
       },
       error: (err) => {

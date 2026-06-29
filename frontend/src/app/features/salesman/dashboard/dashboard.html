@@ -4,6 +4,9 @@
   <div *ngIf="loading" class="loading">Loading...</div>
 
   <div *ngIf="!loading" class="dashboard-container">
+    <!-- Check-in/Check-out Card -->
+    <app-salesman-checkin></app-salesman-checkin>
+
     <!-- KPI Cards -->
     <div class="kpi-grid">
       <div class="kpi-card target">
@@ -51,13 +54,13 @@
     <!-- Quick Actions -->
     <div class="quick-actions">
       <h3>Quick Actions</h3>
-      <button routerLink="/salesman/visits/new" class="btn btn-primary">
+      <button routerLink="/salesman/visits" class="btn btn-primary">
         📍 Start New Visit
       </button>
-      <button routerLink="/salesman/orders/new" class="btn btn-primary">
+      <button routerLink="/salesman/orders" class="btn btn-primary">
         🛒 Create Order
       </button>
-      <button routerLink="/salesman/retailers/new" class="btn btn-primary">
+      <button routerLink="/salesman/retailers" class="btn btn-primary">
         👥 Add Retailer
       </button>
       <button routerLink="/salesman/followups" class="btn btn-secondary">

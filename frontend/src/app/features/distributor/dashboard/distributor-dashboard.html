@@ -15,22 +15,61 @@
   <div class="card" *ngIf="loading">Loading distributor metrics...</div>
   <div class="card error" *ngIf="error">{{ error }}</div>
 
-  <div class="card">
-    <div class="card-header">
-      <h3>Recent Orders</h3>
-      <a routerLink="/distributor/orders">View all</a>
-    </div>
-    <div class="order-list" *ngIf="recentOrders.length; else emptyState">
-      <div class="order-row" *ngFor="let order of recentOrders">
-        <div>
-          <strong>{{ order.retailerName || 'Retailer' }}</strong>
-          <p>{{ order.orderNumber || 'Order' }}</p>
+  <div class="content-grid" *ngIf="!loading">
+    <section class="card">
+      <div class="card-header">
+        <h3>Recent Orders</h3>
+        <a routerLink="/distributor/orders">View all</a>
+      </div>
+      <div class="order-list" *ngIf="recentOrders.length; else emptyState">
+        <div class="order-row" *ngFor="let order of recentOrders">
+          <div>
+            <strong>{{ order.retailerName || 'Retailer' }}</strong>
+            <p>{{ order.orderNumber || 'Order' }}</p>
+          </div>
+          <span class="pill">{{ order.status || 'pending' }}</span>
         </div>
-        <span class="pill">{{ order.status || 'pending' }}</span>
+      </div>
+      <ng-template #emptyState>
+        <p class="muted">No recent orders available yet.</p>
+      </ng-template>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h3>Retailer coverage</h3>
+        <a routerLink="/distributor/retailers">View all</a>
+      </div>
+      <div class="order-list" *ngIf="recentRetailers.length; else noRetailers">
+        <div class="order-row" *ngFor="let retailer of recentRetailers">
+          <div>
+            <strong>{{ retailer.name }}</strong>
+            <p>{{ retailer.phone || retailer.contactNumber || 'No contact updated' }}</p>
+          </div>
+          <span class="pill">{{ retailer.status || 'active' }}</span>
+        </div>
+      </div>
+      <ng-template #noRetailers>
+        <p class="muted">No retailers have been synced to this workspace yet.</p>
+      </ng-template>
+    </section>
+  </div>
+
+  <section class="card" *ngIf="!loading">
+    <div class="card-header">
+      <h3>Low stock alerts</h3>
+    </div>
+    <div class="order-list" *ngIf="lowStockItems.length; else noLowStock">
+      <div class="order-row" *ngFor="let item of lowStockItems">
+        <div>
+          <strong>{{ item.product?.name || item.name || 'Inventory item' }}</strong>
+          <p>{{ item.sku || item.product?.sku || 'SKU unavailable' }}</p>
+        </div>
+        <span class="pill">{{ item.stockOnHand ?? item.stock ?? item.quantity ?? 0 }} left</span>
       </div>
     </div>
-    <ng-template #emptyState>
-      <p class="muted">No recent orders available yet.</p>
+    <ng-template #noLowStock>
+      <p class="muted">Inventory is looking healthy at the moment.</p>
     </ng-template>
-  </div>
+  </section>
 </div>

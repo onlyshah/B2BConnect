@@ -1,11 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { catchError, finalize, takeUntil } from 'rxjs/operators';
 import { DashboardSummary } from '../../../models';
 import { MvpWorkflowService } from '../../../services/mvp-workflow.service';
 import { AuthService } from '../../../services/auth.service';
+import { RetailerService } from '../../../services/retailer.service';
+import { DistributorService } from '../../../services/distributor.service';
+import { OrderService } from '../../../services/order.service';
+import { InventoryService } from '../../../services/inventory.service';
+import { MetricCardComponent, MetricData } from '../../../shared/components/metric-card';
 
 const emptySummary: DashboardSummary = {
   products: 0,
@@ -23,12 +28,15 @@ const emptySummary: DashboardSummary = {
 @Component({
   selector: 'app-company-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MetricCardComponent],
   templateUrl: './company-dashboard.html',
   styleUrls: ['./company-dashboard.css']
 })
 export class CompanyDashboardComponent implements OnInit, OnDestroy {
   summary: DashboardSummary | null = null;
+  metrics: MetricData[] = [];
+  pendingRetailers: any[] = [];
+  lowStockItems: any[] = [];
   loading = true;
   error: string | null = null;
 
@@ -36,26 +44,96 @@ export class CompanyDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private workflowService: MvpWorkflowService,
-    private authService: AuthService
+    private authService: AuthService,
+    private retailerService: RetailerService,
+    private distributorService: DistributorService,
+    private orderService: OrderService,
+    private inventoryService: InventoryService
   ) {}
 
   ngOnInit(): void {
     const companyId = this.authService.getCurrentUserSync()?.companyId;
-    this.workflowService.getDashboardSummary(companyId ? { companyId } : {})
-      .pipe(takeUntil(this.destroy$))
+    const filters: Record<string, string> = companyId ? { companyId } : {};
+
+    forkJoin({
+      summary: this.workflowService.getDashboardSummary(filters).pipe(
+        catchError((err) => {
+          console.error('Company dashboard summary failed', err);
+          return of(emptySummary);
+        })
+      ),
+      retailers: this.retailerService.getRetailers(filters).pipe(
+        catchError((err) => {
+          console.error('Company retailers load failed', err);
+          return of([]);
+        })
+      ),
+      distributors: this.distributorService.getDistributors(filters).pipe(
+        catchError((err) => {
+          console.error('Company distributors load failed', err);
+          return of([]);
+        })
+      ),
+      orders: this.orderService.getOrders(filters).pipe(
+        catchError((err) => {
+          console.error('Company orders load failed', err);
+          return of([]);
+        })
+      ),
+      inventory: this.inventoryService.getInventory(filters).pipe(
+        catchError((err) => {
+          console.error('Company inventory load failed', err);
+          return of([]);
+        })
+      )
+    })
+      .pipe(takeUntil(this.destroy$), finalize(() => (this.loading = false)))
       .subscribe({
-        next: (summary) => {
+        next: ({ summary, retailers, distributors, orders, inventory }) => {
           this.summary = this.normalizeSummary(summary);
+          const retailerList = this.toArray(retailers);
+          const orderList = this.toArray(orders);
+          const inventoryList = this.toArray(inventory);
+
+          this.pendingRetailers = retailerList
+            .filter((item: any) => ['pending', 'requested', 'submitted', 'review', 'in_review', 'under_review'].includes((item.status || '').toLowerCase()))
+            .slice(0, 5);
+
+          this.lowStockItems = inventoryList
+            .filter((item: any) => (item.stockOnHand ?? item.stock ?? item.quantity ?? 0) <= (item.reorderLevel ?? item.minStock ?? 0))
+            .slice(0, 5);
+
+          this.metrics = [
+            { label: 'Products', value: this.summary.products || 0, color: 'primary', icon: '📦' },
+            { label: 'Distributors', value: (distributors?.length ?? this.summary.distributors) || 0, color: 'info', icon: '🚚' },
+            { label: 'Active Retailers', value: this.summary.retailers?.active || 0, color: 'success', icon: '🏪' },
+            { label: 'Pending Approval', value: this.summary.retailers?.pendingApproval || 0, color: 'warning', icon: '⏳' },
+            { label: 'Pending Orders', value: this.summary.orders?.pending || 0, color: 'warning', icon: '🛒' },
+            { label: 'Low Stock Items', value: this.lowStockItems.length, color: 'danger', icon: '⚠️' }
+          ];
           this.error = null;
-          this.loading = false;
         },
         error: (err) => {
           console.error('Company dashboard load failed', err);
           this.summary = emptySummary;
-          this.error = null;
-          this.loading = false;
+          this.metrics = [];
+          this.pendingRetailers = [];
+          this.lowStockItems = [];
+          this.error = 'Unable to load company overview right now.';
         }
       });
+  }
+
+  private toArray(value: any): any[] {
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    if (Array.isArray(value?.data)) {
+      return value.data;
+    }
+
+    return [];
   }
 
   private normalizeSummary(summary: any): DashboardSummary {

@@ -1,16 +1,59 @@
 <div class="dashboard-grid">
+  <section class="panel" *ngIf="loading">
+    <p class="loading">Loading salesman dashboard...</p>
+  </section>
+
+  <section class="panel" *ngIf="error && !loading">
+    <p class="error">{{ error }}</p>
+  </section>
+
   <section class="hero-card">
     <div>
-      <p class="eyebrow">Field execution</p>
-      <h2>Plan your route, visit retailers, capture orders and report faster.</h2>
+      <p class="eyebrow">Field force automation</p>
+      <h2>Good Morning {{ salesmanName }}</h2>
+      <p class="hero-copy">Current status: {{ status }} • {{ attendance }} • {{ gps }}</p>
     </div>
     <a routerLink="/salesman/route" class="primary-btn">Open Route</a>
   </section>
 
+  <section class="status-strip">
+    <div class="status-pill">📍 {{ currentArea }}</div>
+    <div class="status-pill">🕒 Checked In {{ checkInTime }}</div>
+    <div class="status-pill">🛣️ {{ distanceCovered }} covered</div>
+    <div class="status-pill">📡 {{ lastLocationUpdate }}</div>
+  </section>
+
   <section class="kpi-grid">
-    <div class="kpi-card" *ngFor="let item of kpis">
+    <div class="kpi-card" *ngFor="let item of summaryCards">
       <strong>{{ item.value }}</strong>
       <span>{{ item.label }}</span>
+      <small>{{ item.hint }}</small>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h3>Today's summary</h3>
+    </div>
+    <div class="summary-grid">
+      <div class="summary-block">
+        <h4>Visit target</h4>
+        <strong>{{ visitTarget }}</strong>
+        <p>Visited {{ visited }} • Remaining {{ remainingVisits }}</p>
+      </div>
+      <div class="summary-block">
+        <h4>New retailer target</h4>
+        <strong>{{ newRetailerTarget }}</strong>
+        <p>Added {{ newRetailersAdded }} • Remaining {{ remainingNewRetailers }}</p>
+      </div>
+      <div class="summary-block">
+        <h4>Today's orders</h4>
+        <strong>₹{{ todayOrders | number }}</strong>
+      </div>
+      <div class="summary-block">
+        <h4>Today's collections</h4>
+        <strong>₹{{ todayCollections | number }}</strong>
+      </div>
     </div>
   </section>
 
@@ -20,6 +63,21 @@
     </div>
     <div class="action-list">
       <a *ngFor="let action of quickActions" [routerLink]="action.route" class="action-pill">{{ action.label }}</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h3>Assigned retailers</h3>
+    </div>
+    <div class="retailer-list">
+      <div class="retailer-row" *ngFor="let retailer of assignedRetailers">
+        <div>
+          <strong>{{ retailer.name }}</strong>
+          <p>{{ retailer.area }}</p>
+        </div>
+        <span class="outstanding">Outstanding {{ retailer.outstanding }}</span>
+      </div>
     </div>
   </section>
 </div>

@@ -1,0 +1,74 @@
+<div class="order-create-shell">
+  <section class="hero-card">
+    <div>
+      <p class="eyebrow">Order workspace</p>
+      <h2>Create order</h2>
+      <p class="muted">Pick a product, choose the right account, and submit the order from the live catalog.</p>
+    </div>
+    <div class="status-chip" *ngIf="currentRole">{{ currentRole }}</div>
+  </section>
+
+  <section class="panel" *ngIf="loading">
+    <p class="muted">Loading product and account data...</p>
+  </section>
+
+  <section class="panel" *ngIf="error && !loading">
+    <p class="error">{{ error }}</p>
+  </section>
+
+  <form class="panel form-grid" [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+    <label>
+      <span>Order type</span>
+      <select formControlName="orderType">
+        <option value="retailer-order">Retailer order</option>
+        <option value="distributor-replenishment">Distributor replenishment</option>
+      </select>
+    </label>
+
+    <label *ngIf="form.value.orderType === 'retailer-order'">
+      <span>Retailer</span>
+      <select formControlName="retailerId">
+        <option value="">Select retailer</option>
+        <option *ngFor="let retailer of retailers" [value]="retailer._id">{{ retailer.name || retailer.storeName || retailer.retailerName }}</option>
+      </select>
+    </label>
+
+    <label *ngIf="form.value.orderType === 'distributor-replenishment'">
+      <span>Distributor</span>
+      <select formControlName="distributorId">
+        <option value="">Select distributor</option>
+        <option *ngFor="let distributor of distributors" [value]="distributor._id">{{ distributor.name }}</option>
+      </select>
+    </label>
+
+    <label class="wide">
+      <span>Product</span>
+      <select formControlName="productId">
+        <option value="">Select product</option>
+        <option *ngFor="let product of products" [value]="product._id">{{ product.name }} - ₹{{ product.mrp }}</option>
+      </select>
+    </label>
+
+    <label>
+      <span>Quantity</span>
+      <input type="number" min="1" formControlName="quantity" />
+    </label>
+
+    <label>
+      <span>Unit price</span>
+      <input type="number" min="0" formControlName="unitPrice" />
+    </label>
+
+    <div class="summary-row">
+      <div>
+        <span>Total</span>
+        <strong>₹{{ (form.value.quantity || 0) * (form.value.unitPrice || 0) }}</strong>
+      </div>
+      <button type="submit" [disabled]="submitting">Create order</button>
+    </div>
+  </form>
+
+  <section class="panel" *ngIf="message">
+    <p class="success">{{ message }}</p>
+  </section>
+</div>
