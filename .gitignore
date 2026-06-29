@@ -1,0 +1,17 @@
+# Ignore npm and build artifacts
+**/node_modules/
+**/dist/
+**/build/
+**/.angular/
+**/*.log
+**/.DS_Store
+
+# Android / Gradle local artifacts
+frontend/gradle-*.zip
+frontend/.gradle/
+frontend/android/.gradle/
+frontend/android/local.properties
+
+# Capacitor / native builds
+frontend/android/build/
+frontend/android/app/build/
