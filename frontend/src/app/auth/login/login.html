@@ -1,64 +1,76 @@
-<div class="auth-shell">
-  <div class="auth-panel">
-    <div class="brand-panel">
-      <div class="brand-logo">B2B</div>
-      <h1>Welcome to B2BConnect</h1>
-      <p>
-        One login for Distributor, Retailer, Salesman and Company.
-        Secure access to orders, products, visits, and reports.
-      </p>
-      <ul>
-        <li>Single shared sign-in for all user roles</li>
-        <li>Fast access to dashboard and orders</li>
-        <li>Secure token-based authentication</li>
-      </ul>
-    </div>
+<div class="auth-shell d-flex align-items-center justify-content-center py-5 bg-light">
+  <div class="container">
+    <div class="row gx-4 gy-4 justify-content-center">
+      <div class="col-12 col-lg-5">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <div class="badge bg-primary text-uppercase mb-3">B2BConnect</div>
+              <h1 class="h3 mb-2">Welcome back</h1>
+              <p class="text-muted mb-0">One login for Distributor, Retailer, Salesman and Company.</p>
+            </div>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  placeholder="Enter your email"
+                  class="form-control"
+                  [ngClass]="{ 'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched }"
+                />
+                <div class="invalid-feedback" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                  Please enter a valid email.
+                </div>
+              </div>
 
-    <div class="form-panel">
-      <div class="form-header">
-        <h2>Sign in</h2>
-        <p>Common login for all users</p>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  formControlName="password"
+                  placeholder="Enter your password"
+                  class="form-control"
+                  [ngClass]="{ 'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched }"
+                />
+                <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                  Password must be at least 6 characters.
+                </div>
+              </div>
+
+              <button type="submit" [disabled]="loginForm.invalid || loading" class="btn btn-primary w-100">
+                {{ loading ? 'Signing in...' : 'Sign in' }}
+              </button>
+            </form>
+
+            <div *ngIf="error" class="alert alert-danger mt-4 mb-0" role="alert">
+              {{ error }}
+            </div>
+
+            <div class="text-center mt-4">
+              <span class="text-muted">Don’t have an account?</span>
+              <a routerLink="/register" class="link-primary fw-semibold">Choose registration option</a>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="Enter your email"
-            class="form-control"
-          />
-          <span *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error">
-            Valid email is required
-          </span>
+      <div class="col-12 col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body p-5 d-flex flex-column justify-content-center h-100">
+            <div class="mb-4">
+              <h2 class="h4">B2BConnect for all roles</h2>
+              <p class="text-muted">Secure access to orders, products, visits, and reports for every user type in a single platform.</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item border-0 px-0 py-2"><span class="badge rounded-pill bg-success me-2">✔</span>Single shared sign-in for all user roles</li>
+              <li class="list-group-item border-0 px-0 py-2"><span class="badge rounded-pill bg-success me-2">✔</span>Fast access to dashboard and orders</li>
+              <li class="list-group-item border-0 px-0 py-2"><span class="badge rounded-pill bg-success me-2">✔</span>Secure token-based authentication</li>
+            </ul>
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            formControlName="password"
-            placeholder="Enter your password"
-            class="form-control"
-          />
-          <span *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
-            Password must be at least 6 characters
-          </span>
-        </div>
-
-        <button type="submit" [disabled]="loginForm.invalid || loading" class="btn-primary">
-          {{ loading ? 'Signing in...' : 'Sign in' }}
-        </button>
-
-        <p class="error" *ngIf="error">{{ error }}</p>
-      </form>
-
-      <div class="helper-row">
-        <span>Don’t have an account?</span>
-        <a routerLink="/register">Choose registration option</a>
       </div>
     </div>
   </div>

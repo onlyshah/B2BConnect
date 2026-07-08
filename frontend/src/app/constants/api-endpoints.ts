@@ -194,6 +194,26 @@ export const API_ENDPOINTS = {
     UPLOAD_MEDIA: '/stories/:storyId/upload-media',
   },
 
+  // Campaign Endpoints
+  CAMPAIGNS: {
+    BASE: '/campaigns',
+    GET_ALL: '/campaigns',
+    GET_BY_ID: '/campaigns/:campaignId',
+    CREATE: '/campaigns',
+    UPDATE: '/campaigns/:campaignId',
+    DELETE: '/campaigns/:campaignId',
+  },
+
+  // Scheme Endpoints
+  SCHEMES: {
+    BASE: '/schemes',
+    GET_ALL: '/schemes',
+    GET_BY_ID: '/schemes/:schemeId',
+    CREATE: '/schemes',
+    UPDATE: '/schemes/:schemeId',
+    DELETE: '/schemes/:schemeId',
+  },
+
   // Review Endpoints
   REVIEWS: {
     BASE: '/reviews',
@@ -249,9 +269,10 @@ export const API_ENDPOINTS = {
   // Analytics Endpoints
   ANALYTICS: {
     BASE: '/analytics',
-    GET_SALES: '/analytics/sales',
-    GET_PERFORMANCE: '/analytics/performance',
-    GET_TRENDS: '/analytics/trends',
+    GET_SUMMARY: '/analytics/summary',
+    GET_SALES: '/analytics/sales-performance',
+    GET_PERFORMANCE: '/analytics/summary',
+    GET_TRENDS: '/analytics/inventory-performance',
     GET_REPORTS: '/analytics/reports',
     GET_INVENTORY: '/analytics/inventory-performance',
     EXPORT_REPORT: '/analytics/export',

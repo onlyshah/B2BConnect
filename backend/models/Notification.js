@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
+  companyId: { type: String, required: true, index: true },
   tenantId: { type: String, required: true, index: true },
   recipientType: { type: String, enum: ['user', 'distributor', 'retailer', 'company'] },
   recipientId: { type: String, required: true },
@@ -10,9 +11,11 @@ const notificationSchema = new mongoose.Schema({
   status: { type: String, enum: ['unread', 'read'], default: 'unread' },
   payload: Object,
   readAt: Date,
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now }
 });
 
-notificationSchema.index({ tenantId: 1, recipientId: 1, status: 1, createdAt: -1 });
+notificationSchema.index({ companyId: 1, recipientId: 1, status: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Notification', notificationSchema);

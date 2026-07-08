@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const auditLogSchema = new mongoose.Schema({
+  companyId: { type: String, required: true, index: true },
   tenantId: { type: String, required: true, index: true },
   userId: String,
   action: { type: String, required: true },
@@ -9,9 +10,11 @@ const auditLogSchema = new mongoose.Schema({
   details: Object,
   ipAddress: String,
   userAgent: String,
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   timestamp: { type: Date, default: Date.now }
 });
 
-auditLogSchema.index({ tenantId: 1, userId: 1, timestamp: -1 });
+auditLogSchema.index({ companyId: 1, userId: 1, timestamp: -1 });
 
 module.exports = mongoose.model('AuditLog', auditLogSchema);

@@ -1,3 +1,115 @@
-.company-profile { padding: 16px; }
-.company-profile label { display:block; margin-bottom:8px; }
-.company-profile input, .company-profile textarea { width:100%; padding:8px; }
+.company-profile {
+  padding: 0;
+}
+
+.letter-spacing-md {
+  letter-spacing: 0.12em;
+}
+
+.company-summary {
+  overflow: hidden;
+}
+
+.company-banner {
+  min-height: 220px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border-radius: 1rem 1rem 0 0;
+}
+
+.company-logo {
+  width: 72px;
+  height: 72px;
+  font-size: 1.75rem;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.company-banner-actions {
+  right: 1rem;
+  top: 1rem;
+}
+
+.stat-card {
+  min-height: 90px;
+}
+
+.edit-panel {
+  border: 1px solid rgba(148,163,184,0.25);
+  border-radius: 1rem;
+}
+
+.edit-panel .card-body {
+  padding: 2rem;
+}
+
+.edit-panel .form-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.edit-panel input,
+.edit-panel textarea,
+.edit-panel select {
+  border-radius: 0.9rem;
+}
+
+.edit-panel .btn {
+  min-width: 120px;
+}
+
+.company-profile .nav-pills .nav-link {
+  border-radius: 0.85rem;
+  padding: 0.8rem 1rem;
+}
+
+.company-profile .nav-pills .nav-link.active {
+  background: #2563eb;
+}
+
+.company-profile table th,
+.company-profile table td {
+  border-color: #e9ecef;
+}
+
+.company-profile .card-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.company-logo {
+  width: 72px;
+  height: 72px;
+  font-size: 1.5rem;
+}
+
+.company-banner-actions {
+  right: 1rem;
+  top: 1rem;
+}
+
+.info-label {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.page-header h2 {
+  font-size: 1.75rem;
+}
+
+.nav-pills .nav-link {
+  border-radius: 0.85rem;
+}
+
+.nav-pills .nav-link.active {
+  background: #2563eb;
+}
+
+.company-profile table th,
+.company-profile table td {
+  border-color: #e9ecef;
+}

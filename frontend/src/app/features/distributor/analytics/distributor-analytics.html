@@ -9,5 +9,22 @@
   <div *ngIf="loading">Loading analytics...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
 
-  <pre *ngIf="!loading && !error">{{ analytics | json }}</pre>
+  <div *ngIf="!loading && !error">
+    <div class="metrics-grid">
+      <app-metric-card *ngFor="let metric of metrics" [metric]="metric"></app-metric-card>
+    </div>
+
+    <section class="summary-cards">
+      <div class="summary-card">
+        <h4>Recent sales</h4>
+        <p>{{ sales?.orders?.length ?? 0 }} orders loaded</p>
+        <p class="value">₹{{ sales?.totalSales?.toLocaleString() ?? 0 }}</p>
+      </div>
+      <div class="summary-card">
+        <h4>Inventory items</h4>
+        <p>{{ inventory?.topItems?.length ?? 0 }} top items</p>
+        <p class="value">Low stock: {{ inventory?.lowStockItems ?? 0 }}</p>
+      </div>
+    </section>
+  </div>
 </div>

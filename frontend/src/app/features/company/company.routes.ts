@@ -15,7 +15,7 @@ export const companyRoutes: Routes = [
     path: '',
     component: CompanyLayoutComponent,
     children: [
-      { path: '', component: CompanyDashboardComponent },
+      { path: '', component: AnalyticsComponent },
       { path: 'profile', component: CompanyProfileComponent },
       { path: 'territories', component: TerritoryManagementComponent },
       { path: 'products', component: ProductManagementComponent },

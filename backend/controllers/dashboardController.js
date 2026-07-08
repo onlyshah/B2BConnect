@@ -3,66 +3,43 @@ const Order = require('../models/Order');
 const Retailer = require('../models/Retailer');
 const Salesman = require('../models/Salesman');
 const Inventory = require('../models/Inventory');
+const resolveCompanyId = (req) => req.user?.companyId || req.query?.companyId || req.tenantId;
 
-// Get dashboard data
+function buildDashboardFilter(req, extra = {}) {
+  return {
+    tenantId: req.tenantId,
+    companyId: resolveCompanyId(req),
+    isDeleted: false,
+    ...extra,
+  };
+}
+
 const getDashboard = async (req, res) => {
   try {
-    const tenantId = req.tenantId;
+    const filter = buildDashboardFilter(req);
+    const totalProducts = await Product.countDocuments(filter);
+    const totalRetailers = await Retailer.countDocuments(filter);
+    const totalSalesmen = await Salesman.countDocuments(filter);
+    const totalOrders = await Order.countDocuments(filter);
 
-    // Get metrics from database
-    const totalProducts = await Product.countDocuments({ tenantId });
-    const totalRetailers = await Retailer.countDocuments({ tenantId });
-    const totalSalesmen = await Salesman.countDocuments({ tenantId });
-    const totalOrders = await Order.countDocuments({ tenantId });
-
-    // Get today's orders
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const ordersToday = await Order.countDocuments({
-      tenantId,
-      createdAt: { $gte: today, $lt: tomorrow },
-    });
-
-    // Get total sales this month
+    const ordersToday = await Order.countDocuments({ ...filter, createdAt: { $gte: today, $lt: tomorrow } });
     const monthStart = new Date();
     monthStart.setDate(1);
     monthStart.setHours(0, 0, 0, 0);
 
     const totalSalesThisMonth = await Order.aggregate([
-      {
-        $match: {
-          tenantId,
-          createdAt: { $gte: monthStart },
-          status: { $in: ['approved', 'dispatched', 'delivered'] },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          total: { $sum: '$totalAmount' },
-        },
-      },
+      { $match: { ...filter, createdAt: { $gte: monthStart }, status: { $in: ['confirmed', 'approved', 'shipped', 'delivered'] } } },
+      { $group: { _id: null, total: { $sum: '$total' } } },
     ]);
 
-    // Get low stock items
-    const lowStockItems = await Inventory.find({
-      tenantId,
-      quantity: { $lte: 10 },
-    }).limit(5);
-
-    // Get recent orders
-    const recentOrders = await Order.find({ tenantId })
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .populate('retailerId');
-
-    // Get top performing salesmen
-    const topSalesmen = await Salesman.find({ tenantId })
-      .sort({ 'metrics.totalSales': -1 })
-      .limit(5);
+    const lowStockItems = await Inventory.find({ ...filter, stockOnHand: { $lte: 10 } }).limit(5);
+    const recentOrders = await Order.find(filter).sort({ createdAt: -1 }).limit(5).populate('retailerId');
+    const topSalesmen = await Salesman.find(filter).sort({ 'metrics.totalSales': -1 }).limit(5);
 
     res.json({
       success: true,
@@ -85,45 +62,18 @@ const getDashboard = async (req, res) => {
   }
 };
 
-// Get dashboard widgets configuration from database
 const getDashboardWidgets = async (req, res) => {
   try {
-    // This would be loaded from a database collection
-    // For now, returning static configuration
     const widgets = [
-      {
-        id: 'total_products',
-        title: 'Total Products',
-        type: 'kpi',
-        permission: 'product.view',
-      },
-      {
-        id: 'total_retailers',
-        title: 'Total Retailers',
-        type: 'kpi',
-        permission: 'retailer.view',
-      },
-      {
-        id: 'total_orders',
-        title: 'Total Orders',
-        type: 'kpi',
-        permission: 'order.view',
-      },
-      {
-        id: 'recent_orders',
-        title: 'Recent Orders',
-        type: 'table',
-        permission: 'order.view',
-      },
+      { id: 'total_products', title: 'Total Products', type: 'kpi', permission: 'product.view' },
+      { id: 'total_retailers', title: 'Total Retailers', type: 'kpi', permission: 'retailer.view' },
+      { id: 'total_orders', title: 'Total Orders', type: 'kpi', permission: 'order.view' },
+      { id: 'recent_orders', title: 'Recent Orders', type: 'table', permission: 'order.view' },
     ];
-
     res.json({ success: true, data: widgets });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-module.exports = {
-  getDashboard,
-  getDashboardWidgets,
-};
+module.exports = { getDashboard, getDashboardWidgets };

@@ -1,4 +1,5 @@
 /* Global Styles */
+@import 'bootstrap/dist/css/bootstrap.min.css';
 @import '@ionic/angular/css/core.css';
 @import '@ionic/angular/css/normalize.css';
 @import '@ionic/angular/css/structure.css';
@@ -30,4 +31,13 @@ ion-content {
 
 a {
   color: inherit;
+}
+
+.navbar-brand,
+.navbar-text {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.btn-outline-light {
+  border-width: 1px;
 }

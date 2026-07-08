@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from './services/auth.service';
-import { ResponseHandlerService, Toast } from './services/response-handler.service';
+import { ResponseHandlerService } from './services/response-handler.service';
 
 @Component({
   selector: 'app-root',
@@ -17,12 +17,11 @@ export class AppComponent implements OnInit {
   isLoggedIn = false;
   user: any = null;
   isLoading = false;
-  toasts: Toast[] = [];
 
   constructor(
     public authService: AuthService,
     private router: Router,
-    private responseHandler: ResponseHandlerService
+    public responseHandler: ResponseHandlerService
   ) {}
 
   ngOnInit() {
@@ -44,10 +43,6 @@ export class AppComponent implements OnInit {
       this.isLoading = loading;
     });
 
-    this.responseHandler.toasts$.subscribe((toasts: Toast[]) => {
-      this.toasts = toasts;
-    });
-
     this.authService.initializeAuthState();
 
     this.router.events.subscribe((event) => {
@@ -60,10 +55,6 @@ export class AppComponent implements OnInit {
         setTimeout(() => this.responseHandler.setLoading(false), 0);
       }
     });
-  }
-
-  closeToast(id: string) {
-    this.responseHandler.removeToast(id);
   }
 
   logout() {

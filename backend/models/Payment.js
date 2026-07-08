@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const paymentSchema = new mongoose.Schema({
+  companyId: { type: String, required: true, index: true },
   tenantId: { type: String, required: true, index: true },
   invoiceId: { type: String, required: true, index: true },
   orderId: String,
@@ -12,10 +13,12 @@ const paymentSchema = new mongoose.Schema({
   paidAt: { type: Date, default: Date.now },
   status: { type: String, enum: ['recorded', 'reconciled', 'failed', 'reversed'], default: 'recorded' },
   notes: String,
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
-paymentSchema.index({ tenantId: 1, invoiceId: 1, paidAt: -1 });
+paymentSchema.index({ companyId: 1, invoiceId: 1, paidAt: -1 });
 
 module.exports = mongoose.model('Payment', paymentSchema, 'payments');

@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const distributorProductPriceSchema = new mongoose.Schema({
-  tenantId: { type: String, required: true, index: true },
   companyId: { type: String, required: true, index: true },
+  tenantId: { type: String, required: true, index: true },
   distributorId: { type: String, required: true, index: true },
   productId: { type: String, required: true, index: true },
   retailerCategory: { type: String, enum: ['silver', 'gold', 'platinum', 'all'], default: 'all' },
@@ -13,12 +13,14 @@ const distributorProductPriceSchema = new mongoose.Schema({
   validFrom: Date,
   validTo: Date,
   status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
 distributorProductPriceSchema.index({
-  tenantId: 1,
+  companyId: 1,
   distributorId: 1,
   productId: 1,
   retailerCategory: 1

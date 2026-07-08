@@ -35,6 +35,7 @@ const seedAttendance = async () => {
         if (status === 'absent' || status === 'on-leave') {
           // No check-in/out for absent/on-leave
           attendance.push({
+            companyId: company._id,
             tenantId: company._id,
             salesman: salesman._id,
             attendanceDate,
@@ -60,6 +61,7 @@ const seedAttendance = async () => {
           const longitude = (Math.random() * 360) - 180;
 
           attendance.push({
+            companyId: company._id,
             tenantId: company._id,
             salesman: salesman._id,
             attendanceDate,

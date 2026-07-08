@@ -1,1 +1,16 @@
 .campaigns{ padding:16px }
+
+/* Modal backdrop and card styling to match app theme */
+.modal-backdrop{
+	position:fixed;
+	inset:0;
+	background:rgba(0,0,0,0.35);
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	z-index:1050;
+}
+.modal-backdrop .card{
+	border-radius:8px;
+	box-shadow:0 12px 32px rgba(0,0,0,0.2);
+}

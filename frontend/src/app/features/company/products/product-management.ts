@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../../services/product.service';
 import { ProductEditorComponent } from './product-editor';
+import { AuthService } from '../../../services/auth.service';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-product-management',
@@ -10,16 +14,24 @@ import { ProductEditorComponent } from './product-editor';
   templateUrl: './product-management.html',
   styleUrls: ['./product-management.css']
 })
-export class ProductManagementComponent implements OnInit {
+export class ProductManagementComponent implements OnInit, OnDestroy {
   products: any[] = [];
   loading = false;
   selectedProduct: any = null;
   showEditor = false;
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService, private authService: AuthService, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
+    // Try to load immediately (in case auth already set)
     this.loadProducts();
+
+    // Also reload when auth becomes available to ensure requests have token
+    this.authService.currentUser$
+      .pipe(filter(user => !!user), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadProducts();
+      });
   }
 
   loadProducts() {
@@ -28,12 +40,19 @@ export class ProductManagementComponent implements OnInit {
       next: (data: any[]) => {
         this.products = data || [];
         this.loading = false;
+        try { this.cd.detectChanges(); } catch(e) {}
       },
       error: (err) => {
         console.error('Failed to load products', err);
         this.loading = false;
+        try { this.cd.detectChanges(); } catch(e) {}
       }
     });
+  }
+  private destroy$ = new Subject<void>();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   editProduct(product: any) {

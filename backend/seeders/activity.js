@@ -54,6 +54,7 @@ const seedActivity = async () => {
 
       reviews.push({
         tenantId: '000000000000000000000001',
+        companyId: company._id.toString(),
         productId: product._id.toString(),
         retailerId: retailer._id.toString(),
         rating: 4 + (i % 2),
@@ -98,6 +99,7 @@ const seedActivity = async () => {
     for (const order of orders) {
       payments.push({
         tenantId: '000000000000000000000001',
+        companyId: company._id.toString(),
         invoiceId: `INV-${order._id.toString().slice(-4)}`,
         orderId: order._id.toString(),
         retailerId: order.retailerId,
@@ -113,6 +115,7 @@ const seedActivity = async () => {
     for (const product of products.slice(0, 6)) {
       analytics.push({
         tenantId: '000000000000000000000001',
+        companyId: company._id.toString(),
         entityType: 'product',
         entityId: product._id.toString(),
         metricType: 'sales',

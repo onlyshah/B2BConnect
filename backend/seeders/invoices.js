@@ -1,5 +1,6 @@
 const Invoice = require('../models/Invoice');
 const Order = require('../models/Order');
+const Company = require('../models/Company');
 
 const seedInvoices = async () => {
   try {
@@ -7,6 +8,13 @@ const seedInvoices = async () => {
     if (existingCount > 0) {
       console.log('✓ Invoices already exist');
       return [];
+    }
+
+    const company = await Company.findOne({
+      tenantId: '000000000000000000000001',
+    });
+    if (!company) {
+      throw new Error('Company not found. Seed companies first.');
     }
 
     const orders = await Order.find({
@@ -42,6 +50,7 @@ const seedInvoices = async () => {
 
       invoices.push({
         tenantId: '000000000000000000000001',
+        companyId: company._id.toString(),
         invoiceNumber: `INV-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
         orderId: order._id,
         retailerId: order.retailerId,

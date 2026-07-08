@@ -1,25 +1,18 @@
 .app-shell {
-  min-height: 100%;
-  position: relative;
+  min-height: calc(100vh - 56px);
   background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
 }
 
 .app-content {
-  max-width: 1280px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 1rem;
-}
-
-.user-greeting {
-  font-size: 0.95rem;
-  color: var(--ion-color-light-contrast, #ffffff);
-  margin-right: 0.5rem;
+  padding: 2rem 0;
 }
 
 .loading-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(15, 23, 42, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,24 +21,15 @@
 
 .loading-panel {
   background: white;
-  border-radius: 12px;
-  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  gap: 1rem;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
 }
 
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid #dbeafe;
-  border-top-color: #4f46e5;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-.toast-container {
+.app-toast-container {
   position: fixed;
   right: 1rem;
   bottom: 1rem;
@@ -53,48 +37,13 @@
   flex-direction: column;
   gap: 0.75rem;
   z-index: 250;
-  max-width: min(360px, calc(100vw - 2rem));
+  max-width: min(420px, calc(100vw - 2rem));
 }
 
-.toast {
-  border-radius: 10px;
-  padding: 0.9rem 1rem;
-  background: white;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.toast.success {
-  border-left: 4px solid #16a34a;
-}
-
-.toast.error {
-  border-left: 4px solid #dc2626;
-}
-
-.toast.warning {
-  border-left: 4px solid #d97706;
-}
-
-.toast.info {
-  border-left: 4px solid #2563eb;
-}
-
-.toast-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.toast-close {
-  background: transparent;
-  border: 0;
-  font-size: 1.1rem;
-  cursor: pointer;
-  color: #64748b;
+.app-toast {
+  border-radius: 0.85rem;
+  padding: 1rem 1rem;
+  margin: 0;
 }
 
 :host {
@@ -103,19 +52,13 @@
 
 @media (max-width: 767px) {
   .app-content {
-    padding: 0.75rem;
+    padding: 1.25rem 0;
   }
 
-  .toast-container {
+  .app-toast-container {
     left: 0.75rem;
     right: 0.75rem;
     bottom: 0.75rem;
     max-width: none;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
   }
 }

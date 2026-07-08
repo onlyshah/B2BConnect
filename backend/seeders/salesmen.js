@@ -28,6 +28,7 @@ const seedSalesmen = async () => {
       // Patel Distributors salesmen
       {
         tenantId: company._id,
+        companyId: company._id,
         firstName: 'Ravi',
         lastName: 'Sharma',
         email: 'ravi.sharma@b2bconnect.in',
@@ -43,6 +44,7 @@ const seedSalesmen = async () => {
       },
       {
         tenantId: company._id,
+        companyId: company._id,
         firstName: 'Arun',
         lastName: 'Patel',
         email: 'arun.patel@b2bconnect.in',
@@ -59,6 +61,7 @@ const seedSalesmen = async () => {
       // Arihant Agencies salesmen
       {
         tenantId: company._id,
+        companyId: company._id,
         firstName: 'Suresh',
         lastName: 'Kumar',
         email: 'suresh.kumar@b2bconnect.in',
@@ -74,6 +77,7 @@ const seedSalesmen = async () => {
       },
       {
         tenantId: company._id,
+        companyId: company._id,
         firstName: 'Priya',
         lastName: 'Singh',
         email: 'priya.singh@b2bconnect.in',
@@ -90,6 +94,7 @@ const seedSalesmen = async () => {
       // Delhi Trade House salesmen
       {
         tenantId: company._id,
+        companyId: company._id,
         firstName: 'Vikram',
         lastName: 'Verma',
         email: 'vikram.verma@b2bconnect.in',
@@ -105,6 +110,7 @@ const seedSalesmen = async () => {
       },
       {
         tenantId: company._id,
+        companyId: company._id,
         firstName: 'Neha',
         lastName: 'Gupta',
         email: 'neha.gupta@b2bconnect.in',

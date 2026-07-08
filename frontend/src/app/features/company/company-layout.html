@@ -1,17 +1,18 @@
-<div class="company-shell">
-  <aside class="company-sidebar">
-    <div class="company-brand">
-      <h3>Company Admin</h3>
-    </div>
-    <nav>
-      <a *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active" class="company-nav-item">
-        <span class="icon">{{ item.icon }}</span>
-        <span>{{ item.label }}</span>
-      </a>
-    </nav>
-  </aside>
+<dashboard-layout
+  [appName]="appName"
+  [title]="title"
+  [subtitle]="subtitle"
+  [eyebrow]="eyebrow"
+  [roleLabel]="roleLabel"
+  [searchPlaceholder]="searchPlaceholder"
+  [storageKey]="storageKey"
+  [navGroups]="navGroups"
+  [mobileNavItems]="mobileNavItems"
+>
+  <div slot="header-actions" class="d-flex flex-wrap gap-2">
+    <a class="btn btn-primary btn-sm fw-semibold" routerLink="/company/distributors">Review distributors</a>
+    <a class="btn btn-outline-secondary btn-sm fw-semibold" routerLink="/company/analytics">Open analytics</a>
+  </div>
 
-  <main class="company-main">
-    <router-outlet></router-outlet>
-  </main>
-</div>
+  <router-outlet></router-outlet>
+</dashboard-layout>

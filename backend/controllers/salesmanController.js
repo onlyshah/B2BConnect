@@ -1,24 +1,31 @@
-const Salesman = require('../models/Salesman');
 const mongoose = require('mongoose');
+const Salesman = require('../models/Salesman');
 const Visit = require('../models/Visit');
 const Order = require('../models/Order');
 const Attendance = require('../models/Attendance');
 const CollectionRecord = require('../models/CollectionRecord');
 const User = require('../models/User');
 
-// Get all salesmen
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+const buildSalesmanFilter = (req, extra = {}) => ({
+  companyId: resolveCompanyId(req),
+  isDeleted: false,
+  ...extra,
+});
+
 const getSalesmen = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const salesmen = await Salesman.find({ tenantId: req.tenantId })
+    const salesmen = await Salesman.find(buildSalesmanFilter(req))
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    const total = await Salesman.countDocuments({ tenantId: req.tenantId });
+    const total = await Salesman.countDocuments(buildSalesmanFilter(req));
 
     res.json({
       success: true,
@@ -30,12 +37,11 @@ const getSalesmen = async (req, res) => {
   }
 };
 
-// Get single salesman
 const getSalesman = async (req, res) => {
   try {
     const salesman = await Salesman.findOne({
       _id: req.params.salesmanId,
-      tenantId: req.tenantId,
+      ...buildSalesmanFilter(req),
     });
 
     if (!salesman) {
@@ -48,18 +54,20 @@ const getSalesman = async (req, res) => {
   }
 };
 
-// Create salesman
 const createSalesman = async (req, res) => {
   try {
     const { firstName, lastName, email, phone } = req.body;
 
     if (!firstName || !lastName || !email || !phone) {
-      return res.status(400).json({ success: false, message: 'First name, last name, email, and phone are required' });
+      return res.status(400).json({
+        success: false,
+        message: 'First name, last name, email, and phone are required',
+      });
     }
 
     const salesman = new Salesman({
       ...req.body,
-      tenantId: req.tenantId,
+      companyId: resolveCompanyId(req),
       status: 'active',
     });
 
@@ -70,11 +78,10 @@ const createSalesman = async (req, res) => {
   }
 };
 
-// Update salesman
 const updateSalesman = async (req, res) => {
   try {
     const salesman = await Salesman.findOneAndUpdate(
-      { _id: req.params.salesmanId, tenantId: req.tenantId },
+      { _id: req.params.salesmanId, ...buildSalesmanFilter(req) },
       req.body,
       { new: true }
     );
@@ -89,7 +96,6 @@ const updateSalesman = async (req, res) => {
   }
 };
 
-// Assign retailers to salesman
 const assignRetailers = async (req, res) => {
   try {
     const { retailerIds } = req.body;
@@ -99,7 +105,7 @@ const assignRetailers = async (req, res) => {
     }
 
     const salesman = await Salesman.findOneAndUpdate(
-      { _id: req.params.salesmanId, tenantId: req.tenantId },
+      { _id: req.params.salesmanId, ...buildSalesmanFilter(req) },
       { assignedRetailers: retailerIds },
       { new: true }
     );
@@ -114,7 +120,6 @@ const assignRetailers = async (req, res) => {
   }
 };
 
-// Assign territory to salesman
 const assignTerritory = async (req, res) => {
   try {
     const { territory } = req.body;
@@ -124,7 +129,7 @@ const assignTerritory = async (req, res) => {
     }
 
     const salesman = await Salesman.findOneAndUpdate(
-      { _id: req.params.salesmanId, tenantId: req.tenantId },
+      { _id: req.params.salesmanId, ...buildSalesmanFilter(req) },
       { territory },
       { new: true }
     );
@@ -139,13 +144,12 @@ const assignTerritory = async (req, res) => {
   }
 };
 
-// Get salesman performance (aggregated from visits, orders, attendance, collections)
 const getPerformance = async (req, res) => {
   try {
     const salesmanId = req.params.salesmanId;
-    const tenantId = req.tenantId;
+    const companyId = resolveCompanyId(req);
 
-    const salesman = await Salesman.findOne({ _id: salesmanId, tenantId });
+    const salesman = await Salesman.findOne({ _id: salesmanId, ...buildSalesmanFilter(req) });
     if (!salesman) {
       return res.status(404).json({ success: false, message: 'Salesman not found' });
     }
@@ -154,51 +158,67 @@ const getPerformance = async (req, res) => {
     startOfToday.setHours(0, 0, 0, 0);
     const endOfToday = new Date(startOfToday);
     endOfToday.setDate(endOfToday.getDate() + 1);
-
     const startOfMonth = new Date(startOfToday.getFullYear(), startOfToday.getMonth(), 1);
 
-    // Visits
     const todaysVisitsCount = await Visit.countDocuments({
-      tenantId,
+      companyId,
       salesman: salesmanId,
-      visitDate: { $gte: startOfToday, $lt: endOfToday }
+      visitDate: { $gte: startOfToday, $lt: endOfToday },
+      isDeleted: false,
     });
 
     const monthlyVisitsCount = await Visit.countDocuments({
-      tenantId,
+      companyId,
       salesman: salesmanId,
-      visitDate: { $gte: startOfMonth }
+      visitDate: { $gte: startOfMonth },
+      isDeleted: false,
     });
 
-    // Orders generated via visits -> orderGenerated
     const ordersAgg = await Visit.aggregate([
-      { $match: { tenantId: mongoose.Types.ObjectId(tenantId), salesman: mongoose.Types.ObjectId(salesmanId), orderGenerated: { $exists: true, $ne: null } } },
+      {
+        $match: {
+          companyId: mongoose.Types.ObjectId.isValid(companyId)
+            ? mongoose.Types.ObjectId(companyId)
+            : companyId,
+          salesman: mongoose.Types.ObjectId.isValid(salesmanId)
+            ? mongoose.Types.ObjectId(salesmanId)
+            : salesmanId,
+          orderGenerated: { $exists: true, $ne: null },
+        },
+      },
       { $lookup: { from: 'orders', localField: 'orderGenerated', foreignField: '_id', as: 'order' } },
       { $unwind: { path: '$order', preserveNullAndEmptyArrays: false } },
-      { $group: { _id: null, ordersCount: { $sum: 1 }, revenue: { $sum: { $ifNull: ['$order.total', 0] } } } }
+      { $group: { _id: null, ordersCount: { $sum: 1 }, revenue: { $sum: { $ifNull: ['$order.totalAmount', 0] } } } },
     ]);
 
     const ordersCount = (ordersAgg[0] && ordersAgg[0].ordersCount) || 0;
     const ordersRevenue = (ordersAgg[0] && ordersAgg[0].revenue) || 0;
 
-    // Collections: find user(s) mapped to this salesman and sum CollectionRecord.amountCollected
-    const salesmanUsers = await User.find({ tenantId, salesmanId: salesmanId }, { _id: 1 }).lean();
+    const salesmanUsers = await User.find({ companyId, salesmanId: salesmanId }, { _id: 1 }).lean();
     const userIds = salesmanUsers.map((u) => u._id);
 
     let collectionsTotal = 0;
     if (userIds.length > 0) {
       const collAgg = await CollectionRecord.aggregate([
-        { $match: { tenantId: mongoose.Types.ObjectId(tenantId), collectedBy: { $in: userIds } } },
-        { $group: { _id: null, totalCollected: { $sum: '$amountCollected' } } }
+        {
+          $match: {
+            companyId: mongoose.Types.ObjectId.isValid(companyId)
+              ? mongoose.Types.ObjectId(companyId)
+              : companyId,
+            collectedBy: { $in: userIds },
+            isDeleted: false,
+          },
+        },
+        { $group: { _id: null, totalCollected: { $sum: '$amountCollected' } } },
       ]);
       collectionsTotal = (collAgg[0] && collAgg[0].totalCollected) || 0;
     }
 
-    // Attendance today
     const attendanceToday = await Attendance.findOne({
-      tenantId,
+      companyId,
       salesman: salesmanId,
-      attendanceDate: { $gte: startOfToday, $lt: endOfToday }
+      attendanceDate: { $gte: startOfToday, $lt: endOfToday },
+      isDeleted: false,
     }).lean();
 
     const performance = {
@@ -209,17 +229,19 @@ const getPerformance = async (req, res) => {
       ordersCount,
       ordersRevenue,
       collectionsTotal,
-      attendanceToday: attendanceToday ? {
-        status: attendanceToday.status,
-        checkInTime: attendanceToday.checkInTime,
-        checkOutTime: attendanceToday.checkOutTime,
-        workingHours: attendanceToday.workingHours || 0,
-        completedVisits: attendanceToday.completedVisits || 0
-      } : null,
+      attendanceToday: attendanceToday
+        ? {
+            status: attendanceToday.status,
+            checkInTime: attendanceToday.checkInTime,
+            checkOutTime: attendanceToday.checkOutTime,
+            workingHours: attendanceToday.workingHours || 0,
+            completedVisits: attendanceToday.completedVisits || 0,
+          }
+        : null,
       targets: {
         dailyVisitTarget: salesman.dailyVisitTarget || 0,
-        monthlyOrderTarget: salesman.monthlyOrderTarget || 0
-      }
+        monthlyOrderTarget: salesman.monthlyOrderTarget || 0,
+      },
     };
 
     res.json({ success: true, data: performance });
@@ -228,13 +250,13 @@ const getPerformance = async (req, res) => {
   }
 };
 
-// Delete salesman
 const deleteSalesman = async (req, res) => {
   try {
-    const salesman = await Salesman.findOneAndDelete({
-      _id: req.params.salesmanId,
-      tenantId: req.tenantId,
-    });
+    const salesman = await Salesman.findOneAndUpdate(
+      { _id: req.params.salesmanId, ...buildSalesmanFilter(req) },
+      { isDeleted: true, deletedAt: new Date(), status: 'inactive' },
+      { new: true }
+    );
 
     if (!salesman) {
       return res.status(404).json({ success: false, message: 'Salesman not found' });

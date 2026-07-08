@@ -15,17 +15,21 @@ const router = express.Router();
 router.use('/', registrationRoutes);
 
 const generateTokens = (user) => {
-  const accessToken = jwt.sign(
-    { userId: user._id, tenantId: user.tenantId, role: user.role, tokenVersion: user.refreshTokenVersion },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
-  );
+  // Include identifying fields in token so middleware can populate req.user.companyId etc.
+  const payload = {
+    userId: user._id,
+    tenantId: user.tenantId,
+    role: user.role,
+    tokenVersion: user.refreshTokenVersion,
+    companyId: user.companyId,
+    distributorId: user.distributorId,
+    retailerId: user.retailerId,
+    salesmanId: user.salesmanId,
+    email: user.email
+  };
 
-  const refreshToken = jwt.sign(
-    { userId: user._id, tenantId: user.tenantId, role: user.role, tokenVersion: user.refreshTokenVersion },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN }
-  );
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+  const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN });
 
   return { accessToken, refreshToken };
 };
@@ -48,7 +52,17 @@ router.post('/login', async (req, res) => {
   res.json({
     accessToken,
     refreshToken,
-    user: { id: user._id, name: user.name, email: user.email, role: user.role, tenantId: user.tenantId }
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      tenantId: user.tenantId,
+      companyId: user.companyId,
+      distributorId: user.distributorId,
+      retailerId: user.retailerId,
+      salesmanId: user.salesmanId
+    }
   });
 });
 

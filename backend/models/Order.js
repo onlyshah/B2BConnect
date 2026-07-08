@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+  companyId: { type: String, required: true, index: true },
   tenantId: { type: String, required: true, index: true },
-  companyId: { type: String, required: true },
   distributorId: String,
   retailerId: String,
   orderType: { type: String, enum: ['retailer-order', 'distributor-replenishment'], required: true },
@@ -22,10 +22,12 @@ const orderSchema = new mongoose.Schema({
   },
   paymentTerms: String,
   invoiceId: String,
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
-orderSchema.index({ tenantId: 1, retailerId: 1, createdAt: -1 });
+orderSchema.index({ companyId: 1, retailerId: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Order', orderSchema);

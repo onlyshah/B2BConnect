@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  tenantId: { type: String, required: true, index: true },
   companyId: { type: String, required: true, index: true },
+  tenantId: { type: String, required: true, index: true },
   name: { type: String, required: true },
   sku: { type: String, required: true },
   mrp: { type: Number, required: true },
@@ -14,6 +14,8 @@ const productSchema = new mongoose.Schema({
   specs: Object,
   media: [{ type: String, url: String, thumbnailUrl: String }],
   launchStatus: { type: String, enum: ['draft', 'live', 'archived'], default: 'draft' },
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

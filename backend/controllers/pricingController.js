@@ -1,6 +1,8 @@
 const DistributorProductPrice = require('../models/DistributorProductPrice');
 const Retailer = require('../models/Retailer');
 
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
 const calculateFinalPrice = (price) => {
   const discount =
     price.discountType === 'flat'
@@ -9,21 +11,21 @@ const calculateFinalPrice = (price) => {
   return Math.max(price.basePrice - discount, 0);
 };
 
-// Get all prices
 const getPrices = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     const { distributorId, productId, retailerId } = req.query;
+    const companyId = resolveCompanyId(req);
 
-    const filter = { tenantId: req.tenantId, status: 'active' };
+    const filter = { companyId, status: 'active', isDeleted: false };
     if (distributorId) filter.distributorId = distributorId;
     if (productId) filter.productId = productId;
 
     let retailerCategory;
     if (retailerId) {
-      const retailer = await Retailer.findOne({ _id: retailerId, tenantId: req.tenantId });
+      const retailer = await Retailer.findOne({ _id: retailerId, companyId, isDeleted: false });
       retailerCategory = retailer?.category;
     }
 
@@ -39,7 +41,6 @@ const getPrices = async (req, res) => {
       .populate('productId');
 
     const total = await DistributorProductPrice.countDocuments(filter);
-
     const pricesWithFinalPrice = prices.map((price) => ({
       ...price.toObject(),
       finalPrice: calculateFinalPrice(price),
@@ -55,10 +56,10 @@ const getPrices = async (req, res) => {
   }
 };
 
-// Create price rule
 const createPrice = async (req, res) => {
   try {
     const { distributorId, productId, basePrice } = req.body;
+    const companyId = resolveCompanyId(req);
 
     if (!distributorId || !productId || !basePrice) {
       return res.status(400).json({
@@ -69,7 +70,7 @@ const createPrice = async (req, res) => {
 
     const price = new DistributorProductPrice({
       ...req.body,
-      tenantId: req.tenantId,
+      companyId,
       status: 'active',
     });
 
@@ -87,11 +88,10 @@ const createPrice = async (req, res) => {
   }
 };
 
-// Update price rule
 const updatePrice = async (req, res) => {
   try {
     const price = await DistributorProductPrice.findOneAndUpdate(
-      { _id: req.params.priceId, tenantId: req.tenantId },
+      { _id: req.params.priceId, companyId: resolveCompanyId(req), isDeleted: false },
       { ...req.body, updatedAt: new Date() },
       { new: true }
     )

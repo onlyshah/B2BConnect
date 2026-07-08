@@ -1,5 +1,7 @@
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
 const buildVisibilityFilter = (req, role, entity = null) => {
-  const tenantFilter = { tenantId: req.user?.tenantId || req.tenantId };
+  const tenantFilter = { tenantId: req.user?.tenantId || req.tenantId, companyId: resolveCompanyId(req) };
 
   if (!req.user) return tenantFilter;
 
@@ -9,9 +11,9 @@ const buildVisibilityFilter = (req, role, entity = null) => {
     case 'company-admin':
       return {
         ...tenantFilter,
-        ...(entity === 'distributor' ? { companyId: req.user.companyId } : {}),
-        ...(entity === 'salesman' ? { company: req.user.companyId } : {}),
-        ...(entity === 'retailer' ? { companyId: req.user.companyId } : {}),
+        ...(entity === 'distributor' ? { companyId: resolveCompanyId(req) } : {}),
+        ...(entity === 'salesman' ? { companyId: resolveCompanyId(req) } : {}),
+        ...(entity === 'retailer' ? { companyId: resolveCompanyId(req) } : {}),
       };
     case 'distributor-admin':
       return {
@@ -45,7 +47,7 @@ const getRoleContext = (req) => {
   return {
     role,
     tenantId: req.user?.tenantId || req.tenantId,
-    companyId: req.user?.companyId,
+    companyId: resolveCompanyId(req),
     distributorId: req.user?.distributorId,
     salesmanId: req.user?.salesmanId,
     retailerId: req.user?.retailerId,

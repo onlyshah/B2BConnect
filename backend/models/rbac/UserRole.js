@@ -21,6 +21,12 @@ const userRoleSchema = new mongoose.Schema(
       index: true,
       // User's tenant context
     },
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Company',
+      required: true,
+      index: true,
+    },
     // Denormalized data for quick access
     roleName: String,
     roleScope: String,
@@ -68,13 +74,18 @@ const userRoleSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: Date,
   },
   { collection: 'user_roles' }
 );
 
 // Ensure one role per user per tenant (no duplicate assignments)
-userRoleSchema.index({ userId: 1, tenantId: 1, status: 1 }, { unique: false });
-userRoleSchema.index({ tenantId: 1, status: 1 });
+userRoleSchema.index({ userId: 1, companyId: 1, status: 1 }, { unique: false });
+userRoleSchema.index({ companyId: 1, status: 1 });
 userRoleSchema.index({ expiresAt: 1 });
 
 module.exports = mongoose.model('UserRole', userRoleSchema);

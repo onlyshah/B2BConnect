@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const collectionRecordSchema = new mongoose.Schema({
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
   tenantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
   
   collectionId: { type: String, unique: true },
@@ -19,12 +20,14 @@ const collectionRecordSchema = new mongoose.Schema({
   
   status: { type: String, enum: ['recorded', 'verified', 'reconciled'], default: 'recorded' },
   verificationDate: { type: Date },
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
-collectionRecordSchema.index({ tenantId: 1, retailer: 1, collectionDate: -1 });
+collectionRecordSchema.index({ companyId: 1, retailer: 1, collectionDate: -1 });
 collectionRecordSchema.index({ distributor: 1, status: 1 });
 
 module.exports = mongoose.model('CollectionRecord', collectionRecordSchema);

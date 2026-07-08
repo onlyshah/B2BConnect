@@ -1,6 +1,13 @@
 const Permission = require('../models/rbac/Permission');
 const Role = require('../models/rbac/Role');
 const UserRole = require('../models/rbac/UserRole');
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+const buildRoleFilter = (req, extra = {}) => ({
+  companyId: resolveCompanyId(req),
+  isDeleted: false,
+  ...extra,
+});
 
 // Get all permissions
 const getPermissions = async (req, res) => {
@@ -33,13 +40,13 @@ const getRoles = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const roles = await Role.find()
+    const roles = await Role.find(buildRoleFilter(req))
       .populate('permissions')
       .skip(skip)
       .limit(limit)
       .sort({ name: 1 });
 
-    const total = await Role.countDocuments();
+    const total = await Role.countDocuments(buildRoleFilter(req));
 
     res.json({
       success: true,
@@ -65,6 +72,7 @@ const createRole = async (req, res) => {
       displayName,
       description,
       permissions: permissions || [],
+      companyId: resolveCompanyId(req),
       isSystem: false,
     });
 
@@ -81,7 +89,7 @@ const createRole = async (req, res) => {
 const updateRole = async (req, res) => {
   try {
     const role = await Role.findByIdAndUpdate(
-      req.params.roleId,
+      { _id: req.params.roleId, ...buildRoleFilter(req) },
       req.body,
       { new: true }
     ).populate('permissions');
@@ -106,7 +114,7 @@ const addPermissionToRole = async (req, res) => {
     }
 
     const role = await Role.findByIdAndUpdate(
-      req.params.roleId,
+      { _id: req.params.roleId, ...buildRoleFilter(req) },
       { $addToSet: { permissions: permissionId } },
       { new: true }
     ).populate('permissions');
@@ -131,7 +139,7 @@ const removePermissionFromRole = async (req, res) => {
     }
 
     const role = await Role.findByIdAndUpdate(
-      req.params.roleId,
+      { _id: req.params.roleId, ...buildRoleFilter(req) },
       { $pull: { permissions: permissionId } },
       { new: true }
     ).populate('permissions');
@@ -149,7 +157,11 @@ const removePermissionFromRole = async (req, res) => {
 // Delete role
 const deleteRole = async (req, res) => {
   try {
-    const role = await Role.findByIdAndDelete(req.params.roleId);
+    const role = await Role.findOneAndUpdate(
+      { _id: req.params.roleId, ...buildRoleFilter(req) },
+      { isDeleted: true, deletedAt: new Date(), isActive: false },
+      { new: true }
+    );
 
     if (!role) {
       return res.status(404).json({ success: false, message: 'Role not found' });
@@ -170,7 +182,9 @@ const getUserPermissions = async (req, res) => {
   try {
     const userRole = await UserRole.findOne({
       userId: req.params.userId,
+      companyId: resolveCompanyId(req),
       tenantId: req.tenantId,
+      isDeleted: false,
     }).populate({
       path: 'roleId',
       populate: { path: 'permissions' },
@@ -209,6 +223,7 @@ const assignRoleToUser = async (req, res) => {
     // Remove existing role
     await UserRole.deleteOne({
       userId: req.params.userId,
+      companyId: resolveCompanyId(req),
       tenantId: req.tenantId,
     });
 
@@ -217,6 +232,7 @@ const assignRoleToUser = async (req, res) => {
       userId: req.params.userId,
       roleId,
       tenantId: req.tenantId,
+      companyId: resolveCompanyId(req),
     });
 
     await userRole.save();

@@ -8,7 +8,6 @@ import { MvpWorkflowService } from '../../services/mvp-workflow.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
 import { MetricCardComponent, MetricData } from '../../shared/components/metric-card';
-import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 interface MenuItem {
   label: string;
@@ -27,7 +26,7 @@ interface CurrentUser {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, MetricCardComponent, HasPermissionDirective],
+  imports: [CommonModule, RouterModule, MetricCardComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })

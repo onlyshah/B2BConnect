@@ -1,11 +1,36 @@
-// Followup controller for follow-up task management
-// This can be expanded with Followup model later
+const SalesmanFollowup = require('../models/SalesmanFollowup');
+
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+const buildFilter = (req, extra = {}) => ({
+  companyId: resolveCompanyId(req),
+  ...extra,
+});
 
 const getFollowups = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const filter = buildFilter(req);
+    if (req.query.salesmanId) filter.salesmanId = req.query.salesmanId;
+    if (req.query.retailerId) filter.retailerId = req.query.retailerId;
+    if (req.query.status) filter.status = req.query.status;
+
+    const followups = await SalesmanFollowup.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort({ followUpDate: 1 })
+      .populate('salesmanId')
+      .populate('retailerId');
+
+    const total = await SalesmanFollowup.countDocuments(filter);
+
     res.json({
       success: true,
-      data: [],
+      data: followups,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
       message: 'Get follow-ups list',
     });
   } catch (error) {
@@ -15,9 +40,20 @@ const getFollowups = async (req, res) => {
 
 const getFollowupById = async (req, res) => {
   try {
+    const followup = await SalesmanFollowup.findOne({
+      _id: req.params.id,
+      ...buildFilter(req),
+    })
+      .populate('salesmanId')
+      .populate('retailerId');
+
+    if (!followup) {
+      return res.status(404).json({ success: false, message: 'Follow-up not found' });
+    }
+
     res.json({
       success: true,
-      data: {},
+      data: followup,
       message: 'Get follow-up',
     });
   } catch (error) {
@@ -27,26 +63,31 @@ const getFollowupById = async (req, res) => {
 
 const createFollowup = async (req, res) => {
   try {
-    const { title, description, dueDate } = req.body;
+    const { salesmanId, retailerId, followUpDate, notes, status } = req.body;
 
-    if (!title || !description) {
+    if (!salesmanId || !retailerId || !followUpDate) {
       return res.status(400).json({
         success: false,
-        message: 'Title and description are required',
+        message: 'salesmanId, retailerId, and followUpDate are required',
       });
     }
 
+    const followup = new SalesmanFollowup({
+      companyId: resolveCompanyId(req),
+      salesmanId,
+      retailerId,
+      followUpDate,
+      notes: notes || '',
+      status: status || 'open',
+    });
+
+    await followup.save();
+    await followup.populate('salesmanId');
+    await followup.populate('retailerId');
+
     res.status(201).json({
       success: true,
-      data: {
-        _id: Date.now(),
-        title,
-        description,
-        dueDate,
-        status: 'pending',
-        tenantId: req.tenantId,
-        createdAt: new Date(),
-      },
+      data: followup,
       message: 'Follow-up created',
     });
   } catch (error) {
@@ -56,18 +97,19 @@ const createFollowup = async (req, res) => {
 
 const updateFollowup = async (req, res) => {
   try {
-    const { status } = req.body;
+    const followup = await SalesmanFollowup.findOneAndUpdate(
+      { _id: req.params.id, ...buildFilter(req) },
+      { ...req.body, updatedAt: new Date() },
+      { new: true }
+    ).populate('salesmanId').populate('retailerId');
 
-    if (!status) {
-      return res.status(400).json({
-        success: false,
-        message: 'Status is required',
-      });
+    if (!followup) {
+      return res.status(404).json({ success: false, message: 'Follow-up not found' });
     }
 
     res.json({
       success: true,
-      data: { _id: req.params.id, status, updatedAt: new Date() },
+      data: followup,
       message: 'Follow-up updated',
     });
   } catch (error) {

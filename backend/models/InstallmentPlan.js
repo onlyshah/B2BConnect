@@ -9,6 +9,7 @@ const installmentSchema = new mongoose.Schema({
 }, { _id: false });
 
 const installmentPlanSchema = new mongoose.Schema({
+  companyId: { type: String, required: true, index: true },
   tenantId: { type: String, required: true, index: true },
   invoiceId: { type: String, required: true, index: true },
   retailerId: { type: String, required: true, index: true },
@@ -17,10 +18,12 @@ const installmentPlanSchema = new mongoose.Schema({
   creditDays: { type: Number, default: 0 },
   installments: [installmentSchema],
   status: { type: String, enum: ['active', 'completed', 'defaulted', 'cancelled'], default: 'active' },
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
-installmentPlanSchema.index({ tenantId: 1, retailerId: 1, status: 1 });
+installmentPlanSchema.index({ companyId: 1, retailerId: 1, status: 1 });
 
 module.exports = mongoose.model('InstallmentPlan', installmentPlanSchema, 'installment_plans');

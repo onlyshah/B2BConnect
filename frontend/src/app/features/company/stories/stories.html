@@ -1,6 +1,24 @@
 <div class="stories">
-  <h3>Stories</h3>
-  <p>Brand stories and updates</p>
-  <button>Create Story</button>
-  <ul><li>No stories</li></ul>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3>Stories</h3>
+      <p class="text-muted mb-0">Brand stories and updates</p>
+    </div>
+    <button class="btn btn-primary btn-sm" type="button" (click)="loadStories()">Refresh</button>
+  </div>
+
+  <div *ngIf="loading" class="text-center text-muted py-4">Loading stories...</div>
+  <div *ngIf="!loading && message" class="text-danger py-3">{{ message }}</div>
+
+  <div *ngIf="!loading && stories.length > 0" class="row g-3">
+    <div class="col-12 col-md-6" *ngFor="let story of stories">
+      <div class="card p-3 h-100">
+        <h5>{{ story.title || 'Untitled story' }}</h5>
+        <p class="text-muted mb-2">{{ story.type || 'Story' }} • {{ story.publishedAt | date:'mediumDate' }}</p>
+        <p>{{ story.cta?.text || story.contentUrl || story.description || 'No details available.' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !stories.length" class="text-center text-muted py-4">No stories found.</div>
 </div>

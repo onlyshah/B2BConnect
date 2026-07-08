@@ -8,6 +8,10 @@ import { API_ENDPOINTS } from '../constants/api-endpoints';
 export class AnalyticsService {
   constructor(private apiService: ApiService) {}
 
+  getSummary(filters?: any): Observable<any> {
+    return this.apiService.get(API_ENDPOINTS.ANALYTICS.GET_SUMMARY, filters).pipe(map((r: ApiResponse) => r.data));
+  }
+
   getSalesAnalytics(filters?: any): Observable<any> {
     return this.apiService.get(API_ENDPOINTS.ANALYTICS.GET_SALES, filters).pipe(map((r: ApiResponse) => r.data));
   }

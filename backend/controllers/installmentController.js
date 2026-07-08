@@ -1,6 +1,13 @@
 const InstallmentPlan = require('../models/InstallmentPlan');
 
-// Get all installment plans
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+const buildFilter = (req, extra = {}) => ({
+  companyId: resolveCompanyId(req),
+  isDeleted: false,
+  ...extra,
+});
+
 const getInstallmentPlans = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -8,7 +15,7 @@ const getInstallmentPlans = async (req, res) => {
     const skip = (page - 1) * limit;
     const { invoiceId, retailerId, status } = req.query;
 
-    const filter = { tenantId: req.tenantId };
+    const filter = buildFilter(req);
     if (invoiceId) filter.invoiceId = invoiceId;
     if (retailerId) filter.retailerId = retailerId;
     if (status) filter.status = status;
@@ -32,10 +39,9 @@ const getInstallmentPlans = async (req, res) => {
   }
 };
 
-// Create installment plan
 const createInstallmentPlan = async (req, res) => {
   try {
-    const { invoiceId, retailerId, installments } = req.body;
+    const { invoiceId, retailerId, installments, totalAmount } = req.body;
 
     if (!invoiceId || !retailerId || !installments) {
       return res.status(400).json({
@@ -46,7 +52,8 @@ const createInstallmentPlan = async (req, res) => {
 
     const plan = new InstallmentPlan({
       ...req.body,
-      tenantId: req.tenantId,
+      companyId: resolveCompanyId(req),
+      totalAmount: totalAmount || req.body.totalAmount || 0,
       status: 'active',
     });
 
@@ -60,14 +67,13 @@ const createInstallmentPlan = async (req, res) => {
   }
 };
 
-// Update installment
 const updateInstallment = async (req, res) => {
   try {
     const { planId, installmentIndex } = req.params;
 
     const plan = await InstallmentPlan.findOne({
       _id: planId,
-      tenantId: req.tenantId,
+      ...buildFilter(req),
     });
 
     if (!plan) {

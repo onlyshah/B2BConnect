@@ -16,6 +16,12 @@ const auditLogSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Company',
+      required: true,
+      index: true,
+    },
     // Permission being used
     permission: {
       type: String,
@@ -101,13 +107,21 @@ const auditLogSchema = new mongoose.Schema(
       default: Date.now,
       index: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { collection: 'audit_logs' }
 );
 
 // Indexes for common queries
 auditLogSchema.index({ userId: 1, timestamp: -1 });
-auditLogSchema.index({ tenantId: 1, timestamp: -1 });
+auditLogSchema.index({ companyId: 1, timestamp: -1 });
 auditLogSchema.index({ module: 1, action: 1, timestamp: -1 });
 auditLogSchema.index({ entityType: 1, entityId: 1 });
 

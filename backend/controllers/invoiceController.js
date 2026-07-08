@@ -1,4 +1,14 @@
 const Invoice = require('../models/Invoice');
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+function buildInvoiceFilter(req, extra = {}) {
+  return {
+    tenantId: req.tenantId,
+    companyId: resolveCompanyId(req),
+    isDeleted: false,
+    ...extra,
+  };
+}
 
 // Get all invoices
 const getInvoices = async (req, res) => {
@@ -8,7 +18,7 @@ const getInvoices = async (req, res) => {
     const skip = (page - 1) * limit;
     const { retailerId, distributorId, status } = req.query;
 
-    const filter = { tenantId: req.tenantId };
+    const filter = buildInvoiceFilter(req);
     if (retailerId) filter.retailerId = retailerId;
     if (distributorId) filter.distributorId = distributorId;
     if (status) filter.status = status;
@@ -37,7 +47,7 @@ const getInvoice = async (req, res) => {
   try {
     const invoice = await Invoice.findOne({
       _id: req.params.invoiceId,
-      tenantId: req.tenantId,
+      ...buildInvoiceFilter(req),
     })
       .populate('retailerId')
       .populate('distributorId');
@@ -67,6 +77,7 @@ const createInvoice = async (req, res) => {
     const invoice = new Invoice({
       ...req.body,
       tenantId: req.tenantId,
+      companyId: resolveCompanyId(req),
       status: 'issued',
       amountPaid: 0,
     });
@@ -85,7 +96,7 @@ const createInvoice = async (req, res) => {
 const updateInvoice = async (req, res) => {
   try {
     const invoice = await Invoice.findOneAndUpdate(
-      { _id: req.params.invoiceId, tenantId: req.tenantId },
+      { _id: req.params.invoiceId, ...buildInvoiceFilter(req) },
       req.body,
       { new: true }
     )
@@ -106,7 +117,7 @@ const updateInvoice = async (req, res) => {
 const getOutstandingSummary = async (req, res) => {
   try {
     const { retailerId, distributorId } = req.query;
-    const filter = { tenantId: req.tenantId, status: { $in: ['issued', 'overdue'] } };
+    const filter = { ...buildInvoiceFilter(req), status: { $in: ['issued', 'overdue'] } };
     if (retailerId) filter.retailerId = retailerId;
     if (distributorId) filter.distributorId = distributorId;
 
@@ -144,7 +155,7 @@ const markInvoiceAsPaid = async (req, res) => {
     }
 
     const invoice = await Invoice.findOneAndUpdate(
-      { _id: req.params.invoiceId, tenantId: req.tenantId },
+      { _id: req.params.invoiceId, ...buildInvoiceFilter(req) },
       {
         amountPaid,
         status: 'paid',
@@ -168,10 +179,11 @@ const markInvoiceAsPaid = async (req, res) => {
 // Delete invoice
 const deleteInvoice = async (req, res) => {
   try {
-    const invoice = await Invoice.findOneAndDelete({
-      _id: req.params.invoiceId,
-      tenantId: req.tenantId,
-    });
+    const invoice = await Invoice.findOneAndUpdate(
+      { _id: req.params.invoiceId, ...buildInvoiceFilter(req) },
+      { isDeleted: true, deletedAt: new Date(), status: 'cancelled' },
+      { new: true }
+    );
 
     if (!invoice) {
       return res.status(404).json({ success: false, message: 'Invoice not found' });

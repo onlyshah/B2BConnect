@@ -36,6 +36,12 @@ const roleSchema = new mongoose.Schema(
       // For company, distributor scoped roles
       // null for platform roles
     },
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Company',
+      index: true,
+      default: null,
+    },
     parentTenantId: {
       type: mongoose.Schema.Types.ObjectId,
       // For super admin managing tenant roles
@@ -95,13 +101,21 @@ const roleSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { collection: 'roles' }
 );
 
 // Indexes for common queries
-roleSchema.index({ tenantId: 1, scope: 1 });
+roleSchema.index({ companyId: 1, scope: 1 });
 roleSchema.index({ roleType: 1, isActive: 1 });
-roleSchema.index({ name: 1, tenantId: 1 });
+roleSchema.index({ name: 1, companyId: 1 });
 
 module.exports = mongoose.model('Role', roleSchema);

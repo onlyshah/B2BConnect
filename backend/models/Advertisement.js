@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const advertisementSchema = new mongoose.Schema({
-  tenantId: { type: String, required: true, index: true },
-  companyId: { type: String, required: true },
-  name: String,
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
+  tenantId: { type: mongoose.Schema.Types.Mixed, default: null },
+  name: { type: String, required: true, trim: true },
   adType: { type: String, enum: ['banner', 'featured', 'sponsored', 'story'] },
   mediaUrl: { type: String, required: true },
   targeting: {
@@ -24,10 +24,12 @@ const advertisementSchema = new mongoose.Schema({
     ctr: Number,
     conversionRate: Number
   },
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true, versionKey: '__v' });
 
-advertisementSchema.index({ tenantId: 1, companyId: 1, status: 1 });
+advertisementSchema.index({ companyId: 1, status: 1 });
 
 module.exports = mongoose.model('Advertisement', advertisementSchema);

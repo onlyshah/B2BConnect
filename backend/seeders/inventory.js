@@ -1,6 +1,7 @@
 const Inventory = require('../models/Inventory');
 const Distributor = require('../models/Distributor');
 const Product = require('../models/Product');
+const Company = require('../models/Company');
 
 const seedInventory = async () => {
   try {
@@ -8,6 +9,13 @@ const seedInventory = async () => {
     if (existingCount > 0) {
       console.log('✓ Inventory already exists');
       return [];
+    }
+
+    const company = await Company.findOne({
+      tenantId: '000000000000000000000001',
+    });
+    if (!company) {
+      throw new Error('Company not found. Seed companies first.');
     }
 
     const distributors = await Distributor.find({
@@ -32,8 +40,9 @@ const seedInventory = async () => {
 
         inventory.push({
           tenantId: '000000000000000000000001',
-          distributorId: distributor._id,
-          productId: product._id,
+          companyId: company._id.toString(),
+          distributorId: distributor._id.toString(),
+          productId: product._id.toString(),
           stockOnHand,
           reorderLevel,
           reorderQuantity,

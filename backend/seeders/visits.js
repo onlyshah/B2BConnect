@@ -37,6 +37,7 @@ const seedVisits = async () => {
       const checkOutTime = new Date(visitDate.getTime() + 45 * 60 * 1000);
 
       visits.push({
+        companyId: company._id,
         tenantId: company._id,
         salesman: salesman._id,
         retailer: retailer._id,

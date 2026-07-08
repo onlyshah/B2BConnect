@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const reviewSchema = new mongoose.Schema({
+  companyId: { type: String, required: true, index: true },
   tenantId: { type: String, required: true, index: true },
   productId: { type: String, required: true },
   retailerId: { type: String, required: true },
@@ -8,10 +9,12 @@ const reviewSchema = new mongoose.Schema({
   comment: String,
   feedbackType: { type: String, enum: ['positive', 'negative', 'neutral'] },
   verified: { type: Boolean, default: false },
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
-reviewSchema.index({ tenantId: 1, productId: 1, retailerId: 1 });
+reviewSchema.index({ companyId: 1, productId: 1, retailerId: 1 });
 
 module.exports = mongoose.model('Review', reviewSchema);

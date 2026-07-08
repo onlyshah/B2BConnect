@@ -1,6 +1,13 @@
 const ReturnClaim = require('../models/Return');
 
-// Get all return claims
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+const buildReturnFilter = (req, extra = {}) => ({
+  companyId: resolveCompanyId(req),
+  isDeleted: false,
+  ...extra,
+});
+
 const getReturns = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -8,7 +15,7 @@ const getReturns = async (req, res) => {
     const skip = (page - 1) * limit;
     const { retailerId, distributorId, status } = req.query;
 
-    const filter = { tenantId: req.tenantId };
+    const filter = buildReturnFilter(req);
     if (retailerId) filter.retailerId = retailerId;
     if (distributorId) filter.distributorId = distributorId;
     if (status) filter.status = status;
@@ -33,12 +40,11 @@ const getReturns = async (req, res) => {
   }
 };
 
-// Get single return claim
 const getReturn = async (req, res) => {
   try {
     const claim = await ReturnClaim.findOne({
       _id: req.params.returnId,
-      tenantId: req.tenantId,
+      ...buildReturnFilter(req),
     })
       .populate('retailerId')
       .populate('distributorId')
@@ -54,10 +60,10 @@ const getReturn = async (req, res) => {
   }
 };
 
-// Create return claim
 const createReturn = async (req, res) => {
   try {
-    const { retailerId, distributorId, items, reason } = req.body;
+    const { retailerId, distributorId, items } = req.body;
+    const companyId = resolveCompanyId(req);
 
     if (!retailerId || !distributorId || !items || items.length === 0) {
       return res.status(400).json({
@@ -68,7 +74,7 @@ const createReturn = async (req, res) => {
 
     const claim = new ReturnClaim({
       ...req.body,
-      tenantId: req.tenantId,
+      companyId,
       status: 'pending',
     });
 
@@ -83,7 +89,6 @@ const createReturn = async (req, res) => {
   }
 };
 
-// Update return claim status
 const updateReturnStatus = async (req, res) => {
   try {
     const { status, resolutionNotes } = req.body;
@@ -93,7 +98,7 @@ const updateReturnStatus = async (req, res) => {
     }
 
     const claim = await ReturnClaim.findOneAndUpdate(
-      { _id: req.params.returnId, tenantId: req.tenantId },
+      { _id: req.params.returnId, ...buildReturnFilter(req) },
       {
         status,
         resolutionNotes,
@@ -115,13 +120,13 @@ const updateReturnStatus = async (req, res) => {
   }
 };
 
-// Delete return claim
 const deleteReturn = async (req, res) => {
   try {
-    const claim = await ReturnClaim.findOneAndDelete({
-      _id: req.params.returnId,
-      tenantId: req.tenantId,
-    });
+    const claim = await ReturnClaim.findOneAndUpdate(
+      { _id: req.params.returnId, ...buildReturnFilter(req) },
+      { isDeleted: true, deletedAt: new Date(), status: 'cancelled' },
+      { new: true }
+    );
 
     if (!claim) {
       return res.status(404).json({ success: false, message: 'Return claim not found' });

@@ -1,6 +1,13 @@
 const Review = require('../models/Review');
 
-// Get all reviews
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+const buildReviewFilter = (req, extra = {}) => ({
+  companyId: resolveCompanyId(req),
+  isDeleted: false,
+  ...extra,
+});
+
 const getReviews = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -8,7 +15,7 @@ const getReviews = async (req, res) => {
     const skip = (page - 1) * limit;
     const { productId, retailerId } = req.query;
 
-    const filter = { tenantId: req.tenantId };
+    const filter = buildReviewFilter(req);
     if (productId) filter.productId = productId;
     if (retailerId) filter.retailerId = retailerId;
 
@@ -31,7 +38,6 @@ const getReviews = async (req, res) => {
   }
 };
 
-// Create review
 const createReview = async (req, res) => {
   try {
     const { productId, retailerId, rating } = req.body;
@@ -45,6 +51,7 @@ const createReview = async (req, res) => {
 
     const review = new Review({
       ...req.body,
+      companyId: resolveCompanyId(req),
       tenantId: req.tenantId,
     });
 

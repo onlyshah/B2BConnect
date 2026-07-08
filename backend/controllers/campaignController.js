@@ -1,4 +1,14 @@
-const Advertisement = require('../models/Advertisement');
+const Campaign = require('../models/Campaign');
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+function buildCampaignFilter(req, extra = {}) {
+  return {
+    tenantId: req.tenantId,
+    companyId: resolveCompanyId(req),
+    isDeleted: false,
+    ...extra,
+  };
+}
 
 // Get campaigns/ads
 const getCampaigns = async (req, res) => {
@@ -7,12 +17,12 @@ const getCampaigns = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const campaigns = await Advertisement.find({ tenantId: req.tenantId, companyId: req.user.companyId })
+    const campaigns = await Campaign.find(buildCampaignFilter(req))
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    const total = await Advertisement.countDocuments({ tenantId: req.tenantId, companyId: req.user.companyId });
+    const total = await Campaign.countDocuments(buildCampaignFilter(req));
 
     res.json({ success: true, data: campaigns, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
   } catch (error) {
@@ -26,10 +36,10 @@ const createCampaign = async (req, res) => {
     const { mediaUrl } = req.body;
     if (!mediaUrl) return res.status(400).json({ success: false, message: 'mediaUrl is required' });
 
-    const campaign = new Advertisement({
+    const campaign = new Campaign({
       ...req.body,
       tenantId: req.tenantId,
-      companyId: req.user.companyId,
+      companyId: resolveCompanyId(req),
     });
 
     await campaign.save();
@@ -42,8 +52,8 @@ const createCampaign = async (req, res) => {
 // Update campaign
 const updateCampaign = async (req, res) => {
   try {
-    const campaign = await Advertisement.findOneAndUpdate(
-      { _id: req.params.campaignId, tenantId: req.tenantId, companyId: req.user.companyId },
+    const campaign = await Campaign.findOneAndUpdate(
+      { _id: req.params.campaignId, ...buildCampaignFilter(req) },
       req.body,
       { new: true }
     );
@@ -57,7 +67,11 @@ const updateCampaign = async (req, res) => {
 // Delete campaign
 const deleteCampaign = async (req, res) => {
   try {
-    const campaign = await Advertisement.findOneAndDelete({ _id: req.params.campaignId, tenantId: req.tenantId, companyId: req.user.companyId });
+    const campaign = await Campaign.findOneAndUpdate(
+      { _id: req.params.campaignId, ...buildCampaignFilter(req) },
+      { isDeleted: true, deletedAt: new Date(), status: 'archived' },
+      { new: true }
+    );
     if (!campaign) return res.status(404).json({ success: false, message: 'Campaign not found' });
     res.json({ success: true, message: 'Campaign deleted' });
   } catch (error) {

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const Distributor = require('../models/Distributor');
 const Retailer = require('../models/Retailer');
@@ -8,37 +9,39 @@ const Sample = require('../models/Sample');
 const ReturnClaim = require('../models/Return');
 const Review = require('../models/Review');
 const Story = require('../models/Story');
-const Advertisement = require('../models/Advertisement');
+const Campaign = require('../models/Campaign');
 const Scheme = require('../models/Scheme');
 const { buildVisibilityFilter } = require('../middleware/ownership');
 
-// Get analytics summary
+const resolveCompanyId = (req) => req.user?.companyId || req.query?.companyId || req.body?.companyId || req.tenantId;
+
+const buildCompanyFilter = (req, extra = {}) => {
+  const companyId = resolveCompanyId(req);
+  return {
+    companyId,
+    isDeleted: false,
+    ...extra,
+  };
+};
+
+const buildEntityFilter = (req, entity, extra = {}) =>
+  buildVisibilityFilter(req, req.user?.role || 'super-admin', entity, extra);
+
 const getSummary = async (req, res) => {
   try {
-    const { companyId, distributorId } = req.query;
-    const tenantFilter = { tenantId: req.tenantId };
-    const roleFilter = buildVisibilityFilter(req, req.user?.role || 'super-admin', 'retailer');
-    const companyFilter = companyId ? { ...tenantFilter, companyId } : tenantFilter;
-    const companyAwareFilter = {
-      ...roleFilter,
-      ...(companyId ? { companyId } : {}),
-      ...(distributorId ? { distributorId } : {}),
-    };
-
-    const distributorEntityFilter = {
-      ...companyFilter,
-      ...(distributorId ? { _id: distributorId } : {}),
-    };
+    const { distributorId } = req.query;
+    const companyFilter = buildCompanyFilter(req);
+    const companyAwareFilter = buildEntityFilter(req, 'retailer', distributorId ? { distributorId } : {});
+    const orderFilter = buildEntityFilter(req, 'order', distributorId ? { distributorId } : {});
 
     const distributorIds = distributorId
       ? [distributorId]
-      : (await Distributor.find(companyFilter).select('_id')).map((item) =>
-          item._id.toString()
-        );
+      : (await Distributor.find(companyFilter).select('_id')).map((item) => item._id.toString());
 
     const distributorOnlyFilter = {
-      ...tenantFilter,
-      ...((companyId || distributorId) ? { distributorId: { $in: distributorIds } } : {}),
+      companyId: companyFilter.companyId,
+      isDeleted: false,
+      ...(distributorIds.length ? { distributorId: { $in: distributorIds } } : {}),
     };
 
     const [
@@ -58,11 +61,14 @@ const getSummary = async (req, res) => {
       activeSchemeCount,
     ] = await Promise.all([
       Product.countDocuments(companyFilter),
-      Distributor.countDocuments(distributorEntityFilter),
+      Distributor.countDocuments({
+        ...companyFilter,
+        ...(distributorId ? { _id: distributorId } : {}),
+      }),
       Retailer.countDocuments({ ...companyAwareFilter, status: 'active' }),
       Retailer.countDocuments({ ...companyAwareFilter, status: 'pending' }),
-      Order.countDocuments({ ...companyAwareFilter, status: 'pending' }),
-      Order.countDocuments({ ...companyAwareFilter, status: 'delivered' }),
+      Order.countDocuments({ ...orderFilter, status: 'pending' }),
+      Order.countDocuments({ ...orderFilter, status: 'delivered' }),
       Invoice.find({ ...distributorOnlyFilter, status: { $in: ['issued', 'overdue'] } }),
       Inventory.find(distributorOnlyFilter),
       Sample.countDocuments({ ...companyAwareFilter, status: 'requested' }),
@@ -70,9 +76,9 @@ const getSummary = async (req, res) => {
         ...companyAwareFilter,
         status: { $in: ['submitted', 'under-review'] },
       }),
-      Review.find(tenantFilter).select('rating'),
+      Review.find(companyFilter).select('rating'),
       Story.countDocuments({ ...companyFilter, status: 'published' }),
-      Advertisement.countDocuments({ ...companyFilter, status: 'active' }),
+      Campaign.countDocuments({ ...companyFilter, status: 'active' }),
       Scheme.countDocuments({ ...companyFilter, status: 'active' }),
     ]);
 
@@ -130,14 +136,10 @@ const getSummary = async (req, res) => {
   }
 };
 
-// Get sales performance
 const getSalesPerformance = async (req, res) => {
   try {
-    const { companyId, distributorId, startDate, endDate } = req.query;
-
-    const filter = buildVisibilityFilter(req, req.user?.role || 'super-admin', 'order');
-    if (companyId) filter.companyId = companyId;
-    if (distributorId) filter.distributorId = distributorId;
+    const { distributorId, startDate, endDate } = req.query;
+    const filter = buildEntityFilter(req, 'order', distributorId ? { distributorId } : {});
 
     if (startDate || endDate) {
       filter.createdAt = {};
@@ -168,23 +170,18 @@ const getSalesPerformance = async (req, res) => {
   }
 };
 
-// Get inventory performance
 const getInventoryPerformance = async (req, res) => {
   try {
     const { distributorId } = req.query;
-
-    const filter = { tenantId: req.tenantId };
-    if (distributorId) filter.distributorId = distributorId;
+    const filter = buildCompanyFilter(req, distributorId ? { distributorId } : {});
 
     const inventory = await Inventory.find(filter).populate('productId');
-
     const lowStockItems = inventory.filter(
-      (item) =>
-        item.reorderLevel !== undefined && item.stockOnHand <= item.reorderLevel
+      (item) => item.reorderLevel !== undefined && item.stockOnHand <= item.reorderLevel
     );
 
     const totalValue = inventory.reduce(
-      (sum, item) => sum + (item.stockOnHand * (item.productId?.mrp || 0)),
+      (sum, item) => sum + item.stockOnHand * (item.productId?.mrp || 0),
       0
     );
 
@@ -194,9 +191,7 @@ const getInventoryPerformance = async (req, res) => {
         totalItems: inventory.length,
         lowStockItems: lowStockItems.length,
         totalInventoryValue: Math.round(totalValue * 100) / 100,
-        topItems: inventory
-          .sort((a, b) => b.stockOnHand - a.stockOnHand)
-          .slice(0, 10),
+        topItems: inventory.sort((a, b) => b.stockOnHand - a.stockOnHand).slice(0, 10),
       },
     });
   } catch (error) {

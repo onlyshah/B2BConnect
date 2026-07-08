@@ -1,13 +1,135 @@
-<div class="territories">
-  <h3>Territories</h3>
-  <p>Manage operating territories (Country → State → City → Area → Pincode)</p>
-  <button>Add Territory</button>
-  <ul>
-    <li>Gujarat
-      <ul><li>Vadodara</li><li>Ahmedabad</li><li>Surat</li></ul>
-    </li>
-    <li>Maharashtra
-      <ul><li>Mumbai</li><li>Pune</li></ul>
-    </li>
-  </ul>
-</div>
+<section class="territory-page container-fluid px-0">
+  <div class="page-header d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+    <div>
+      <small class="text-uppercase text-muted">Territory management</small>
+      <h2 class="mb-1">Company territories</h2>
+      <p class="text-muted mb-0">Maintain state, city and area coverage with a hierarchical territory model for the enterprise.</p>
+    </div>
+  </div>
+  
+
+  <div class="row g-12">
+    <div class="col-12 col-xl-12">
+      <div class="card p-3 mb-4">
+        <h5 class="mb-3">Create territory</h5>
+        <div class="row g-3">
+          <div class="col-12 col-sm-6 col-lg-3">
+            <label class="form-label">Country</label>
+            <div class="dropdown-select position-relative">
+              <button type="button" class="form-control form-select form-select-sm text-start d-flex justify-content-between align-items-center" (click)="toggleCountryDropdown()" [class.disabled]="!countries.length">
+                <span>{{ selectedCountry || 'Select country' }}</span>
+                <span class="dropdown-caret">▾</span>
+              </button>
+              <div class="dropdown-panel shadow-sm bg-white border rounded" *ngIf="countryDropdownOpen">
+                <input type="text" class="form-control form-control-sm mb-2" placeholder="Search country" [(ngModel)]="countrySearch" (input)="filterCountries()" />
+                <button type="button" class="dropdown-item" *ngFor="let country of filteredCountries" (click)="selectCountry(country)">{{ country }}</button>
+                <div class="dropdown-item text-muted" *ngIf="!filteredCountries.length">No countries found</div>
+              </div>
+              <div *ngIf="validationErrors.country" class="text-danger small mt-1">{{ validationErrors.country }}</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <label class="form-label">State</label>
+            <div class="dropdown-select position-relative">
+              <button type="button" class="form-control form-select form-select-sm text-start d-flex justify-content-between align-items-center" (click)="toggleStateDropdown()" [class.disabled]="!states.length">
+                <span>{{ selectedState || 'Select state' }}</span>
+                <span class="dropdown-caret">▾</span>
+              </button>
+              <div class="dropdown-panel shadow-sm bg-white border rounded" *ngIf="stateDropdownOpen">
+                <input type="text" class="form-control form-control-sm mb-2" placeholder="Search state" [(ngModel)]="stateSearch" (input)="filterStates()" />
+                <button type="button" class="dropdown-item" *ngFor="let state of filteredStates" (click)="selectState(state)">{{ state }}</button>
+                <div class="dropdown-item text-muted" *ngIf="!filteredStates.length">No states found</div>
+              </div>
+              <div *ngIf="validationErrors.state" class="text-danger small mt-1">{{ validationErrors.state }}</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <label class="form-label">City</label>
+            <div class="dropdown-select position-relative">
+              <button type="button" class="form-control form-select form-select-sm text-start d-flex justify-content-between align-items-center" (click)="toggleCityDropdown()" [class.disabled]="!cities.length">
+                <span>{{ selectedCity || 'Select city' }}</span>
+                <span class="dropdown-caret">▾</span>
+              </button>
+              <div class="dropdown-panel shadow-sm bg-white border rounded" *ngIf="cityDropdownOpen">
+                <input type="text" class="form-control form-control-sm mb-2" placeholder="Search city" [(ngModel)]="citySearch" (input)="filterCities()" />
+                <button type="button" class="dropdown-item" *ngFor="let city of filteredCities" (click)="selectCity(city)">{{ city }}</button>
+                <div class="dropdown-item text-muted" *ngIf="!filteredCities.length">No cities found</div>
+              </div>
+              <div *ngIf="validationErrors.city" class="text-danger small mt-1">{{ validationErrors.city }}</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <label class="form-label">Area</label>
+            <div class="dropdown-select position-relative">
+              <button type="button" class="form-control form-select form-select-sm text-start d-flex justify-content-between align-items-center" (click)="toggleAreaDropdown()" [class.disabled]="!areas.length">
+                <span>{{ selectedArea || 'Select area' }}</span>
+                <span class="dropdown-caret">▾</span>
+              </button>
+              <div class="dropdown-panel shadow-sm bg-white border rounded" *ngIf="areaDropdownOpen">
+                <input type="text" class="form-control form-control-sm mb-2" placeholder="Search area" [(ngModel)]="areaSearch" (input)="filterAreas()" />
+                <button type="button" class="dropdown-item" *ngFor="let area of filteredAreas" (click)="selectArea(area)">{{ area }}</button>
+                <div class="dropdown-item text-muted" *ngIf="!filteredAreas.length">No areas found</div>
+              </div>
+              <div *ngIf="validationErrors.area" class="text-danger small mt-1">{{ validationErrors.area }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <button class="btn btn-outline-primary btn-sm" type="button" (click)="addTerritory()" [disabled]="!selectedCountry || !selectedState || !selectedCity || !selectedArea || savingTerritory">
+            Save territory
+          </button>
+        </div>
+      </div>
+
+      
+    </div>
+   
+    <div class="col-12 col-xl-12">
+  
+      <div class="card p-3 mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-3">
+          <h5 class="mb-0">Territory table</h5>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge bg-primary">States {{ territories.length }}</span>
+            <span class="badge bg-secondary">Cities {{ territories.reduce((sum, item) => sum + item.cities.length, 0) }}</span>
+            <span class="badge bg-info text-dark">Areas {{ territories.reduce((sum, item) => sum + item.cities.reduce((c, city) => c + city.areas.length, 0), 0) }}</span>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover">
+            <thead>
+              <tr>
+                <th>State</th>
+                <th>City</th>
+                <th>Areas</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="loading">
+                <td colspan="4" class="text-center py-4 text-muted">Loading territories...</td>
+              </tr>
+              <tr *ngIf="!loading && !territoryRows.length">
+                <td colspan="4" class="text-center py-4 text-muted">No territories found yet. Create one using the form above.</td>
+              </tr>
+              <tr *ngFor="let row of territoryRows">
+                <td>{{ row.state.state }}</td>
+                <td>{{ row.city.name }}</td>
+                <td>
+                  <span class="badge bg-light text-dark me-1" *ngFor="let area of row.city.areas">{{ area }}</span>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-secondary me-1" type="button" (click)="startEditCity(row.city)">Edit city</button>
+                  <button class="btn btn-sm btn-outline-danger" type="button" (click)="removeCity(row.state, row.city)">Delete city</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+     
+    </div>
+  </div>
+</section>

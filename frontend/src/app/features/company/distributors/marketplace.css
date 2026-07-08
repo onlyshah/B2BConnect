@@ -1,1 +1,39 @@
-.distributor-marketplace{ padding:16px }
+.distributor-marketplace {
+  padding: 1rem;
+}
+
+.distributor-marketplace .card-body {
+  padding: 1.5rem;
+}
+
+.distributor-marketplace table {
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+}
+
+.distributor-marketplace tbody tr {
+  background: #ffffff;
+  border-radius: 0.75rem;
+}
+
+.distributor-marketplace tbody tr td,
+.distributor-marketplace thead th {
+  vertical-align: middle;
+  border: none;
+}
+
+.distributor-marketplace .badge {
+  font-size: 0.85rem;
+  padding: 0.55em 0.75em;
+}
+
+.distributor-marketplace .btn {
+  min-width: 90px;
+}
+
+@media (max-width: 767px) {
+  .distributor-marketplace {
+    padding: 0.75rem;
+  }
+}
+

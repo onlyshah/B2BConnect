@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const visitSchema = new mongoose.Schema({
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
   tenantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
   
   salesman: { type: mongoose.Schema.Types.ObjectId, ref: 'Salesman', required: true, index: true },
@@ -36,12 +37,14 @@ const visitSchema = new mongoose.Schema({
   }],
   
   photos: [String],
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
-visitSchema.index({ tenantId: 1, salesman: 1, visitDate: -1 });
+visitSchema.index({ companyId: 1, salesman: 1, visitDate: -1 });
 visitSchema.index({ retailer: 1, visitDate: -1 });
 visitSchema.index({ 'geoLocation': '2dsphere' });
 

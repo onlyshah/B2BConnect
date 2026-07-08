@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const attendanceSchema = new mongoose.Schema({
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
   tenantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
   salesman: { type: mongoose.Schema.Types.ObjectId, ref: 'Salesman', required: true, index: true },
   
@@ -38,12 +39,14 @@ const attendanceSchema = new mongoose.Schema({
   approvalStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
   approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   approvalNotes: String,
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
-attendanceSchema.index({ tenantId: 1, salesman: 1, attendanceDate: -1 });
-attendanceSchema.index({ tenantId: 1, status: 1, attendanceDate: -1 });
+attendanceSchema.index({ companyId: 1, salesman: 1, attendanceDate: -1 });
+attendanceSchema.index({ companyId: 1, status: 1, attendanceDate: -1 });
 
 module.exports = mongoose.model('Attendance', attendanceSchema);

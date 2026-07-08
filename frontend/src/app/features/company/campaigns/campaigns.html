@@ -1,6 +1,66 @@
 <div class="campaigns">
-  <h3>Campaigns</h3>
-  <p>Create and manage marketing campaigns</p>
-  <button>Create Campaign</button>
-  <ul><li>No campaigns yet</li></ul>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3>Campaigns</h3>
+      <p class="text-muted mb-0">Create and manage marketing campaigns</p>
+    </div>
+    <div>
+      <button class="btn btn-secondary btn-sm me-2" type="button" (click)="createCampaign()">Add Campaign</button>
+      <button class="btn btn-primary btn-sm" type="button" (click)="loadCampaigns()">Refresh</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center text-muted py-4">Loading campaigns...</div>
+  <div *ngIf="!loading && message" class="text-danger py-3">{{ message }}</div>
+
+  <table *ngIf="!loading && campaigns.length > 0" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Published</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let campaign of campaigns">
+        <td>{{ campaign.title || campaign.name || 'Untitled' }}</td>
+        <td>{{ campaign.adType || '-' }}</td>
+        <td>{{ campaign.status || '-' }}</td>
+        <td>{{ campaign.createdAt | date:'mediumDate' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && !campaigns.length" class="text-center text-muted py-4">No campaigns found.</div>
+  <div *ngIf="!loading && !campaigns.length" class="text-center py-2">
+    <button class="btn btn-outline-primary btn-sm" (click)="createCampaign()">Create first campaign</button>
+  </div>
+
+  <!-- Campaign create modal -->
+  <div *ngIf="campaignModalOpen" class="modal-backdrop d-flex align-items-center justify-content-center">
+    <div class="card p-3" style="min-width:320px; max-width:560px;">
+      <h5 class="mb-2">Create Campaign</h5>
+      <div class="mb-2">
+        <label class="form-label">Title</label>
+        <input class="form-control form-control-sm" [(ngModel)]="newCampaignTitle" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Ad Type</label>
+        <select class="form-select form-select-sm" [(ngModel)]="newCampaignAdType">
+          <option value="generic">Generic</option>
+          <option value="banner">Banner</option>
+          <option value="shelf">Shelf</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Media URL (required)</label>
+        <input class="form-control form-control-sm" placeholder="https://..." [(ngModel)]="newCampaignMediaUrl" />
+      </div>
+      <div class="text-end">
+        <button class="btn btn-secondary btn-sm me-2" (click)="campaignModalOpen=false">Cancel</button>
+        <button class="btn btn-primary btn-sm" (click)="submitCreateCampaign()">Create</button>
+      </div>
+    </div>
+  </div>
 </div>

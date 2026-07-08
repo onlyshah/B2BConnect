@@ -1,39 +1,18 @@
-<div class="retailer-shell">
-  <aside class="sidebar">
-    <div class="brand-block">
-      <div class="brand-badge">R</div>
-      <div>
-        <h2>Retailer App</h2>
-        <p>Order, discover and grow</p>
-      </div>
-    </div>
+<dashboard-layout
+  [appName]="appName"
+  [title]="title"
+  [subtitle]="subtitle"
+  [eyebrow]="eyebrow"
+  [roleLabel]="roleLabel"
+  [searchPlaceholder]="searchPlaceholder"
+  [storageKey]="storageKey"
+  [navGroups]="navGroups"
+  [mobileNavItems]="mobileNavItems"
+>
+  <div slot="header-actions" class="d-flex flex-wrap gap-2">
+    <a class="btn btn-primary btn-sm fw-semibold" routerLink="/retailer/orders/new">Create order</a>
+    <a class="btn btn-outline-secondary btn-sm fw-semibold" routerLink="/retailer/products">Browse products</a>
+  </div>
 
-    <nav class="nav-list">
-      <a *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/retailer' }">
-        <span class="nav-icon">{{ item.icon }}</span>
-        <span>{{ item.label }}</span>
-      </a>
-    </nav>
-  </aside>
-
-  <main class="content-area">
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">Retailer workspace</p>
-        <h1>Shopping and ordering, simplified</h1>
-      </div>
-      <a class="ghost-link" routerLink="/retailer/settings">Profile</a>
-    </header>
-
-    <section class="page-body">
-      <router-outlet></router-outlet>
-    </section>
-  </main>
-</div>
-
-<nav class="mobile-nav">
-  <a *ngFor="let item of mobileNavItems" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/retailer' }">
-    <span>{{ item.icon }}</span>
-    <small>{{ item.label }}</small>
-  </a>
-</nav>
+  <router-outlet></router-outlet>
+</dashboard-layout>

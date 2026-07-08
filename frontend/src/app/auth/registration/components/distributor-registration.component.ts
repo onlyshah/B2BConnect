@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { RegistrationService, Company } from '../services/registration.service';
+import { LocationService } from '../../../services/location.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-distributor-registration',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 py-12 px-4">
       <div class="max-w-2xl mx-auto">
@@ -119,17 +120,41 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
                 <span *ngIf="isFieldInvalid('address')" class="text-red-400 text-sm mt-1 block">Address required</span>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div>
+                  <label class="block text-white font-medium mb-2">Country *</label>
+                  <select formControlName="country" (change)="onCountryChange()" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                    <option value="">Select Country</option>
+                    <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+                  </select>
+                  <span *ngIf="isFieldInvalid('country')" class="text-red-400 text-sm mt-1 block">Required</span>
+                </div>
                 <div>
                   <label class="block text-white font-medium mb-2">State *</label>
-                  <input type="text" formControlName="state" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="Gujarat">
+                  <select formControlName="state" (change)="onStateChange()" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                    <option value="">Select State</option>
+                    <option *ngFor="let state of states" [value]="state">{{ state }}</option>
+                  </select>
                   <span *ngIf="isFieldInvalid('state')" class="text-red-400 text-sm mt-1 block">Required</span>
                 </div>
                 <div>
                   <label class="block text-white font-medium mb-2">City *</label>
-                  <input type="text" formControlName="city" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="Vadodara">
+                  <select formControlName="city" (change)="onCityChange()" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                    <option value="">Select City</option>
+                    <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+                  </select>
                   <span *ngIf="isFieldInvalid('city')" class="text-red-400 text-sm mt-1 block">Required</span>
                 </div>
+                <div>
+                  <label class="block text-white font-medium mb-2">Area *</label>
+                  <select formControlName="area" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                    <option value="">Select Area</option>
+                    <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
+                  </select>
+                  <span *ngIf="isFieldInvalid('area')" class="text-red-400 text-sm mt-1 block">Required</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div>
                   <label class="block text-white font-medium mb-2">Pincode *</label>
                   <input type="text" formControlName="pincode" class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500" placeholder="390001">
@@ -241,6 +266,10 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 })
 export class DistributorRegistrationComponent implements OnInit {
   form: FormGroup;
+  countries: string[] = [];
+  states: string[] = [];
+  cities: string[] = [];
+  areas: string[] = [];
   companySearchControl = new FormBuilder().control('');
   filteredCompanies: Company[] = [];
   selectedCompanies: Company[] = [];
@@ -251,6 +280,7 @@ export class DistributorRegistrationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private registrationService: RegistrationService,
+    private locationService: LocationService,
     private router: Router
   ) {
     this.form = this.fb.group({
@@ -261,8 +291,10 @@ export class DistributorRegistrationComponent implements OnInit {
       mobileNumber: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       address: ['', Validators.required],
+      country: ['', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
+      area: ['', Validators.required],
       pincode: ['', Validators.required],
       warehouseCapacity: [null],
       password: ['', Validators.required],
@@ -272,6 +304,8 @@ export class DistributorRegistrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadCountryData();
+
     // Setup company search
     this.companySearchControl.valueChanges.pipe(
       debounceTime(300),
@@ -288,6 +322,57 @@ export class DistributorRegistrationComponent implements OnInit {
       },
       error: () => {
         this.filteredCompanies = [];
+      }
+    });
+  }
+
+  onCountryChange(): void {
+    const country = this.form.get('country')?.value;
+    this.states = [];
+    this.cities = [];
+    this.areas = [];
+    this.form.patchValue({ state: '', city: '', area: '' });
+
+    if (country) {
+      this.locationService.getStates(country).subscribe((states) => {
+        this.states = states.length ? states : [country === 'India' ? 'Gujarat' : ''];
+      });
+    }
+  }
+
+  onStateChange(): void {
+    const country = this.form.get('country')?.value;
+    const state = this.form.get('state')?.value;
+    this.cities = [];
+    this.areas = [];
+    this.form.patchValue({ city: '', area: '' });
+
+    if (country && state) {
+      this.locationService.getCities(country, state).subscribe((cities) => {
+        this.cities = cities.length ? cities : [state === 'Gujarat' ? 'Vadodara' : ''];
+      });
+    }
+  }
+
+  onCityChange(): void {
+    const city = this.form.get('city')?.value;
+    this.areas = [];
+    this.form.patchValue({ area: '' });
+
+    if (city) {
+      this.locationService.getAreas(city).subscribe((areas) => {
+        this.areas = areas;
+      });
+    }
+  }
+
+  private loadCountryData(): void {
+    this.locationService.getCountries().subscribe((countries) => {
+      this.countries = countries.length ? countries : ['India'];
+
+      const activeCountry = this.form.get('country')?.value || 'India';
+      if (!this.countries.includes(activeCountry)) {
+        this.countries.unshift(activeCountry);
       }
     });
   }

@@ -1,4 +1,14 @@
 const Order = require('../models/Order');
+const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+
+function buildOrderFilter(req, extra = {}) {
+  return {
+    tenantId: req.tenantId,
+    companyId: resolveCompanyId(req),
+    isDeleted: false,
+    ...extra,
+  };
+}
 
 // Get all orders
 const getOrders = async (req, res) => {
@@ -7,14 +17,14 @@ const getOrders = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const orders = await Order.find({ tenantId: req.tenantId })
+    const orders = await Order.find(buildOrderFilter(req))
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
       .populate('retailerId')
       .populate('items.productId');
 
-    const total = await Order.countDocuments({ tenantId: req.tenantId });
+    const total = await Order.countDocuments(buildOrderFilter(req));
 
     res.json({
       success: true,
@@ -31,7 +41,7 @@ const getOrder = async (req, res) => {
   try {
     const order = await Order.findOne({
       _id: req.params.orderId,
-      tenantId: req.tenantId,
+      ...buildOrderFilter(req),
     })
       .populate('retailerId')
       .populate('items.productId');
@@ -49,7 +59,7 @@ const getOrder = async (req, res) => {
 // Create order
 const createOrder = async (req, res) => {
   try {
-    const { retailerId, items, totalAmount } = req.body;
+    const { retailerId, items } = req.body;
 
     if (!retailerId || !items || items.length === 0) {
       return res.status(400).json({ success: false, message: 'Retailer ID and items are required' });
@@ -58,8 +68,8 @@ const createOrder = async (req, res) => {
     const order = new Order({
       ...req.body,
       tenantId: req.tenantId,
-      companyId: req.user.companyId,
-      status: 'draft',
+      companyId: resolveCompanyId(req),
+      status: 'pending',
     });
 
     await order.save();
@@ -73,7 +83,7 @@ const createOrder = async (req, res) => {
 const updateOrder = async (req, res) => {
   try {
     const order = await Order.findOneAndUpdate(
-      { _id: req.params.orderId, tenantId: req.tenantId },
+      { _id: req.params.orderId, ...buildOrderFilter(req) },
       req.body,
       { new: true }
     );
@@ -92,8 +102,8 @@ const updateOrder = async (req, res) => {
 const approveOrder = async (req, res) => {
   try {
     const order = await Order.findOneAndUpdate(
-      { _id: req.params.orderId, tenantId: req.tenantId },
-      { status: 'approved' },
+      { _id: req.params.orderId, ...buildOrderFilter(req) },
+      { status: 'confirmed' },
       { new: true }
     );
 
@@ -111,8 +121,8 @@ const approveOrder = async (req, res) => {
 const rejectOrder = async (req, res) => {
   try {
     const order = await Order.findOneAndUpdate(
-      { _id: req.params.orderId, tenantId: req.tenantId },
-      { status: 'rejected', rejectionReason: req.body.reason },
+      { _id: req.params.orderId, ...buildOrderFilter(req) },
+      { status: 'cancelled', rejectionReason: req.body.reason },
       { new: true }
     );
 
@@ -130,8 +140,8 @@ const rejectOrder = async (req, res) => {
 const dispatchOrder = async (req, res) => {
   try {
     const order = await Order.findOneAndUpdate(
-      { _id: req.params.orderId, tenantId: req.tenantId },
-      { status: 'dispatched', dispatchedAt: new Date() },
+      { _id: req.params.orderId, ...buildOrderFilter(req) },
+      { status: 'shipped', dispatchedAt: new Date() },
       { new: true }
     );
 
@@ -148,10 +158,11 @@ const dispatchOrder = async (req, res) => {
 // Delete order
 const deleteOrder = async (req, res) => {
   try {
-    const order = await Order.findOneAndDelete({
-      _id: req.params.orderId,
-      tenantId: req.tenantId,
-    });
+    const order = await Order.findOneAndUpdate(
+      { _id: req.params.orderId, ...buildOrderFilter(req) },
+      { isDeleted: true, deletedAt: new Date(), status: 'cancelled' },
+      { new: true }
+    );
 
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });

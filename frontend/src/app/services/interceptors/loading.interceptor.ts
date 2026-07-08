@@ -32,6 +32,11 @@ export class LoadingInterceptor implements HttpInterceptor {
         return next.handle(req);
       }
 
+      // Skip the global overlay for requests marked as local/loading-managed.
+      if (req.headers.get('x-skip-loading') === 'true') {
+        return next.handle(req);
+      }
+
       // Keep the global overlay focused on mutating actions.
       // Dashboard/data pages already manage their own loading states.
       if (req.method === 'GET') {

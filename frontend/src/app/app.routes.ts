@@ -14,9 +14,8 @@ export const appRoutes: Routes = [
   },
   {
     path: 'company/dashboard',
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['company-admin'] },
-    loadChildren: () => import('./features/company/company.routes').then(m => m.companyRoutes)
+    pathMatch: 'full',
+    redirectTo: 'company'
   },
   {
     path: 'distributor/dashboard',
