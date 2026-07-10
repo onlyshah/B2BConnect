@@ -1,16 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 import { ProductEditorComponent } from './product-editor';
 import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-product-management',
   standalone: true,
-  imports: [CommonModule, ProductEditorComponent],
+  imports: [CommonModule, RouterModule, ProductEditorComponent, UiButtonComponent, UiCardComponent],
   templateUrl: './product-management.html',
   styleUrls: ['./product-management.css']
 })

@@ -6,38 +6,34 @@
       <p>Track distributor health, retailer approvals, stock pressure, and campaign readiness in one place.</p>
     </div>
     <div class="hero-actions">
-      <a class="primary-action" routerLink="/company/distributors">Review distributors</a>
-      <a class="secondary-action" routerLink="/company/analytics">Open analytics</a>
+        <ui-button variant="primary" class="primary-action" routerLink="/company/distributors">Review distributors</ui-button>
+        <ui-button variant="ghost" class="secondary-action" routerLink="/company/analytics">Open analytics</ui-button>
     </div>
   </section>
 
-  <section *ngIf="loading" class="card">
-    <p>Loading company overview...</p>
-  </section>
-
-  <section *ngIf="error && !loading" class="card error">
+  <ui-card class="card error" *ngIf="error && !loading">
     <p>{{ error }}</p>
-  </section>
+  </ui-card>
 
   <section *ngIf="!loading" class="metrics-grid">
     <app-metric-card *ngFor="let metric of metrics" [metric]="metric"></app-metric-card>
   </section>
 
   <div class="content-grid" *ngIf="!loading">
-    <section class="card">
+    <ui-card class="card">
       <div class="card-header">
         <h3>Immediate actions</h3>
-        <a routerLink="/company/retailers">Manage retailers</a>
+        <ui-button variant="ghost" routerLink="/company/retailers">Manage retailers</ui-button>
       </div>
       <div class="action-list">
-        <a class="action-item" routerLink="/company/products">Review products</a>
-        <a class="action-item" routerLink="/company/distributors">Approve distributors</a>
-        <a class="action-item" routerLink="/company/campaigns">Launch campaigns</a>
-        <a class="action-item" routerLink="/company/analytics">Open analytics</a>
+        <ui-button variant="ghost" class="action-item" routerLink="/company/products">Review products</ui-button>
+        <ui-button variant="ghost" class="action-item" routerLink="/company/distributors">Approve distributors</ui-button>
+        <ui-button variant="ghost" class="action-item" routerLink="/company/campaigns">Launch campaigns</ui-button>
+        <ui-button variant="ghost" class="action-item" routerLink="/company/analytics">Open analytics</ui-button>
       </div>
-    </section>
+    </ui-card>
 
-    <section class="card">
+    <ui-card class="card">
       <div class="card-header">
         <h3>Pending retailer approvals</h3>
       </div>
@@ -47,16 +43,16 @@
             <strong>{{ retailer.name || retailer.retailerName || 'Retailer' }}</strong>
             <p>{{ retailer.phone || retailer.contactNumber || 'Awaiting review' }}</p>
           </div>
-          <span class="pill">{{ retailer.status || 'pending' }}</span>
+          <ui-badge type="warning">{{ retailer.status || 'pending' }}</ui-badge>
         </div>
       </div>
       <ng-template #noPendingRetailers>
         <p class="muted">No pending retailer approvals right now.</p>
       </ng-template>
-    </section>
+    </ui-card>
   </div>
 
-  <section class="card" *ngIf="!loading">
+  <ui-card class="card" *ngIf="!loading">
     <div class="card-header">
       <h3>Low stock alerts</h3>
     </div>
@@ -66,11 +62,11 @@
           <strong>{{ item.product?.name || item.name || 'Inventory item' }}</strong>
           <p>{{ item.sku || item.product?.sku || 'SKU unavailable' }}</p>
         </div>
-        <span class="pill">{{ item.stockOnHand ?? item.stock ?? item.quantity ?? 0 }} in stock</span>
+        <ui-badge type="danger">{{ item.stockOnHand ?? item.stock ?? item.quantity ?? 0 }} in stock</ui-badge>
       </div>
     </div>
     <ng-template #noLowStock>
       <p class="muted">Inventory looks healthy across the current network.</p>
     </ng-template>
-  </section>
+  </ui-card>
 </div>

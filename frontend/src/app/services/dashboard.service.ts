@@ -42,6 +42,10 @@ export class DashboardService {
     return this.apiService.get(API_ENDPOINTS.DASHBOARD.GET_CHARTS).pipe(map((r: ApiResponse) => r.data));
   }
 
+  getDashboardOverview(): Observable<any> {
+    return this.apiService.get(API_ENDPOINTS.DASHBOARD.BASE).pipe(map((r: ApiResponse) => r.data));
+  }
+
   getSalesPerformance(filters?: any): Observable<any> {
     return this.apiService.get(API_ENDPOINTS.ANALYTICS.GET_SALES, filters).pipe(map((r: ApiResponse) => r.data));
   }

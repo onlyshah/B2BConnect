@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { UiButtonComponent } from '../../shared/ui/components/ui-button';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiButtonComponent],
   template: `
     <div class="p-4">
       <h2>My Profile</h2>
@@ -18,7 +19,7 @@ import { AuthService } from '../../services/auth.service';
         <p><strong>Role:</strong> {{ user.role }}</p>
         <p *ngIf="user.tenantId"><strong>Tenant:</strong> {{ user.tenantId }}</p>
         <p *ngIf="user.companyId"><strong>Company:</strong> {{ user.companyId }}</p>
-        <button class="btn mt-4" (click)="logout()">Logout</button>
+        <ui-button variant="secondary" class="mt-4" (clicked)="logout()">Logout</ui-button>
       </div>
     </div>
   `

@@ -14,6 +14,7 @@ export class OrderListComponent implements OnInit {
   orders: Order[] = [];
   loading = true;
   error: string | null = null;
+  orderCounts: Record<string, number> = {};
 
   constructor(private orderService: OrderService) {}
 
@@ -25,6 +26,11 @@ export class OrderListComponent implements OnInit {
     this.orderService.getOrders().subscribe({
       next: (data) => {
         this.orders = data;
+        this.orderCounts = this.orders.reduce((counts, order) => {
+          const status = order.status || 'unknown';
+          counts[status] = (counts[status] || 0) + 1;
+          return counts;
+        }, {} as Record<string, number>);
         this.loading = false;
       },
       error: (err) => {

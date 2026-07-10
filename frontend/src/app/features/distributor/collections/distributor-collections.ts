@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CollectionService } from '../../../services/collection.service';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 
 @Component({
   selector: 'app-distributor-collections',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiCardComponent],
   templateUrl: './distributor-collections.html',
   styleUrls: ['./distributor-collections.css']
 })

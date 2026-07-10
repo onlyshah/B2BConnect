@@ -10,6 +10,9 @@ import { RetailerService } from '../../../services/retailer.service';
 import { DistributorService } from '../../../services/distributor.service';
 import { OrderService } from '../../../services/order.service';
 import { InventoryService } from '../../../services/inventory.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiBadgeComponent } from '../../../shared/ui/components/ui-badge';
 import { MetricCardComponent, MetricData } from '../../../shared/components/metric-card';
 
 const emptySummary: DashboardSummary = {
@@ -28,7 +31,7 @@ const emptySummary: DashboardSummary = {
 @Component({
   selector: 'app-company-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, MetricCardComponent],
+  imports: [CommonModule, RouterModule, MetricCardComponent, UiButtonComponent, UiCardComponent, UiBadgeComponent],
   templateUrl: './company-dashboard.html',
   styleUrls: ['./company-dashboard.css']
 })

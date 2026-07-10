@@ -8,15 +8,16 @@
     <div class="status-chip" *ngIf="currentRole">{{ currentRole }}</div>
   </section>
 
-  <section class="panel" *ngIf="loading">
+  <ui-card class="panel" [elevated]="true" *ngIf="loading">
     <p class="muted">Loading product and account data...</p>
-  </section>
+  </ui-card>
 
-  <section class="panel" *ngIf="error && !loading">
+  <ui-card class="panel" [elevated]="true" *ngIf="error && !loading">
     <p class="error">{{ error }}</p>
-  </section>
+  </ui-card>
 
-  <form class="panel form-grid" [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+  <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+    <ui-card class="panel form-grid" [elevated]="true">
     <label>
       <span>Order type</span>
       <select formControlName="orderType">
@@ -64,8 +65,9 @@
         <span>Total</span>
         <strong>₹{{ (form.value.quantity || 0) * (form.value.unitPrice || 0) }}</strong>
       </div>
-      <button type="submit" [disabled]="submitting">Create order</button>
+      <ui-button type="submit" variant="primary" [disabled]="submitting">Create order</ui-button>
     </div>
+  </ui-card>
   </form>
 
   <section class="panel" *ngIf="message">

@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SampleService } from '../../../services/sample.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 
 @Component({
   selector: 'app-sample-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, UiButtonComponent],
   template: `
     <div class="p-4">
       <h2>Sample Requests</h2>
@@ -14,7 +15,7 @@ import { SampleService } from '../../../services/sample.service';
       <form [formGroup]="form" (ngSubmit)="submit()" class="mt-4 space-y-3">
         <input formControlName="retailerId" placeholder="Retailer ID" class="w-full border p-2" />
         <input formControlName="productName" placeholder="Product Name" class="w-full border p-2" />
-        <button type="submit" class="btn">Request Sample</button>
+        <ui-button type="submit" variant="primary">Request Sample</ui-button>
       </form>
       <div *ngIf="loading" class="mt-4">Loading sample requests...</div>
       <div *ngIf="!loading && samples.length === 0" class="mt-4">No sample requests yet.</div>

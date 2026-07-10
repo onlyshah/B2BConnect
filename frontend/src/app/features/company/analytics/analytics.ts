@@ -4,11 +4,13 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AnalyticsService } from '../../../services/analytics.service';
 import { MetricCardComponent, MetricData } from '../../../shared/components/metric-card';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 
 @Component({
   selector: 'app-company-analytics',
   standalone: true,
-  imports: [CommonModule, MetricCardComponent],
+  imports: [CommonModule, MetricCardComponent, UiButtonComponent, UiCardComponent],
   templateUrl: './analytics.html',
   styleUrls: ['./analytics.css']
 })

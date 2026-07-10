@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { PricingService } from '../../../services/pricing.service';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 
 @Component({
   selector: 'app-distributor-pricing',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiCardComponent],
   templateUrl: './distributor-pricing.html',
   styleUrls: ['./distributor-pricing.css']
 })

@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { UiButtonComponent } from '../ui/components/ui-button';
 
 export interface ApprovalItem {
   id: string;
@@ -17,7 +18,7 @@ export interface ApprovalItem {
 @Component({
   selector: 'app-approval-card',
   standalone: true,
-  imports: [CommonModule, HasPermissionDirective],
+  imports: [CommonModule, HasPermissionDirective, UiButtonComponent],
   template: `
     <div class="approval-card" [class]="'type-' + item.type">
       <div class="approval-header">
@@ -45,30 +46,28 @@ export interface ApprovalItem {
       </div>
       
       <div class="approval-actions" *ngIf="item.status === 'pending'">
-        <button 
+        <ui-button 
           *appHasPermission="'approve-' + item.type" 
-          class="btn-approve" 
-          (click)="onApprove.emit(item)">
+          variant="success" 
+          (clicked)="onApprove.emit(item)">
           ✓ Approve
-        </button>
-        <button 
+        </ui-button>
+        <ui-button 
           *appHasPermission="'reject-' + item.type" 
-          class="btn-reject" 
-          (click)="onReject.emit(item)">
+          variant="danger" 
+          (clicked)="onReject.emit(item)">
           ✗ Reject
-        </button>
-        <button 
+        </ui-button>
+        <ui-button 
           *appHasPermission="'view-' + item.type" 
-          class="btn-view" 
-          (click)="onView.emit(item)">
+          variant="ghost" 
+          (clicked)="onView.emit(item)">
           View Details
-        </button>
+        </ui-button>
       </div>
       
       <div class="approval-actions" *ngIf="item.status !== 'pending'">
-        <button class="btn-view" (click)="onView.emit(item)">
-          View Details
-        </button>
+        <ui-button variant="ghost" (clicked)="onView.emit(item)">View Details</ui-button>
       </div>
     </div>
   `,

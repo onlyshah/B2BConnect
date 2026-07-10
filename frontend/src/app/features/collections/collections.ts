@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CollectionService } from '../../services/collection.service';
 import { AuthService } from '../../services/auth.service';
+import { UiButtonComponent } from '../../shared/ui/components/ui-button';
 
 @Component({
   selector: 'app-collections',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, UiButtonComponent],
   templateUrl: './collections.html',
   styleUrls: ['./collections.scss']
 })

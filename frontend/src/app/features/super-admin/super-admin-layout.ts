@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { DashboardLayoutComponent, DashboardNavGroup, DashboardNavItem } from '../../shared/ui/layouts/dashboard-layout';
+import { UiButtonComponent } from '../../shared/ui/components/ui-button';
 
 @Component({
   selector: 'app-super-admin-layout',
   standalone: true,
-  imports: [RouterModule, DashboardLayoutComponent],
+  imports: [RouterModule, DashboardLayoutComponent, UiButtonComponent],
   templateUrl: './super-admin-layout.html',
   styleUrls: ['./super-admin-layout.css']
 })

@@ -7,6 +7,8 @@ import { TerritoryService } from '../../../services/territory.service';
 import { LocationService } from '../../../services/location.service';
 import { ResponseHandlerService } from '../../../services/response-handler.service';
 import { AuthService } from '../../../services/auth.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 
 interface City {
   _id?: string;
@@ -30,7 +32,7 @@ interface Territory {
 @Component({
   selector: 'app-territory-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, UiButtonComponent, UiCardComponent],
   templateUrl: './territory-management.html',
   styleUrls: ['./territory-management.css']
 })

@@ -1,115 +1,309 @@
 .company-profile {
-  padding: 0;
+  display: grid;
+  gap: 24px;
 }
 
-.letter-spacing-md {
-  letter-spacing: 0.12em;
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
 }
 
-.company-summary {
-  overflow: hidden;
+.page-header h1 {
+  margin: 0;
+  font-size: 2.15rem;
+}
+
+.page-description {
+  margin: 0.75rem 0 0;
+  color: var(--text-muted);
+  max-width: 720px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+  gap: 24px;
+}
+
+.sidebar-panels {
+  display: grid;
+  gap: 24px;
 }
 
 .company-banner {
-  min-height: 220px;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  border-radius: 1rem 1rem 0 0;
+  display: grid;
+  gap: 24px;
+  padding: 2rem;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #4338ca, #6366f1);
+  color: #ffffff;
+}
+
+.banner-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 .company-logo {
-  width: 72px;
-  height: 72px;
-  font-size: 1.75rem;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 1.9rem;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .company-banner-actions {
-  right: 1rem;
-  top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.stat-card {
-  min-height: 90px;
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 8px;
+}
+
+.info-card,
+.snapshot-card,
+.brand-card,
+.info-panel {
+  background: var(--surface-elevated);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 20px;
+  padding: 1.2rem;
+  box-shadow: var(--shadow);
+}
+
+.info-label,
+.info-card small,
+.brand-card small,
+.snapshot-card small {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.info-card p,
+.info-panel p,
+.brand-card h5,
+.card-title,
+.summary-list li {
+  margin: 0;
+  color: var(--text);
+}
+
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
 }
 
 .edit-panel {
-  border: 1px solid rgba(148,163,184,0.25);
-  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
 }
 
 .edit-panel .card-body {
   padding: 2rem;
 }
 
-.edit-panel .form-label {
-  font-size: 0.85rem;
+.edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-grid > div {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  z-index: 10;
+}
+
+.loading-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.loading-text {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.status-panel {
+  margin-top: 1.25rem;
+}
+
+.additional-content {
+  display: grid;
+  gap: 24px;
+}
+
+.tab-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.tab-item {
+  border: none;
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--text);
+  padding: 0.9rem 1.25rem;
+  border-radius: 999px;
+  cursor: pointer;
   font-weight: 700;
-  color: #334155;
 }
 
-.edit-panel input,
-.edit-panel textarea,
-.edit-panel select {
-  border-radius: 0.9rem;
+.tab-item.active {
+  background: var(--color-primary);
+  color: #ffffff;
 }
 
-.edit-panel .btn {
-  min-width: 120px;
+.tab-panel {
+  display: grid;
+  gap: 18px;
 }
 
-.company-profile .nav-pills .nav-link {
-  border-radius: 0.85rem;
-  padding: 0.8rem 1rem;
+.info-grid,
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 
-.company-profile .nav-pills .nav-link.active {
-  background: #2563eb;
+.brand-card {
+  display: grid;
+  gap: 16px;
+  border-radius: 20px;
 }
 
-.company-profile table th,
-.company-profile table td {
-  border-color: #e9ecef;
+.brand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.company-profile .card-title {
-  font-size: 1rem;
-  font-weight: 700;
+.contact-table-wrapper {
+  overflow: auto;
 }
 
-.company-logo {
-  width: 72px;
-  height: 72px;
-  font-size: 1.5rem;
+.contact-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.company-banner-actions {
-  right: 1rem;
-  top: 1rem;
+.contact-table th,
+.contact-table td {
+  padding: 1rem 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  text-align: left;
 }
 
-.info-label {
-  display: block;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+.contact-table thead th {
+  color: var(--text-muted);
   text-transform: uppercase;
-  color: #6b7280;
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
 }
 
-.page-header h2 {
-  font-size: 1.75rem;
+.document-list {
+  display: grid;
+  gap: 10px;
 }
 
-.nav-pills .nav-link {
-  border-radius: 0.85rem;
+.document-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid rgba(148, 163, 184, 0.15);
 }
 
-.nav-pills .nav-link.active {
-  background: #2563eb;
+.document-row h6 {
+  margin: 0 0 0.35rem;
 }
 
-.company-profile table th,
-.company-profile table td {
-  border-color: #e9ecef;
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.summary-list li {
+  color: var(--text);
+}
+
+@media (max-width: 992px) {
+  .profile-grid,
+  .grid-2,
+  .tab-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+  }
 }

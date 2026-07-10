@@ -4,12 +4,13 @@ import { RouterModule } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { DashboardService } from '../../../services/dashboard.service';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 import { MetricCardComponent, MetricData } from '../../../shared/components/metric-card';
 
 @Component({
   selector: 'app-distributor-analytics',
   standalone: true,
-  imports: [CommonModule, RouterModule, MetricCardComponent],
+  imports: [CommonModule, RouterModule, MetricCardComponent, UiCardComponent],
   templateUrl: './distributor-analytics.html',
   styleUrls: ['./distributor-analytics.css']
 })

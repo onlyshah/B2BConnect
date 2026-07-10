@@ -1,11 +1,17 @@
-<div class="products-container">
-  <h2>Products Catalog</h2>
+<div class="products-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Product Catalog</p>
+      <h2>Available products</h2>
+      <p class="page-subtitle">Browse live inventory and place orders directly from the dashboard.</p>
+    </div>
+  </header>
 
   <div *ngIf="loading" class="loading">Loading products...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
 
   <div class="products-grid">
-    <div *ngFor="let product of products" class="product-card">
+    <article *ngFor="let product of products" class="product-card">
       <div class="product-header">
         <h3>{{ product.name }}</h3>
         <span class="sku">{{ product.sku }}</span>
@@ -24,10 +30,10 @@
       </div>
 
       <div class="product-actions">
-        <button class="btn-view" [routerLink]="['/dashboard/products', product._id]">View Details</button>
-        <button class="btn-order" [routerLink]="['/dashboard/orders/new']" [queryParams]="{ productId: product._id, sku: product.sku }">Order Now</button>
+        <ui-button variant="ghost" class="btn-view" [routerLink]="['/dashboard/products', product._id]">View Details</ui-button>
+        <ui-button variant="primary" class="btn-order" [routerLink]="['/dashboard/orders/new']" [queryParams]="{ productId: product._id, sku: product.sku }">Order Now</ui-button>
       </div>
-    </div>
+    </article>
   </div>
 
   <div *ngIf="products.length === 0 && !loading" class="no-products">

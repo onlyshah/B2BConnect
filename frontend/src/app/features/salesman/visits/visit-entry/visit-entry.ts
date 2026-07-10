@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UiButtonComponent } from '../../../../shared/ui/components/ui-button';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { VisitService } from '../../../../services/visit.service';
 
 @Component({
   selector: 'app-visit-entry',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, UiButtonComponent],
   templateUrl: './visit-entry.html',
   styleUrls: ['./visit-entry.scss']
 })

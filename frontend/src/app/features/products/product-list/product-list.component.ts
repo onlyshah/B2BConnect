@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiButtonComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })

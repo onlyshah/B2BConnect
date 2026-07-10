@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UiBadgeComponent } from '../../../shared/ui/components/ui-badge';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { DistributorService } from '../../../services/distributor.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
@@ -9,7 +11,7 @@ import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-distributor-marketplace',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiBadgeComponent, UiButtonComponent],
   templateUrl: './marketplace.html',
   styleUrls: ['./marketplace.css']
 })

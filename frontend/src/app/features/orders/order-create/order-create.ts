@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { AuthService } from '../../../services/auth.service';
@@ -15,7 +17,7 @@ type OrderMode = 'retailer-order' | 'distributor-replenishment';
 @Component({
   selector: 'app-order-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, UiButtonComponent, UiCardComponent],
   templateUrl: './order-create.html',
   styleUrls: ['./order-create.css']
 })

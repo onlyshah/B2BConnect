@@ -5,11 +5,13 @@ import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 
 @Component({
   selector: 'app-stories',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiButtonComponent, UiCardComponent],
   templateUrl: './stories.html',
   styleUrls: ['./stories.css']
 })

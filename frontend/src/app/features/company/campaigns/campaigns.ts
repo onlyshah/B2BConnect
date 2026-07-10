@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CampaignService } from '../../../services/campaign.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 import { AuthService } from '../../../services/auth.service';
 import { ResponseHandlerService } from '../../../services/response-handler.service';
 import { Subject } from 'rxjs';
@@ -11,7 +13,7 @@ import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-campaigns',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, UiButtonComponent, UiCardComponent],
   templateUrl: './campaigns.html',
   styleUrls: ['./campaigns.css']
 })

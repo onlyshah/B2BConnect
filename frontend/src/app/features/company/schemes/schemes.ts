@@ -7,11 +7,13 @@ import { ResponseHandlerService } from '../../../services/response-handler.servi
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 
 @Component({
   selector: 'app-schemes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, UiButtonComponent, UiCardComponent],
   templateUrl: './schemes.html',
   styleUrls: ['./schemes.css']
 })

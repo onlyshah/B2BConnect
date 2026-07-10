@@ -6,6 +6,7 @@
 @import '@ionic/angular/css/typography.css';
 @import '@ionic/angular/css/padding.css';
 @import '@ionic/angular/css/flex-utils.css';
+@import './assets/css/purple-admin.css';
 @import './app/shared/ui/theme.css';
 
 * {

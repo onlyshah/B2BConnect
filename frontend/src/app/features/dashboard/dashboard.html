@@ -1,124 +1,163 @@
-<div class="dashboard-layout">
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h3>{{ userRole | uppercase }}</h3>
-      <span class="user-name" *ngIf="currentUser">{{ currentUser.name }}</span>
-    </div>
-    <nav class="menu">
-      <a 
-        *ngFor="let item of menuItems" 
-        [routerLink]="item.route" 
-        routerLinkActive="active" 
-        class="menu-item"
-        [class.restricted]="item.permission && !hasPermission(item.permission)">
-        <span class="icon">{{ item.icon }}</span>
-        <span class="label">{{ item.label }}</span>
-      </a>
-    </nav>
-  </aside>
-
-  <main class="dashboard-content">
-    <!-- Page Header -->
-    <section class="page-header">
+<dashboard-layout
+  class="dashboard-layout"
+  [appName]="'B2BConnect'"
+  [title]="title"
+  [subtitle]="subtitle"
+  [eyebrow]="eyebrow"
+  [roleLabel]="roleLabel"
+  [searchPlaceholder]="'Search orders, inventory, retailers'"
+  [navGroups]="navGroups"
+  [mobileNavItems]="mobileNavItems"
+>
+  <div class="dashboard-content">
+    <section class="page-header d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
       <div>
-        <h1>Welcome, {{ currentUser?.name || 'User' }}!</h1>
-        <p class="role-subtitle">
-          <span *ngIf="userRole === 'super-admin'">Platform Administrator - Manage all companies and users</span>
-          <span *ngIf="userRole === 'company-admin'">Company Administrator - Manage company products, campaigns, and distributors</span>
-          <span *ngIf="userRole === 'distributor-admin'">Distributor Administrator - Manage orders, inventory, and retailers</span>
-          <span *ngIf="userRole === 'salesman'">Sales Executive - Track visits and build retailer relationships</span>
-          <span *ngIf="userRole === 'retailer'">Retailer - Browse products and place orders</span>
-        </p>
+        <p class="eyebrow">Overview</p>
+        <h1>Welcome back, {{ currentUser?.name || 'User' }}!</h1>
+        <p class="role-subtitle">{{ roleLabel }}</p>
+      </div>
+      <div class="header-actions">
+        <span class="badge bg-primary">Live analytics</span>
+        <span class="badge bg-secondary">{{ lowStockCount }} low stock items</span>
       </div>
     </section>
 
-    <!-- Metrics Grid -->
-    <section class="metrics-section" *ngIf="!loadingSummary && metrics.length > 0">
-      <div class="metrics-grid">
-        <app-metric-card 
-          *ngFor="let metric of metrics" 
-          [metric]="metric"
-          [color]="getMetricColor(metric)">
-        </app-metric-card>
+    <section class="top-cards" *ngIf="!loadingSummary && dashboardCards.length">
+      <div class="row gx-3 gy-3">
+        <div class="col-12 col-sm-6 col-xl-3" *ngFor="let card of dashboardCards">
+          <ui-card class="card-statistic">
+            <div class="card-body">
+              <div class="stat-header d-flex justify-content-between align-items-start">
+                <div>
+                  <p class="stat-label">{{ card.title }}</p>
+                  <h2 class="stat-value">{{ card.value }}</h2>
+                </div>
+                <div class="stat-icon">{{ card.icon }}</div>
+              </div>
+              <p class="stat-meta">{{ card.subtitle }}</p>
+            </div>
+          </ui-card>
+        </div>
       </div>
     </section>
 
-    <section class="insights-grid" *ngIf="!loadingSummary">
-      <article class="insight-card">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Portfolio mix</p>
-            <h3>Operational mix</h3>
-          </div>
-        </div>
-        <div class="bar-list" *ngIf="chartBars.length; else noBars">
-          <div class="bar-row" *ngFor="let bar of chartBars">
-            <div class="bar-label">{{ bar.label }}</div>
-            <div class="bar-track">
-              <span class="bar-fill" [style.width.%]="getBarWidth(bar.value)" [style.background]="bar.color"></span>
+    <section *ngIf="!loadingSummary" class="row gx-3 gy-3">
+      <div class="col-lg-8">
+        <ui-card class="chart-card">
+          <div class="card-body">
+            <div class="section-head d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <p class="eyebrow">Sales pulse</p>
+                <h3>Orders over time</h3>
+              </div>
+              <span class="badge bg-success">{{ salesSeries.length }} points</span>
             </div>
-            <div class="bar-value">{{ bar.value }}</div>
-          </div>
-        </div>
-        <ng-template #noBars>
-          <p class="muted">No summary data available yet.</p>
-        </ng-template>
-      </article>
-
-      <article class="insight-card">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Sales pulse</p>
-            <h3>Recent order activity</h3>
-          </div>
-        </div>
-        <div class="chart-frame" *ngIf="trendPoints; else noTrend">
-          <svg [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight" preserveAspectRatio="none" class="trend-chart">
-            <line x1="0" [attr.y1]="svgHeight - 1" [attr.x2]="svgWidth" [attr.y2]="svgHeight - 1" class="axis"></line>
-            <polyline [attr.points]="trendPoints" class="trend-line"></polyline>
-          </svg>
-        </div>
-        <ng-template #noTrend>
-          <p class="muted">Sales performance is not available yet.</p>
-        </ng-template>
-      </article>
-
-      <article class="insight-card">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Inventory health</p>
-            <h3>Stock pressure</h3>
-          </div>
-        </div>
-        <div class="inventory-list" *ngIf="inventorySeries.length; else noInventory">
-          <div class="inventory-row" *ngFor="let item of inventorySeries">
-            <div class="inventory-name">{{ item.label }}</div>
-            <div class="inventory-meta">
-              <span>{{ item.stock }} on hand</span>
-              <span>{{ item.reorderLevel }} reorder</span>
+            <div class="chart-frame" *ngIf="trendPoints; else noTrend">
+              <svg [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight" preserveAspectRatio="none" class="trend-chart">
+                <line x1="0" [attr.y1]="svgHeight - 1" [attr.x2]="svgWidth" [attr.y2]="svgHeight - 1" class="axis"></line>
+                <polyline [attr.points]="trendPoints" class="trend-line"></polyline>
+              </svg>
             </div>
+            <ng-template #noTrend>
+              <p class="muted">Sales performance is not available yet.</p>
+            </ng-template>
           </div>
-        </div>
-        <ng-template #noInventory>
-          <p class="muted">Inventory health will appear once analytics returns data.</p>
-        </ng-template>
-      </article>
+        </ui-card>
+      </div>
+
+      <div class="col-lg-4">
+        <ui-card class="summary-card">
+          <div class="card-body">
+            <div class="section-head mb-3">
+              <p class="eyebrow">Inventory health</p>
+              <h3>Stock pressure</h3>
+            </div>
+            <div class="inventory-list" *ngIf="inventorySeries.length; else noInventory">
+              <div class="inventory-row" *ngFor="let item of inventorySeries">
+                <div class="inventory-name">{{ item.label }}</div>
+                <div class="inventory-meta">
+                  <span>{{ item.stock }} on hand</span>
+                  <span>{{ item.reorderLevel }} reorder</span>
+                </div>
+              </div>
+            </div>
+            <ng-template #noInventory>
+              <p class="muted">Inventory health will appear once analytics returns data.</p>
+            </ng-template>
+          </div>
+        </ui-card>
+      </div>
     </section>
 
-    <!-- Loading State -->
+    <section class="row gx-3 gy-3 mt-3" *ngIf="!loadingSummary">
+      <div class="col-lg-8">
+        <ui-card class="table-card">
+          <div class="card-body">
+            <div class="section-head d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <p class="eyebrow">Recent orders</p>
+                <h3>Latest transactions</h3>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-borderless align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Retailer</th>
+                    <th>Status</th>
+                    <th class="text-end">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of recentOrders">
+                    <td>{{ order._id || order.orderId }}</td>
+                    <td>{{ order.retailerId?.name || order.retailerName || '—' }}</td>
+                    <td><span class="badge bg-light text-dark">{{ order.status || 'Unknown' }}</span></td>
+                    <td class="text-end">₹{{ order.totalAmount ?? order.total ?? 0 }}</td>
+                  </tr>
+                  <tr *ngIf="recentOrders.length === 0">
+                    <td colspan="4" class="text-center muted">No recent orders available.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </ui-card>
+      </div>
+
+      <div class="col-lg-4">
+        <ui-card class="stats-card">
+          <div class="card-body">
+            <div class="section-head mb-3">
+              <p class="eyebrow">Top performers</p>
+              <h3>Sales team</h3>
+            </div>
+            <div class="top-salesmen" *ngIf="topSalesmen.length; else noSalesmen">
+              <div class="top-salesman" *ngFor="let person of topSalesmen">
+                <div class="salesman-name">{{ person.name || person.fullName || 'Unnamed' }}</div>
+                <div class="salesman-meta">₹{{ person.metrics?.totalSales ?? person.totalSales ?? 0 }}</div>
+              </div>
+            </div>
+            <ng-template #noSalesmen>
+              <p class="muted">No top performer data available.</p>
+            </ng-template>
+          </div>
+        </ui-card>
+      </div>
+    </section>
+
     <section class="loading-state" *ngIf="loadingSummary">
       <div class="spinner"></div>
       <p>Loading dashboard data...</p>
     </section>
 
-    <!-- Error State -->
     <section class="error-state" *ngIf="summaryError && !loadingSummary">
       <span class="error-icon">⚠️</span>
       <p>{{ summaryError }}</p>
-      <button class="retry-btn" (click)="ngOnInit()">Retry</button>
+      <ui-button variant="secondary" class="retry-btn" (clicked)="ngOnInit()">Retry</ui-button>
     </section>
 
-    <!-- Content Outlet -->
     <router-outlet></router-outlet>
-  </main>
-</div>
+  </div>
+</dashboard-layout>

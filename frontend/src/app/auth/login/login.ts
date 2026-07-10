@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UiButtonComponent } from '../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../shared/ui/components/ui-card';
+import { UiBadgeComponent } from '../../shared/ui/components/ui-badge';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, UiButtonComponent, UiCardComponent, UiBadgeComponent],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })

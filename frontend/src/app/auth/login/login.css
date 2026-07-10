@@ -3,12 +3,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8fafc;
-  padding: 2rem 1rem;
+  background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.22), transparent 35%), linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+  padding: 3rem 1rem;
 }
 
 .auth-shell .card {
-  border-radius: 1.5rem;
+  border-radius: 1.75rem;
+  background: #ffffff;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.08);
+  border: none;
 }
 
 .auth-shell .card-body {
@@ -17,24 +20,34 @@
 
 .auth-shell .badge {
   letter-spacing: 0.08em;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
+  padding: 0.65rem 0.95rem;
+  display: inline-flex;
 }
 
 .auth-shell h1,
 .auth-shell h2 {
   margin-bottom: 0.5rem;
+  color: #111827;
 }
 
 .auth-shell .text-muted {
-  color: #6b7280 !important;
+  color: #64748b !important;
 }
 
 .auth-shell .alert {
   margin-top: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
 }
 
 .auth-shell .list-group-item {
   padding-left: 0;
   padding-right: 0;
+  background: transparent;
+  border: none;
 }
 
 .auth-shell .list-group-item .badge {
@@ -42,12 +55,26 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  background: rgba(16, 185, 129, 0.14);
+  color: #047857;
 }
 
 .auth-shell a.link-primary {
   font-weight: 600;
+  color: #4338ca;
+}
+
+.auth-shell a.link-primary:hover {
+  text-decoration: underline;
 }
 
 .auth-shell input.form-control {
-  border-radius: 0.85rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-shell input.form-control:focus {
+  border-color: rgba(124, 58, 237, 0.55);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
 }

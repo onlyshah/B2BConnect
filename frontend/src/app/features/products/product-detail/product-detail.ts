@@ -2,15 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { Product } from '../../../models';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiButtonComponent],
   template: `
     <div class="p-4">
-      <button class="btn" [routerLink]="['/dashboard/products']">← Back to catalog</button>
+      <ui-button variant="ghost" [routerLink]="['/dashboard/products']">← Back to catalog</ui-button>
       <div *ngIf="loading" class="mt-4">Loading product...</div>
       <div *ngIf="error" class="mt-4 text-red-600">{{ error }}</div>
       <div *ngIf="product && !loading" class="mt-4 space-y-3">
@@ -21,7 +22,7 @@ import { Product } from '../../../models';
         <p *ngIf="product.packSize"><strong>Pack Size:</strong> {{ product.packSize }}</p>
         <p *ngIf="product.benefits?.length"><strong>Benefits:</strong> {{ product.benefits.join(', ') }}</p>
         <div class="flex gap-3 mt-4">
-          <button class="btn" [routerLink]="['/dashboard/orders/new']" [queryParams]="{ productId: product._id, sku: product.sku }">Order Now</button>
+          <ui-button variant="primary" [routerLink]="['/dashboard/orders/new']" [queryParams]="{ productId: product._id, sku: product.sku }">Order Now</ui-button>
         </div>
       </div>
     </div>

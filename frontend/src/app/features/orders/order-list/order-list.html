@@ -1,10 +1,27 @@
-<div class="orders-container">
-  <h2>My Orders</h2>
+<div class="orders-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Orders</p>
+      <h2>My Orders</h2>
+      <p class="page-subtitle">Review recent transactions and monitor current status at a glance.</p>
+    </div>
+    <div class="status-summary">
+      <div class="status-card">
+        <strong>{{ orders.length }}</strong>
+        <span>Total orders</span>
+      </div>
+      <div class="status-card" *ngFor="let status of ['pending', 'confirmed', 'shipped', 'delivered']">
+        <strong>{{ orderCounts[status] || 0 }}</strong>
+        <span>{{ status | titlecase }}</span>
+      </div>
+    </div>
+  </header>
 
   <div *ngIf="loading" class="loading">Loading orders...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
 
-  <table *ngIf="orders.length > 0" class="orders-table">
+  <div *ngIf="orders.length > 0" class="table-card">
+    <table class="orders-table">
     <thead>
       <tr>
         <th>Order ID</th>

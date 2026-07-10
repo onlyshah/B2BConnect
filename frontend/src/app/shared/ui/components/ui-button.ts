@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <button class="ui-button" [class]="variantClass" [type]="type" (click)="clicked.emit($event)">
+    <button class="ui-button" [ngClass]="[variantClass, className]" [type]="type" [disabled]="disabled" [attr.aria-label]="ariaLabel" (click)="clicked.emit($event)">
       <ng-content></ng-content>
     </button>
   `,
@@ -15,6 +15,9 @@ import { CommonModule } from '@angular/common';
 export class UiButtonComponent {
   @Input() variant: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost' = 'primary';
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
+  @Input() disabled = false;
+  @Input('class') className = '';
+  @Input('aria-label') ariaLabel?: string;
   @Output() clicked = new EventEmitter<Event>();
 
   get variantClass(): string {

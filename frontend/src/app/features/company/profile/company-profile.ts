@@ -4,11 +4,14 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { CompanyService } from '../../../services/company.service';
 import { AuthService } from '../../../services/auth.service';
 import { LocationService } from '../../../services/location.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiBadgeComponent } from '../../../shared/ui/components/ui-badge';
 
 @Component({
   selector: 'app-company-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, UiButtonComponent, UiCardComponent, UiBadgeComponent],
   templateUrl: './company-profile.html',
   styleUrls: ['./company-profile.css']
 })

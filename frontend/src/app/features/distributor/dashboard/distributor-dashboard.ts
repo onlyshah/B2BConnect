@@ -7,12 +7,15 @@ import { DashboardService } from '../../../services/dashboard.service';
 import { RetailerService } from '../../../services/retailer.service';
 import { OrderService } from '../../../services/order.service';
 import { InventoryService } from '../../../services/inventory.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiBadgeComponent } from '../../../shared/ui/components/ui-badge';
 import { MetricCardComponent, MetricData } from '../../../shared/components/metric-card';
 
 @Component({
   selector: 'app-distributor-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, MetricCardComponent],
+  imports: [CommonModule, RouterModule, MetricCardComponent, UiButtonComponent, UiCardComponent, UiBadgeComponent],
   templateUrl: './distributor-dashboard.html',
   styleUrls: ['./distributor-dashboard.css']
 })

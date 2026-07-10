@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Product } from '../../models';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { UiButtonComponent } from '../ui/components/ui-button';
 
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [CommonModule, RouterModule, HasPermissionDirective],
+  imports: [CommonModule, RouterModule, HasPermissionDirective, UiButtonComponent],
   template: `
     <div class="product-card">
       <div class="product-image">
@@ -35,24 +36,24 @@ import { HasPermissionDirective } from '../../core/directives/has-permission.dir
       </div>
       
       <div class="product-actions">
-        <button 
+        <ui-button 
           *appHasPermission="'view-products'" 
-          class="btn-primary" 
-          (click)="onView.emit(product)">
+          variant="primary" 
+          (clicked)="onView.emit(product)">
           View
-        </button>
-        <button 
+        </ui-button>
+        <ui-button 
           *appHasPermission="'edit-products'" 
-          class="btn-secondary" 
-          (click)="onEdit.emit(product)">
+          variant="secondary" 
+          (clicked)="onEdit.emit(product)">
           Edit
-        </button>
-        <button 
+        </ui-button>
+        <ui-button 
           *appHasPermission="'add-to-order'" 
-          class="btn-accent" 
-          (click)="onAddToCart.emit(product)">
+          variant="success" 
+          (clicked)="onAddToCart.emit(product)">
           Add
-        </button>
+        </ui-button>
       </div>
     </div>
   `,

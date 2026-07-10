@@ -5,12 +5,13 @@ import { SalesmanService } from '../../../services/salesman.service';
 import { VisitService } from '../../../services/visit.service';
 import { DashboardService } from '../../../services/dashboard.service';
 import { SalesmanCheckinComponent } from './salesman-checkin/salesman-checkin';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-salesman-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, SalesmanCheckinComponent],
+  imports: [CommonModule, RouterModule, SalesmanCheckinComponent, UiButtonComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })

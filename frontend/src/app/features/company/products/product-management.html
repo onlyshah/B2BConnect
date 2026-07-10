@@ -1,7 +1,7 @@
-<div class="product-management">
+<ui-card class="product-management" [elevated]="true">
   <h3>Products</h3>
-  <button (click)="loadProducts()">Refresh</button>
-  <button (click)="createProduct()">Add Product</button>
+  <ui-button variant="secondary" (clicked)="loadProducts()">Refresh</ui-button>
+  <ui-button variant="primary" (clicked)="createProduct()">Add Product</ui-button>
 
   <app-product-editor *ngIf="showEditor" [product]="selectedProduct" (saved)="onSaved()"></app-product-editor>
 
@@ -15,10 +15,10 @@
         <td>{{p.sku}}</td>
         <td>{{p.brand || '-'}}</td>
         <td>{{p.mrp || '-'}}</td>
-        <td><button type="button" (click)="editProduct(p)">Edit</button></td>
+        <td><ui-button type="button" variant="ghost" (clicked)="editProduct(p)">Edit</ui-button></td>
       </tr>
     </tbody>
   </table>
 
   <div *ngIf="!loading && products.length === 0">No products yet</div>
-</div>
+</ui-card>

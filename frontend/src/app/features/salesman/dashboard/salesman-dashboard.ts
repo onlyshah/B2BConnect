@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { UiBadgeComponent } from '../../../shared/ui/components/ui-badge';
 import { Subject, forkJoin, of } from 'rxjs';
 import { catchError, finalize, takeUntil } from 'rxjs/operators';
 import { SalesmanService } from '../../../services/salesman.service';
@@ -11,7 +12,7 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-salesman-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiBadgeComponent],
   templateUrl: './salesman-dashboard.html',
   styleUrls: ['./salesman-dashboard.css']
 })

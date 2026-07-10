@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { UiButtonComponent } from '../ui/components/ui-button';
 
 export type FormMode = 'create' | 'edit' | 'view' | 'approve';
 
@@ -28,7 +29,7 @@ export interface FormConfig {
 @Component({
   selector: 'app-dynamic-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HasPermissionDirective],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HasPermissionDirective, UiButtonComponent],
   template: `
     <div class="form-container" [class]="'mode-' + mode">
       <div class="form-header">
@@ -150,39 +151,39 @@ export interface FormConfig {
         </div>
         
         <div class="form-actions">
-          <button 
+          <ui-button 
             type="submit" 
-            class="btn-primary" 
+            variant="primary" 
             [disabled]="mode === 'view' || (!form.valid && mode !== 'approve')"
             *ngIf="mode !== 'view'">
             {{ getSubmitButtonLabel() }}
-          </button>
-          
-          <button 
+          </ui-button>
+
+          <ui-button 
             *ngIf="mode === 'approve'" 
             type="button" 
-            class="btn-success"
+            variant="success"
             *appHasPermission="'approve'"
-            (click)="onApprove.emit(form.value)">
+            (clicked)="onApprove.emit(form.value)">
             Approve
-          </button>
-          
-          <button 
+          </ui-button>
+
+          <ui-button 
             *ngIf="mode === 'approve'" 
             type="button" 
-            class="btn-danger"
+            variant="danger"
             *appHasPermission="'reject'"
-            (click)="onReject.emit(form.value)">
+            (clicked)="onReject.emit(form.value)">
             Reject
-          </button>
-          
-          <button 
+          </ui-button>
+
+          <ui-button 
             *ngIf="config.showCancel !== false" 
             type="button" 
-            class="btn-secondary"
-            (click)="onCancel.emit()">
+            variant="secondary"
+            (clicked)="onCancel.emit()">
             {{ mode === 'view' ? 'Close' : 'Cancel' }}
-          </button>
+          </ui-button>
         </div>
       </form>
     </div>

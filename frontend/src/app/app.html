@@ -1,34 +1,33 @@
 <ion-app>
   <ion-content [fullscreen]="true">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-      <div class="container-fluid px-3">
-        <a class="navbar-brand mb-0 h1" routerLink="/">{{ title }}</a>
-        <div class="d-flex align-items-center gap-2">
-          <span class="navbar-text text-white small" *ngIf="user">👋 {{ user.name }}</span>
-          <button class="btn btn-outline-light btn-sm" *ngIf="isLoggedIn" (click)="logout()">Logout</button>
+    <header class="app-header">
+      <div class="app-header-inner">
+        <a class="app-brand" routerLink="/">{{ title }}</a>
+        <div class="app-header-actions">
+          <span class="user-greeting" *ngIf="user">👋 {{ user.name }}</span>
+          <ui-button variant="secondary" *ngIf="isLoggedIn" (clicked)="logout()">Logout</ui-button>
         </div>
       </div>
-    </nav>
+    </header>
 
-    <div class="app-shell container-fluid px-0">
-      <main class="app-content container py-4">
+    <div class="app-shell">
+      <main class="app-content">
         <router-outlet></router-outlet>
       </main>
     </div>
   </ion-content>
 
   <div class="loading-overlay" *ngIf="isLoading" aria-live="polite">
-    <div class="loading-panel card shadow-sm">
+    <ui-card class="loading-panel">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <span class="ms-3">Loading workspace data...</span>
-    </div>
+      <span class="loading-text">Loading workspace data...</span>
+    </ui-card>
   </div>
 
   <div class="app-toast-container" *ngIf="(responseHandler.toasts$ | async) as toasts" aria-live="polite">
-    <div *ngFor="let toast of toasts"
-      class="app-toast alert d-flex align-items-start justify-content-between shadow-sm"
+    <div *ngFor="let toast of toasts" class="app-toast alert"
       [ngClass]="{
         'alert-success': toast.type === 'success',
         'alert-danger': toast.type === 'error',
@@ -37,10 +36,10 @@
       }"
       role="alert">
       <div>
-        <strong *ngIf="toast.title" class="d-block">{{ toast.title }}</strong>
+        <strong *ngIf="toast.title" class="toast-title">{{ toast.title }}</strong>
         <span>{{ toast.message }}</span>
       </div>
-      <button type="button" class="btn-close" aria-label="Close" (click)="responseHandler.removeToast(toast.id)" *ngIf="toast.closeable !== false"></button>
+      <ui-button type="button" variant="ghost" class="btn btn-icon btn-close" aria-label="Close" (clicked)="responseHandler.removeToast(toast.id)" *ngIf="toast.closeable !== false"></ui-button>
     </div>
   </div>
 </ion-app>

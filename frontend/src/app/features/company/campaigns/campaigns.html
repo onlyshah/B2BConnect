@@ -5,8 +5,8 @@
       <p class="text-muted mb-0">Create and manage marketing campaigns</p>
     </div>
     <div>
-      <button class="btn btn-secondary btn-sm me-2" type="button" (click)="createCampaign()">Add Campaign</button>
-      <button class="btn btn-primary btn-sm" type="button" (click)="loadCampaigns()">Refresh</button>
+      <ui-button variant="secondary" class="me-2" (clicked)="createCampaign()">Add Campaign</ui-button>
+      <ui-button variant="primary" (clicked)="loadCampaigns()">Refresh</ui-button>
     </div>
   </div>
 
@@ -34,12 +34,12 @@
 
   <div *ngIf="!loading && !campaigns.length" class="text-center text-muted py-4">No campaigns found.</div>
   <div *ngIf="!loading && !campaigns.length" class="text-center py-2">
-    <button class="btn btn-outline-primary btn-sm" (click)="createCampaign()">Create first campaign</button>
+    <ui-button variant="ghost" (clicked)="createCampaign()">Create first campaign</ui-button>
   </div>
 
   <!-- Campaign create modal -->
   <div *ngIf="campaignModalOpen" class="modal-backdrop d-flex align-items-center justify-content-center">
-    <div class="card p-3" style="min-width:320px; max-width:560px;">
+    <ui-card class="p-3" style="min-width:320px; max-width:560px;">
       <h5 class="mb-2">Create Campaign</h5>
       <div class="mb-2">
         <label class="form-label">Title</label>
@@ -58,9 +58,9 @@
         <input class="form-control form-control-sm" placeholder="https://..." [(ngModel)]="newCampaignMediaUrl" />
       </div>
       <div class="text-end">
-        <button class="btn btn-secondary btn-sm me-2" (click)="campaignModalOpen=false">Cancel</button>
-        <button class="btn btn-primary btn-sm" (click)="submitCreateCampaign()">Create</button>
+        <ui-button variant="secondary" class="me-2" (clicked)="campaignModalOpen=false">Cancel</ui-button>
+        <ui-button variant="primary" (clicked)="submitCreateCampaign()">Create</ui-button>
       </div>
-    </div>
+    </ui-card>
   </div>
 </div>

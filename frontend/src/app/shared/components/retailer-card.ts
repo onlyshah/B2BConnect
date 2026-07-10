@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Retailer } from '../../models';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { UiButtonComponent } from '../ui/components/ui-button';
 
 @Component({
   selector: 'app-retailer-card',
   standalone: true,
-  imports: [CommonModule, RouterModule, HasPermissionDirective],
+  imports: [CommonModule, RouterModule, HasPermissionDirective, UiButtonComponent],
   template: `
     <div class="retailer-card">
       <div class="retailer-header">
@@ -40,25 +41,25 @@ import { HasPermissionDirective } from '../../core/directives/has-permission.dir
       </div>
       
       <div class="retailer-actions">
-        <button 
+        <ui-button 
           *appHasPermission="'view-retailers'" 
-          class="btn-primary" 
-          (click)="onView.emit(retailer)">
+          variant="primary" 
+          (clicked)="onView.emit(retailer)">
           View
-        </button>
-        <button 
+        </ui-button>
+        <ui-button 
           *appHasPermission="'approve-retailers'" 
           [disabled]="retailer.approvalStatus !== 'pending'"
-          class="btn-success" 
-          (click)="onApprove.emit(retailer)">
+          variant="success" 
+          (clicked)="onApprove.emit(retailer)">
           Approve
-        </button>
-        <button 
+        </ui-button>
+        <ui-button 
           *appHasPermission="'edit-retailers'" 
-          class="btn-secondary" 
-          (click)="onEdit.emit(retailer)">
+          variant="secondary" 
+          (clicked)="onEdit.emit(retailer)">
           Edit
-        </button>
+        </ui-button>
       </div>
     </div>
   `,

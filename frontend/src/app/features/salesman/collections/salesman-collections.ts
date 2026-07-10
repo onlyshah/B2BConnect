@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { CollectionService } from '../../../services/collection.service';
 
 @Component({
   selector: 'app-salesman-collections',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiButtonComponent],
   templateUrl: './salesman-collections.html',
   styleUrls: ['./salesman-collections.css']
 })

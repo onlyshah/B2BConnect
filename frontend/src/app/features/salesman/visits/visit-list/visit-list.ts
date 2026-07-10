@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { VisitService } from '../../../services/visit.service';
+import { UiButtonComponent } from '../../../../shared/ui/components/ui-button';
 
 @Component({
   selector: 'app-visit-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiButtonComponent],
   templateUrl: './visit-list.html',
   styleUrls: ['./visit-list.scss']
 })

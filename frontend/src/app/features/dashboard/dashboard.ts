@@ -7,7 +7,10 @@ import { DashboardSummary } from '../../models';
 import { MvpWorkflowService } from '../../services/mvp-workflow.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
-import { MetricCardComponent, MetricData } from '../../shared/components/metric-card';
+import { DashboardLayoutComponent, DashboardNavGroup, DashboardNavItem } from '../../shared/ui/layouts/dashboard-layout';
+import { UiButtonComponent } from '../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../shared/ui/components/ui-card';
+import { MetricData } from '../../shared/components/metric-card';
 
 interface MenuItem {
   label: string;
@@ -26,7 +29,7 @@ interface CurrentUser {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, MetricCardComponent],
+  imports: [CommonModule, RouterModule, DashboardLayoutComponent, UiButtonComponent, UiCardComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -35,18 +38,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
   userRole: string | null = null;
 
   menuItems: MenuItem[] = [];
+  navGroups: DashboardNavGroup[] = [];
+  mobileNavItems: DashboardNavItem[] = [];
   summary: DashboardSummary | null = null;
   loadingSummary = true;
   summaryError: string | null = null;
 
   metrics: MetricData[] = [];
+  dashboardCards: Array<{ title: string; value: string | number; subtitle: string; icon?: string }> = [];
   chartBars: Array<{ label: string; value: number; color: string }> = [];
   salesSeries: number[] = [];
   inventorySeries: Array<{ label: string; stock: number; reorderLevel: number }> = [];
+  recentOrders: any[] = [];
+  topSalesmen: any[] = [];
+  lowStockCount = 0;
+  overview: any = null;
   trendPoints = '';
   chartMax = 1;
   svgWidth = 360;
   svgHeight = 180;
+
+  title = 'Dashboard';
+  subtitle = 'Live company operations and performance';
+  eyebrow = 'Operations';
 
   private destroy$ = new Subject<void>();
 
@@ -70,8 +84,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
         } else {
           this.loadingSummary = false;
           this.summaryError = 'Please sign in to view your dashboard.';
+          this.menuItems = [];
+          this.navGroups = [];
+          this.mobileNavItems = [];
         }
       });
+  }
+
+  get roleLabel(): string {
+    switch (this.userRole) {
+      case 'super-admin':
+        return 'Platform Administrator';
+      case 'company-admin':
+        return 'Company Administrator';
+      case 'distributor-admin':
+        return 'Distributor Administrator';
+      case 'salesman':
+        return 'Sales Executive';
+      case 'retailer':
+        return 'Retailer';
+      default:
+        return 'Operator';
+    }
   }
 
   private applyUser(user: any) {
@@ -85,7 +119,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
     this.userRole = user.role;
     this.buildMenuItems();
+    this.buildNavConfiguration();
     this.loadDashboardData();
+  }
+
+  private buildNavConfiguration() {
+    this.navGroups = [
+      {
+        title: 'Workspace',
+        items: this.menuItems
+      }
+    ];
+
+    this.mobileNavItems = this.menuItems.map((item) => ({
+      label: item.label,
+      route: item.route,
+      icon: item.icon
+    }));
   }
 
   ngOnDestroy() {
@@ -173,6 +223,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           return of(null);
         })
       ),
+      overview: this.dashboardService.getDashboardOverview().pipe(
+        catchError((err) => {
+          console.error('Dashboard overview failed', err);
+          return of(null);
+        })
+      ),
       sales: this.dashboardService.getSalesPerformance().pipe(
         catchError((err) => {
           console.error('Sales performance failed', err);
@@ -193,9 +249,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next: ({ summary, sales, inventory }) => {
+        next: ({ summary, overview, sales, inventory }) => {
           this.summary = summary ?? this.summary;
+          this.overview = overview ?? this.overview;
+          this.recentOrders = (this.overview?.recentOrders || []).slice(0, 6);
+          this.topSalesmen = this.overview?.topSalesmen || [];
+          this.lowStockCount = this.overview?.lowStockItems ?? this.summary?.inventory?.lowStock ?? 0;
+
           this.buildMetrics();
+          this.buildDashboardCards();
           this.buildCharts(sales, inventory);
 
           if (!this.summaryError) {
@@ -211,9 +273,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const metricsMap: Record<string, MetricData[]> = {
       'super-admin': [
         { label: 'Active Companies', value: this.summary.distributors || 0, color: 'primary', icon: '🏢', trend: 'up', trendPercent: 5 },
-        { label: 'Total Users', value: 0, color: 'info', icon: '👥', trend: 'up', trendPercent: 3 },
-        { label: 'Platform Revenue', value: '$0', color: 'success', icon: '💰', trend: 'up', trendPercent: 8 },
-        { label: 'Active Retailers', value: this.summary.retailers?.active || 0, color: 'primary', icon: '🏪' }
+        { label: 'Total Retailers', value: this.summary.retailers?.active || 0, color: 'info', icon: '🏪' },
+        { label: 'Orders Delivered', value: this.summary.orders?.delivered || 0, color: 'success', icon: '✅' },
+        { label: 'Open Invoices', value: this.summary.finance?.openInvoices || 0, color: 'warning', icon: '💳' }
       ],
       'company-admin': [
         { label: 'Active Distributors', value: this.summary.distributors || 0, color: 'primary', icon: '🚚', trend: 'up', trendPercent: 4 },
@@ -229,10 +291,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         { label: 'Outstanding Amount', value: `₹${this.summary.finance?.outstandingAmount || 0}`, color: 'info', icon: '💰' }
       ],
       salesman: [
-        { label: "Today's Visits", value: 0, color: 'primary', icon: '📍', trend: 'neutral' },
-        { label: 'Retailers Contacted', value: 0, color: 'info', icon: '🏪' },
-        { label: 'Pending Follow-ups', value: 0, color: 'warning', icon: '🔔' },
-        { label: 'Orders Created', value: this.summary.orders?.pending || 0, color: 'success', icon: '📦', trend: 'up', trendPercent: 15 }
+        { label: "Today's Visits", value: this.overview?.metrics?.ordersToday ?? 0, color: 'primary', icon: '📍', trend: 'neutral' },
+        { label: 'Retailers Contacted', value: this.summary.retailers?.active || 0, color: 'info', icon: '🏪' },
+        { label: 'Pending Samples', value: this.summary.workflows?.pendingSamples || 0, color: 'warning', icon: '🔔' },
+        { label: 'Delivered Orders', value: this.summary.orders?.delivered || 0, color: 'success', icon: '📦', trend: 'up', trendPercent: 15 }
       ],
       retailer: [
         { label: 'Total Orders', value: this.summary.orders?.pending || 0, color: 'primary', icon: '🛒' },
@@ -244,6 +306,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const role = (this.userRole || 'retailer').replace(/_/g, '-');
     this.metrics = metricsMap[role] || metricsMap['retailer'];
+  }
+
+  private buildDashboardCards(): void {
+    const summary = this.summary;
+    this.dashboardCards = [
+      {
+        title: 'Products',
+        value: summary?.products ?? 0,
+        subtitle: 'Live catalog',
+        icon: '📦'
+      },
+      {
+        title: 'Distributors',
+        value: summary?.distributors ?? 0,
+        subtitle: 'Active partners',
+        icon: '🚚'
+      },
+      {
+        title: 'Pending Orders',
+        value: summary?.orders?.pending ?? 0,
+        subtitle: 'Awaiting fulfillment',
+        icon: '⏳'
+      },
+      {
+        title: 'Low Stock',
+        value: this.lowStockCount,
+        subtitle: 'Needs attention',
+        icon: '📉'
+      }
+    ];
   }
 
   private buildCharts(sales: any, inventory: any): void {
@@ -264,7 +356,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const salesOrders = Array.isArray(sales?.orders) ? sales.orders : [];
     const salesValues = salesOrders
-      .slice(0, 6)
+      .slice(0, 8)
       .map((order: any) => Number(order.totalAmount ?? order.total ?? 0))
       .filter((value: number) => Number.isFinite(value) && value >= 0);
     this.salesSeries = salesValues.length ? salesValues : baseBars.map((bar) => bar.value);
@@ -276,6 +368,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       stock: Number(item.stockOnHand ?? item.stock ?? item.quantity ?? 0),
       reorderLevel: Number(item.reorderLevel ?? item.minStock ?? 0)
     }));
+
+    if (!this.inventorySeries.length && summary) {
+      this.inventorySeries = [
+        { label: 'Low stock', stock: summary.inventory?.lowStock || 0, reorderLevel: 0 }
+      ];
+    }
   }
 
   private buildPolylinePoints(values: number[]): string {

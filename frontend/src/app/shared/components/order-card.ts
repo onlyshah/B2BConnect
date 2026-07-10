@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Order } from '../../models';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { UiButtonComponent } from '../ui/components/ui-button';
 
 @Component({
   selector: 'app-order-card',
   standalone: true,
-  imports: [CommonModule, RouterModule, HasPermissionDirective],
+  imports: [CommonModule, RouterModule, HasPermissionDirective, UiButtonComponent],
   template: `
     <div class="order-card">
       <div class="order-header">
@@ -34,26 +35,26 @@ import { HasPermissionDirective } from '../../core/directives/has-permission.dir
       </div>
       
       <div class="order-actions">
-        <button 
+        <ui-button 
           *appHasPermission="'view-orders'" 
-          class="btn-primary" 
-          (click)="onView.emit(order)">
+          variant="primary" 
+          (clicked)="onView.emit(order)">
           View
-        </button>
-        <button 
+        </ui-button>
+        <ui-button 
           *appHasPermission="'approve-orders'" 
           [disabled]="order.status === 'approved' || order.status === 'rejected'"
-          class="btn-success" 
-          (click)="onApprove.emit(order)">
+          variant="success" 
+          (clicked)="onApprove.emit(order)">
           Approve
-        </button>
-        <button 
+        </ui-button>
+        <ui-button 
           *appHasPermission="'edit-orders'" 
           [disabled]="order.status !== 'pending'"
-          class="btn-secondary" 
-          (click)="onEdit.emit(order)">
+          variant="secondary" 
+          (clicked)="onEdit.emit(order)">
           Edit
-        </button>
+        </ui-button>
       </div>
     </div>
   `,

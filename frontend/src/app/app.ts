@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { UiButtonComponent } from './shared/ui/components/ui-button';
+import { UiCardComponent } from './shared/ui/components/ui-card';
 import { AuthService } from './services/auth.service';
 import { ResponseHandlerService } from './services/response-handler.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, IonicModule],
+  imports: [CommonModule, RouterModule, IonicModule, UiButtonComponent, UiCardComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

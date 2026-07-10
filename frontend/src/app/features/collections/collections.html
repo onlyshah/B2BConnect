@@ -1,12 +1,16 @@
-<div class="collections-container">
-  <div class="header">
-    <h1>Collection Management</h1>
-    <button (click)="showForm = !showForm" class="btn-primary">
+<div class="collections-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Collections</p>
+      <h1>Collection management</h1>
+      <p class="page-subtitle">Track payments, verify receipts, and reconcile collections across retailers.</p>
+    </div>
+    <ui-button variant="primary" (clicked)="showForm = !showForm">
       {{ showForm ? 'Cancel' : 'Record Collection' }}
-    </button>
-  </div>
+    </ui-button>
+  </header>
 
-  <div *ngIf="showForm" class="form-section">
+  <section *ngIf="showForm" class="form-section">
     <form [formGroup]="formData" (ngSubmit)="onSubmit()" class="collection-form">
       <div class="form-group">
         <label>Retailer</label>
@@ -36,20 +40,20 @@
         <input type="text" formControlName="referenceId" placeholder="Cheque/Transaction number" />
       </div>
 
-      <button type="submit" class="btn-success" [disabled]="formData.invalid">Submit</button>
+      <ui-button type="submit" variant="success" [disabled]="formData.invalid">Submit</ui-button>
     </form>
-  </div>
+  </section>
 
   <div class="filters">
-    <button (click)="onFilterChange('all')" class="filter-btn">All</button>
-    <button *ngFor="let status of statusOptions" (click)="onFilterChange(status)" class="filter-btn">
+    <ui-button variant="ghost" class="filter-btn" (clicked)="onFilterChange('all')">All</ui-button>
+    <ui-button *ngFor="let status of statusOptions" variant="ghost" class="filter-btn" (clicked)="onFilterChange(status)">
       {{ status | titlecase }}
-    </button>
+    </ui-button>
   </div>
 
   <div *ngIf="isLoading" class="loading">Loading...</div>
 
-  <div *ngIf="!isLoading && filteredCollections.length > 0" class="collections-list">
+  <section *ngIf="!isLoading && filteredCollections.length > 0" class="collections-list">
     <div *ngFor="let collection of filteredCollections" class="collection-card">
       <div class="card-header">
         <h3>{{ collection.collectionId }}</h3>
@@ -63,7 +67,7 @@
         <p *ngIf="collection.referenceId"><strong>Ref ID:</strong> {{ collection.referenceId }}</p>
       </div>
     </div>
-  </div>
+  </section>
 
   <div *ngIf="!isLoading && filteredCollections.length === 0" class="no-data">
     No collections found
