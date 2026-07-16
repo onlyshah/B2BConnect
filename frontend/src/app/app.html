@@ -1,15 +1,35 @@
 <ion-app>
-  <ion-content [fullscreen]="true">
-    <header class="app-header">
-      <div class="app-header-inner">
-        <a class="app-brand" routerLink="/">{{ title }}</a>
-        <div class="app-header-actions">
-          <span class="user-greeting" *ngIf="user">👋 {{ user.name }}</span>
-          <ui-button variant="secondary" *ngIf="isLoggedIn" (clicked)="logout()">Logout</ui-button>
+  <ion-header class="app-header" *ngIf="isLoggedIn">
+    <ion-toolbar>
+      <div class="header-inner">
+        <div class="header-brand">
+          <ion-icon name="business-outline"></ion-icon>
+          <span class="brand-name">{{ title }}</span>
+        </div>
+
+        <div class="header-actions">
+          <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
+          <span class="role-badge">{{ userRole }}</span>
+
+          <div class="user-block">
+            <div class="user-avatar">{{ userInitials }}</div>
+            <div class="user-text">
+              <p class="user-name">{{ userName }}</p>
+              <p class="user-title">{{ userTitle }}</p>
+            </div>
+          </div>
+
+          <ion-button fill="outline" size="small" class="logout-btn" (click)="logout()">
+            Log out
+          </ion-button>
+
+          <ion-icon name="ellipsis-vertical-outline" class="mobile-menu-icon" (click)="openMobileMenu()"></ion-icon>
         </div>
       </div>
-    </header>
+    </ion-toolbar>
+  </ion-header>
 
+  <ion-content [fullscreen]="true">
     <div class="app-shell">
       <main class="app-content">
         <router-outlet></router-outlet>
@@ -18,12 +38,12 @@
   </ion-content>
 
   <div class="loading-overlay" *ngIf="isLoading" aria-live="polite">
-    <ui-card class="loading-panel">
+    <div class="loading-panel card">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
       <span class="loading-text">Loading workspace data...</span>
-    </ui-card>
+    </div>
   </div>
 
   <div class="app-toast-container" *ngIf="(responseHandler.toasts$ | async) as toasts" aria-live="polite">
@@ -39,7 +59,7 @@
         <strong *ngIf="toast.title" class="toast-title">{{ toast.title }}</strong>
         <span>{{ toast.message }}</span>
       </div>
-      <ui-button type="button" variant="ghost" class="btn btn-icon btn-close" aria-label="Close" (clicked)="responseHandler.removeToast(toast.id)" *ngIf="toast.closeable !== false"></ui-button>
+      <button type="button" class="btn btn-icon btn-close" aria-label="Close" (click)="responseHandler.removeToast(toast.id)" *ngIf="toast.closeable !== false"></button>
     </div>
   </div>
 </ion-app>

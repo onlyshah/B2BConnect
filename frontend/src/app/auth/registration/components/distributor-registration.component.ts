@@ -11,17 +11,17 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 py-12 px-4">
-      <div class="max-w-2xl mx-auto">
+    <div class="auth-page">
+      <div class="auth-frame">
         <!-- Back Button -->
         <button 
           (click)="goBack()"
-          class="mb-8 flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+          class="auth-back">
           ← Back to Role Selection
         </button>
 
         <!-- Card -->
-        <div class="bg-slate-800 rounded-2xl p-8 md:p-12 border border-slate-700">
+        <div class="auth-card">
           <h1 class="text-3xl font-bold text-white mb-2">Register as Distributor</h1>
           <p class="text-gray-400 mb-8">Fill in your business details and apply to companies</p>
 

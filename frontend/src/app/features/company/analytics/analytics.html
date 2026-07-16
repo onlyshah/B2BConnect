@@ -10,10 +10,10 @@
     </div>
   </div>
 
-  <ui-card class="loading-panel shadow-sm" *ngIf="loading">
+  <div *ngIf="loading" class="loading-panel card shadow-sm">
     <div class="spinner-border text-primary" role="status"></div>
     <span class="ms-3">Loading analytics data...</span>
-  </ui-card>
+  </div>
 
   <div *ngIf="message && !loading" class="alert alert-danger">{{ message }}</div>
 
@@ -22,7 +22,7 @@
   </div>
 
   <section *ngIf="!loading && !message" class="charts-grid">
-    <ui-card class="chart-card shadow-sm">
+    <div class="chart-card card shadow-sm">
       <div class="card-body">
         <h3>Sales Trend</h3>
         <p class="text-muted">Recent sales by order value.</p>
@@ -39,9 +39,9 @@
           <p class="muted">Sales trend is not available yet.</p>
         </ng-template>
       </div>
-    </ui-card>
+    </div>
 
-    <ui-card class="chart-card shadow-sm">
+    <div class="chart-card card shadow-sm">
       <div class="card-body">
         <h3>Inventory Health</h3>
         <p class="text-muted">Top inventory items and stock levels.</p>
@@ -58,11 +58,11 @@
           <p class="muted">Inventory metrics are not available yet.</p>
         </ng-template>
       </div>
-    </ui-card>
+    </div>
   </section>
 
   <section *ngIf="!loading && !message" class="insights-grid">
-    <ui-card class="insight-card shadow-sm">
+    <div class="insight-card card shadow-sm">
       <div class="card-body">
         <h3>Orders</h3>
         <p class="text-muted">Pending and delivered order activity.</p>
@@ -77,9 +77,9 @@
           </div>
         </div>
       </div>
-    </ui-card>
+    </div>
 
-    <ui-card class="insight-card shadow-sm">
+    <div class="insight-card card shadow-sm">
       <div class="card-body">
         <h3>Finance</h3>
         <p class="text-muted">Invoice pressure and receivable amount.</p>
@@ -94,9 +94,9 @@
           </div>
         </div>
       </div>
-    </ui-card>
+    </div>
 
-    <ui-card class="insight-card shadow-sm">
+    <div class="insight-card card shadow-sm">
       <div class="card-body">
         <h3>Workflows</h3>
         <p class="text-muted">Pending samples and return requests.</p>
@@ -111,9 +111,9 @@
           </div>
         </div>
       </div>
-    </ui-card>
+    </div>
 
-    <ui-card class="insight-card shadow-sm">
+    <div class="insight-card card shadow-sm">
       <div class="card-body">
         <h3>Campaigns & Schemes</h3>
         <p class="text-muted">Active promotions and campaigns live now.</p>
@@ -128,6 +128,6 @@
           </div>
         </div>
       </div>
-    </ui-card>
+    </div>
   </section>
 </div>

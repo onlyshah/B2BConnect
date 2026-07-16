@@ -8,14 +8,13 @@ import { DistributorMarketplaceComponent } from './distributors/marketplace';
 import { CampaignsComponent } from './campaigns/campaigns';
 import { StoriesComponent } from './stories/stories';
 import { SchemesComponent } from './schemes/schemes';
-import { AnalyticsComponent } from './analytics/analytics';
 
 export const companyRoutes: Routes = [
   {
     path: '',
     component: CompanyLayoutComponent,
     children: [
-      { path: '', component: AnalyticsComponent },
+      { path: '', component: CompanyDashboardComponent },
       { path: 'profile', component: CompanyProfileComponent },
       { path: 'territories', component: TerritoryManagementComponent },
       { path: 'products', component: ProductManagementComponent },
@@ -23,7 +22,7 @@ export const companyRoutes: Routes = [
       { path: 'campaigns', component: CampaignsComponent },
       { path: 'stories', component: StoriesComponent },
       { path: 'schemes', component: SchemesComponent },
-      { path: 'analytics', component: AnalyticsComponent }
+      { path: 'analytics', redirectTo: '', pathMatch: 'full' }
     ]
   }
 ];

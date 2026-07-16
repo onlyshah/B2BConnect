@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { VisitService } from '../../../services/visit.service';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-salesman-visits',
   standalone: true,
-  imports: [CommonModule, UiButtonComponent],
+  imports: [CommonModule],
   templateUrl: './salesman-visits.html',
   styleUrls: ['./salesman-visits.css']
 })

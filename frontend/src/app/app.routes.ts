@@ -19,27 +19,23 @@ export const appRoutes: Routes = [
   },
   {
     path: 'distributor/dashboard',
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['distributor-admin'] },
-    loadChildren: () => import('./features/distributor/distributor.routes').then(m => m.distributorRoutes)
+    pathMatch: 'full',
+    redirectTo: 'distributor'
   },
   {
     path: 'retailer/dashboard',
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['retailer'] },
-    loadChildren: () => import('./features/retailer/retailer.routes').then(m => m.retailerRoutes)
+    pathMatch: 'full',
+    redirectTo: 'retailer'
   },
   {
     path: 'salesman/dashboard',
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['salesman'] },
-    loadChildren: () => import('./features/salesman/salesman.routes').then(m => m.salesmanRoutes)
+    pathMatch: 'full',
+    redirectTo: 'salesman'
   },
   {
     path: 'super-admin/dashboard',
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['super-admin'] },
-    loadChildren: () => import('./features/super-admin/super-admin.routes').then(m => m.superAdminRoutes)
+    pathMatch: 'full',
+    redirectTo: 'super-admin'
   },
   {
     path: 'company',

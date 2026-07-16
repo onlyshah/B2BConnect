@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeTenantAlias } = require('./schemaHelpers');
 
 const userSchema = new mongoose.Schema({
   companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', index: true, default: null },
@@ -35,6 +36,7 @@ userSchema.pre('validate', function (next) {
   next();
 });
 
+normalizeTenantAlias(userSchema);
 userSchema.index({ companyId: 1, role: 1 });
 userSchema.index({ email: 1 }, { unique: true, sparse: true });
 userSchema.index({ phone: 1 }, { unique: true, sparse: true });

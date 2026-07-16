@@ -1,65 +1,43 @@
 const Payment = require('../models/Payment');
-const Invoice = require('../models/Invoice');
-const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
-
-function buildPaymentFilter(req, extra = {}) {
-  return {
-    tenantId: req.tenantId,
-    companyId: resolveCompanyId(req),
-    isDeleted: false,
-    ...extra,
-  };
-}
+const { successResponse, errorResponse } = require('../utils/response');
+const { buildTenantFilter, getPagination } = require('../utils/tenantScope');
 
 const getPayments = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-    const { invoiceId, retailerId, distributorId } = req.query;
-    const filter = buildPaymentFilter(req);
-    if (invoiceId) filter.invoiceId = invoiceId;
-    if (retailerId) filter.retailerId = retailerId;
-    if (distributorId) filter.distributorId = distributorId;
-    const payments = await Payment.find(filter).skip(skip).limit(limit).sort({ paidAt: -1 }).populate('invoiceId').populate('retailerId').populate('distributorId');
-    const total = await Payment.countDocuments(filter);
-    res.json({ success: true, data: payments, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
+    const { page, limit, skip } = getPagination(req, 10);
+    const filter = buildTenantFilter(req);
+    const [payments, total] = await Promise.all([
+      Payment.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+      Payment.countDocuments(filter),
+    ]);
+
+    return successResponse(res, {
+      message: 'Payments retrieved successfully',
+      data: payments,
+      meta: { page, limit, total, pages: Math.ceil(total / limit) },
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return errorResponse(res, { status: 500, message: error.message });
   }
 };
 
 const getPayment = async (req, res) => {
   try {
-    const payment = await Payment.findOne({ _id: req.params.paymentId, ...buildPaymentFilter(req) }).populate('invoiceId').populate('retailerId').populate('distributorId');
-    if (!payment) return res.status(404).json({ success: false, message: 'Payment not found' });
-    res.json({ success: true, data: payment });
+    const payment = await Payment.findOne({ _id: req.params.paymentId, ...buildTenantFilter(req) }).lean();
+    if (!payment) return errorResponse(res, { status: 404, message: 'Payment not found' });
+    return successResponse(res, { message: 'Payment retrieved successfully', data: payment });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return errorResponse(res, { status: 500, message: error.message });
   }
 };
 
 const createPayment = async (req, res) => {
   try {
-    const { invoiceId, amount } = req.body;
-    if (!invoiceId || !amount) return res.status(400).json({ success: false, message: 'invoiceId and amount are required' });
-    const payment = new Payment({ ...req.body, tenantId: req.tenantId, companyId: resolveCompanyId(req), paidAt: new Date(), status: 'recorded' });
+    const payment = new Payment({ ...req.body, tenantId: req.tenantId });
     await payment.save();
-
-    const invoice = await Invoice.findOne({ _id: payment.invoiceId, ...buildPaymentFilter(req) });
-    if (invoice) {
-      invoice.amountPaid = (invoice.amountPaid || 0) + payment.amount;
-      invoice.status = invoice.amountPaid >= invoice.amountDue ? 'paid' : 'issued';
-      invoice.updatedAt = new Date();
-      await invoice.save();
-    }
-
-    await payment.populate('invoiceId');
-    await payment.populate('retailerId');
-    await payment.populate('distributorId');
-    res.status(201).json({ success: true, data: payment, message: 'Payment created' });
+    return successResponse(res, { status: 201, message: 'Payment created successfully', data: payment });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return errorResponse(res, { status: 500, message: error.message });
   }
 };
 

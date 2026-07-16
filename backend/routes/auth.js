@@ -40,30 +40,35 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ message: 'Email and password required' });
   }
 
-  const user = await User.findOne({ email: email.toLowerCase() });
-  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-    return res.status(401).json({ message: 'Invalid credentials' });
-  }
-  if (user.status !== 'active') {
-    return res.status(403).json({ message: `Account is ${user.status}` });
-  }
-
-  const { accessToken, refreshToken } = generateTokens(user);
-  res.json({
-    accessToken,
-    refreshToken,
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      tenantId: user.tenantId,
-      companyId: user.companyId,
-      distributorId: user.distributorId,
-      retailerId: user.retailerId,
-      salesmanId: user.salesmanId
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
-  });
+
+    if (user.status !== 'active') {
+      return res.status(403).json({ message: `Account is ${user.status}` });
+    }
+
+    const { accessToken, refreshToken } = generateTokens(user);
+    return res.json({
+      accessToken,
+      refreshToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        tenantId: user.tenantId,
+        companyId: user.companyId,
+        distributorId: user.distributorId,
+        retailerId: user.retailerId,
+        salesmanId: user.salesmanId
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Authentication failed' });
+  }
 });
 
 router.get('/me', authenticate, ensureTenant, async (req, res) => {
@@ -141,6 +146,7 @@ router.post('/refresh', async (req, res) => {
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
     const user = await User.findOne({ _id: decoded.userId, tenantId: decoded.tenantId });
     if (!user || user.status !== 'active' || decoded.tokenVersion !== user.refreshTokenVersion) {
       return res.status(401).json({ message: 'Invalid refresh token' });
@@ -158,9 +164,10 @@ router.post('/logout', async (req, res) => {
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
     const user = await User.findOne({ _id: decoded.userId, tenantId: decoded.tenantId });
     if (!user || decoded.tokenVersion !== user.refreshTokenVersion) {
-      return res.status(401).json({ message: 'Invalid refresh token' });
+      return res.json({ message: 'Logged out' });
     }
 
     if (user.role === 'salesman' && user.salesmanId) {
@@ -183,7 +190,7 @@ router.post('/logout', async (req, res) => {
       { $inc: { refreshTokenVersion: 1 }, updatedAt: new Date() }
     );
   } catch (err) {
-    return res.status(401).json({ message: 'Invalid refresh token' });
+    return res.json({ message: 'Logged out' });
   }
 
   res.json({ message: 'Logged out' });

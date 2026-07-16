@@ -12,18 +12,18 @@ const {
 
 const router = express.Router();
 
-router.get('/', authenticate, authorize(['super-admin']), getCompanies);
+router.get('/', authenticate, ensureTenant, authorize(['super-admin', 'company-admin']), getCompanies);
 
-router.post('/', authenticate, authorize(['super-admin']), createCompany);
+router.post('/', authenticate, ensureTenant, authorize(['super-admin']), createCompany);
 
-router.get('/:companyId', authenticate, getCompany);
+router.get('/:companyId', authenticate, ensureTenant, getCompany);
 
-router.put('/:companyId', authenticate, authorize(['super-admin', 'company-admin']), updateCompany);
+router.put('/:companyId', authenticate, ensureTenant, authorize(['super-admin', 'company-admin']), updateCompany);
 
-router.post('/:companyId/approve', authenticate, authorize(['super-admin']), approveCompany);
+router.post('/:companyId/approve', authenticate, ensureTenant, authorize(['super-admin']), approveCompany);
 
-router.post('/:companyId/reject', authenticate, authorize(['super-admin']), rejectCompany);
+router.post('/:companyId/reject', authenticate, ensureTenant, authorize(['super-admin']), rejectCompany);
 
-router.delete('/:companyId', authenticate, authorize(['super-admin']), deleteCompany);
+router.delete('/:companyId', authenticate, ensureTenant, authorize(['super-admin']), deleteCompany);
 
 module.exports = router;

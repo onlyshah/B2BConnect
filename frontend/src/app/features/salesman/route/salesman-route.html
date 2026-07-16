@@ -25,9 +25,9 @@
   <section class="route-card" *ngIf="!loading">
     <h3>Live route actions</h3>
     <div class="action-list">
-      <ui-button variant="primary" class="pill-btn" [routerLink]="['/salesman/visits/new']">Start visit</ui-button>
-      <ui-button variant="secondary" class="pill-btn" [routerLink]="['/salesman/visits']">Check in</ui-button>
-      <ui-button variant="secondary" class="pill-btn" [routerLink]="['/salesman/visits']">Capture location</ui-button>
+      <button class="pill-btn" routerLink="/salesman/visits/new" type="button">Start visit</button>
+      <button class="pill-btn" routerLink="/salesman/visits" type="button">Check in</button>
+      <button class="pill-btn" routerLink="/salesman/visits" type="button">Capture location</button>
     </div>
   </section>
 </div>

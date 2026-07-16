@@ -7,6 +7,7 @@ const CollectionRecord = require('../models/CollectionRecord');
 const User = require('../models/User');
 
 const resolveCompanyId = (req) => req.user?.companyId || req.body?.companyId || req.query?.companyId || req.tenantId;
+const toObjectId = (value) => (mongoose.Types.ObjectId.isValid(value) ? new mongoose.Types.ObjectId(value) : value);
 
 const buildSalesmanFilter = (req, extra = {}) => ({
   companyId: resolveCompanyId(req),
@@ -177,12 +178,8 @@ const getPerformance = async (req, res) => {
     const ordersAgg = await Visit.aggregate([
       {
         $match: {
-          companyId: mongoose.Types.ObjectId.isValid(companyId)
-            ? mongoose.Types.ObjectId(companyId)
-            : companyId,
-          salesman: mongoose.Types.ObjectId.isValid(salesmanId)
-            ? mongoose.Types.ObjectId(salesmanId)
-            : salesmanId,
+          companyId: toObjectId(companyId),
+          salesman: toObjectId(salesmanId),
           orderGenerated: { $exists: true, $ne: null },
         },
       },
@@ -202,9 +199,7 @@ const getPerformance = async (req, res) => {
       const collAgg = await CollectionRecord.aggregate([
         {
           $match: {
-            companyId: mongoose.Types.ObjectId.isValid(companyId)
-              ? mongoose.Types.ObjectId(companyId)
-              : companyId,
+            companyId: toObjectId(companyId),
             collectedBy: { $in: userIds },
             isDeleted: false,
           },

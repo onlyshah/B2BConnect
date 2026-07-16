@@ -6,7 +6,7 @@ import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 @Component({
   selector: 'app-distributor-module-page',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiCardComponent],
   templateUrl: './distributor-module.html',
   styleUrls: ['./distributor-module.css']
 })

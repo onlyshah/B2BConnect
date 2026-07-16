@@ -66,7 +66,7 @@ const seedUsers = async () => {
         role: 'salesman',
         status: 'active',
       })),
-      // Retailer Demo User
+      // Retailer Seed User
       ...(retailer ? [{
         tenantId: '000000000000000000000001',
         companyId: company._id,

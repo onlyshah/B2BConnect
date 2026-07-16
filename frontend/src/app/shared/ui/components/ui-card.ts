@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <section class="ui-card" [ngClass]="className" [class.elevated]="elevated">
+    <section class="ui-card" [class.elevated]="elevated">
       <div class="ui-card__header" *ngIf="title || subtitle">
         <div>
           <h3 *ngIf="title">{{ title }}</h3>
@@ -25,5 +25,4 @@ export class UiCardComponent {
   @Input() title?: string;
   @Input() subtitle?: string;
   @Input() elevated = false;
-  @Input('class') className = '';
 }

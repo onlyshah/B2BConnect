@@ -8,13 +8,12 @@ import { CompanyService } from '../../../services/company.service';
 import { DistributorService } from '../../../services/distributor.service';
 import { RetailerService } from '../../../services/retailer.service';
 import { OrderService } from '../../../services/order.service';
-import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 import { MetricCardComponent, MetricData } from '../../../shared/components/metric-card';
 
 @Component({
   selector: 'app-super-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, MetricCardComponent, UiCardComponent],
+  imports: [CommonModule, RouterModule, MetricCardComponent],
   template: `
     <section class="page-card">
       <div class="hero">
@@ -26,15 +25,15 @@ import { MetricCardComponent, MetricData } from '../../../shared/components/metr
         <span class="pill">Live monitoring</span>
       </div>
 
-      <ui-card class="card" *ngIf="loading">Loading platform metrics...</ui-card>
-      <ui-card class="card error" *ngIf="error">{{ error }}</ui-card>
+      <div class="card" *ngIf="loading">Loading platform metrics...</div>
+      <div class="card error" *ngIf="error">{{ error }}</div>
 
       <div class="metrics-grid" *ngIf="!loading">
         <app-metric-card *ngFor="let metric of metrics" [metric]="metric"></app-metric-card>
       </div>
 
       <div class="content-grid" *ngIf="!loading">
-        <ui-card class="card">
+        <section class="card">
           <div class="card-header">
             <h3>Approval queue</h3>
             <a routerLink="/super-admin/approvals">Open queue</a>
@@ -51,9 +50,9 @@ import { MetricCardComponent, MetricData } from '../../../shared/components/metr
           <ng-template #emptyApprovalQueue>
             <p class="muted">No approvals are pending at the moment.</p>
           </ng-template>
-        </ui-card>
+        </section>
 
-        <ui-card class="card">
+        <section class="card">
           <div class="card-header">
             <h3>Recent companies</h3>
             <a routerLink="/super-admin/companies">Manage tenants</a>
@@ -69,7 +68,7 @@ import { MetricCardComponent, MetricData } from '../../../shared/components/metr
           <ng-template #emptyCompanies>
             <p class="muted">No tenant profiles are available yet.</p>
           </ng-template>
-        </ui-card>
+        </section>
       </div>
     </section>
   `,

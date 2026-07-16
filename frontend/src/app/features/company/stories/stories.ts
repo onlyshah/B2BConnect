@@ -4,14 +4,12 @@ import { StoryService } from '../../../services/story.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { ChangeDetectorRef } from '@angular/core';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
-import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 
 @Component({
   selector: 'app-stories',
   standalone: true,
-  imports: [CommonModule, UiButtonComponent, UiCardComponent],
+  imports: [CommonModule, UiButtonComponent],
   templateUrl: './stories.html',
   styleUrls: ['./stories.css']
 })
@@ -21,7 +19,7 @@ export class StoriesComponent implements OnInit, OnDestroy {
   message = '';
   private destroy$ = new Subject<void>();
 
-  constructor(private storyService: StoryService, private authService: AuthService, private cd: ChangeDetectorRef) {}
+  constructor(private storyService: StoryService, private authService: AuthService) {}
 
   ngOnInit() {
     this.loadStories();
@@ -37,13 +35,11 @@ export class StoriesComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.stories = data || [];
         this.loading = false;
-        try { this.cd.detectChanges(); } catch(e) {}
       },
       error: (err) => {
         console.error('Failed to load stories', err);
         this.message = 'Unable to load stories.';
         this.loading = false;
-        try { this.cd.detectChanges(); } catch(e) {}
       }
     });
   }

@@ -15,17 +15,14 @@ interface RoleOption {
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="page-shell">
-      <div class="page-frame">
-        <div class="hero-panel">
-          <span class="badge">Registration</span>
-          <h1 class="hero-title">Pick your registration path</h1>
-          <p class="hero-copy">
-            One clean onboarding experience for every role. Select your profile and continue with a role-specific registration form.
-          </p>
+    <div class="auth-content">
+      <div class="role-wrapper">
+        <div class="role-header">
+          <h2>Create your account</h2>
+          <p class="subtitle">Select your role to continue with the right registration form</p>
         </div>
 
-        <div class="cards-grid">
+        <div class="role-grid">
           <button
             *ngFor="let role of roles"
             class="role-card"
@@ -33,177 +30,199 @@ interface RoleOption {
             type="button"
             (click)="selectRole(role)"
           >
-            <div class="role-card__media">
+            <div class="role-icon">
               <span>{{ role.icon }}</span>
             </div>
-            <div class="role-card__body">
-              <h2>{{ role.title }}</h2>
-              <p>{{ role.description }}</p>
+            <div class="role-text">
+              <h3>{{ role.title }}</h3>
+              <p class="role-desc">{{ role.description }}</p>
             </div>
-            <div class="role-card__cta">Continue →</div>
+            <span class="role-btn">Continue</span>
+            <span class="role-chevron">→</span>
           </button>
         </div>
 
-        <div class="footer-panel">
-          <p>
-            Already have an account?
-            <a routerLink="/login">Login here</a>
-          </p>
-        </div>
+        <p class="switch-auth">Already have an account? <a routerLink="/login">Log in</a></p>
       </div>
     </div>
   `,
   styles: [`
     :host {
+      --auth-primary: #3671e9;
+      --auth-primary-tint: #eaf1fd;
+      --auth-text-primary: #1a1a1a;
+      --auth-text-secondary: #6b7280;
+      --auth-border: #e5e7eb;
+      --auth-surface: #ffffff;
+      --auth-bg: #f7f8fa;
+      --auth-radius: 12px;
       display: block;
     }
 
-    .page-shell {
+    .auth-content {
       min-height: 100vh;
-      padding: 2rem;
-      background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.16), transparent 24%),
-                  linear-gradient(180deg, #071118 0%, #111827 100%);
-      color: #e2e8f0;
+      background: var(--auth-bg);
+      padding: 16px;
     }
 
-    .page-frame {
-      max-width: 1180px;
-      margin: 0 auto;
-      display: grid;
-      gap: 2rem;
+    .role-wrapper {
+      max-width: 640px;
+      margin: 40px auto;
+      padding: 0 16px 32px;
     }
 
-    .hero-panel {
-      padding: 2.25rem;
-      border-radius: 28px;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid rgba(148, 163, 184, 0.14);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.22);
+    .role-header {
+      margin-bottom: 20px;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      background: rgba(99, 102, 241, 0.18);
-      color: #c7d2fe;
-      font-size: 0.82rem;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
+    .role-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--auth-text-primary);
+      margin: 0 0 4px;
     }
 
-    .hero-title {
+    .role-header .subtitle {
+      font-size: 13px;
+      color: var(--auth-text-secondary);
       margin: 0;
-      font-size: clamp(2.2rem, 3.5vw, 3.4rem);
-      line-height: 1.03;
-      color: #f8fafc;
     }
 
-    .hero-copy {
-      margin: 1rem 0 0;
-      max-width: 680px;
-      color: #cbd5e1;
-      font-size: 1rem;
-      line-height: 1.8;
-    }
-
-    .cards-grid {
+    .role-grid {
       display: grid;
-      gap: 1.25rem;
-      grid-template-columns: 1fr;
-    }
-
-    @media (min-width: 980px) {
-      .cards-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
     .role-card {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      align-items: flex-start;
+      gap: 14px;
       width: 100%;
-      padding: 1.8rem;
-      border-radius: 22px;
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      background: rgba(15, 23, 42, 0.94);
-      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.20);
-      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+      padding: 20px;
+      height: 100%;
       cursor: pointer;
       text-align: left;
+      background: var(--auth-surface);
+      border: 1px solid var(--auth-border);
+      border-radius: var(--auth-radius);
+      transition: border-color 0.15s ease, transform 0.18s ease;
     }
 
     .role-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(99, 102, 241, 0.45);
-      background: rgba(30, 41, 59, 1);
+      border-color: var(--auth-primary);
+      transform: translateY(-2px);
     }
 
-    .role-card__media {
-      width: 54px;
-      height: 54px;
-      display: grid;
-      place-items: center;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--accent, #8b5cf6);
-      font-size: 1.5rem;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    .role-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--auth-primary-tint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+      font-size: 20px;
+      color: var(--auth-primary);
     }
 
-    .role-card__body h2 {
-      margin: 0;
-      color: #f8fafc;
-      font-size: 1.35rem;
-      line-height: 1.25;
+    .role-text h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--auth-text-primary);
+      margin: 0 0 6px;
     }
 
-    .role-card__body p {
-      margin: 0.75rem 0 0;
-      color: #cbd5e1;
-      font-size: 0.96rem;
-      line-height: 1.75;
+    .role-desc {
+      font-size: 13px;
+      color: var(--auth-text-secondary);
+      line-height: 1.5;
+      margin: 0 0 16px;
     }
 
-    .role-card__cta {
-      align-self: flex-start;
-      padding: 0.85rem 1.3rem;
-      border-radius: 9999px;
-      background: linear-gradient(135deg, var(--accent, #8b5cf6), #4338ca);
-      color: white;
-      font-weight: 700;
-      transition: transform 0.2s ease;
+    .role-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--auth-border);
+      color: var(--auth-text-primary);
+      background: transparent;
+      font-weight: 600;
+      text-transform: none;
     }
 
-    .role-card:hover .role-card__cta {
-      transform: translateY(-1px);
+    .role-chevron {
+      display: none;
     }
 
-    .footer-panel {
-      padding: 1.9rem 2.2rem;
-      border-radius: 22px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.10);
-      color: #cbd5e1;
+    .switch-auth {
+      font-size: 13px;
+      color: var(--auth-text-secondary);
+      text-align: center;
+      margin: 20px 0 0;
     }
 
-    .footer-panel p {
-      margin: 0;
-      font-size: 0.98rem;
-    }
-
-    .footer-panel a {
-      color: #93c5fd;
-      font-weight: 700;
+    .switch-auth a {
+      color: var(--auth-primary);
       text-decoration: none;
+      font-weight: 600;
     }
 
-    .footer-panel a:hover {
-      text-decoration: underline;
+    @media (max-width: 576px) {
+      .role-wrapper {
+        margin: 0;
+        padding: 20px 0 24px;
+      }
+
+      .role-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .role-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        flex-direction: row;
+      }
+
+      .role-icon {
+        width: 34px;
+        height: 34px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+
+      .role-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .role-text h3 {
+        margin: 0;
+      }
+
+      .role-desc {
+        display: none;
+      }
+
+      .role-btn {
+        display: none;
+      }
+
+      .role-chevron {
+        display: block;
+        font-size: 18px;
+        color: var(--auth-text-secondary);
+        flex-shrink: 0;
+      }
     }
   `]
 })

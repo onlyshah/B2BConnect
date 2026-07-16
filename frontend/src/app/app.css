@@ -1,37 +1,132 @@
-.app-header {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.16), rgba(59, 130, 246, 0.09));
-  border-bottom: 1px solid rgba(99, 102, 241, 0.16);
-  padding: 1rem 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 30;
+:host {
+  --header-primary: #3671e9;
+  --header-primary-tint: #eaf1fd;
+  --header-text-primary: #1a1a1a;
+  --header-text-secondary: #6b7280;
+  --header-border: #e5e7eb;
+  --header-surface: #ffffff;
 }
 
-.app-header-inner {
-  max-width: 1180px;
-  margin: 0 auto;
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-header ion-toolbar {
+  --background: var(--header-surface);
+  --border-color: var(--header-border);
+  --min-height: 60px;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.header-brand ion-icon {
+  font-size: 20px;
+  color: var(--header-primary);
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--header-text-primary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
   gap: 16px;
 }
 
-.app-brand {
-  color: #4338ca;
-  font-size: 1.35rem;
-  font-weight: 800;
-  text-decoration: none;
+.notif-icon {
+  font-size: 19px;
+  color: var(--header-text-secondary);
+  cursor: pointer;
 }
 
-.app-header-actions {
+.role-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--header-primary-tint);
+  color: var(--header-primary);
+  white-space: nowrap;
+}
+
+.user-block {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  padding-left: 16px;
+  border-left: 1px solid var(--header-border);
 }
 
-.user-greeting {
-  color: #4f46e5;
-  font-weight: 700;
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--header-primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-text {
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--header-text-primary);
+}
+
+.user-title {
+  margin: 0;
+  font-size: 11px;
+  color: var(--header-text-secondary);
+}
+
+.logout-btn {
+  --border-radius: 8px;
+  --border-color: var(--header-border);
+  --color: var(--header-text-secondary);
+  --box-shadow: none;
+  height: 32px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.mobile-menu-icon {
+  display: none;
+  font-size: 20px;
+  color: var(--header-text-secondary);
+  cursor: pointer;
 }
 
 .app-shell {
@@ -93,15 +188,34 @@
   margin-bottom: 0.35rem;
 }
 
-@media (max-width: 767px) {
-  .app-header,
-  .app-content {
-    padding: 1rem;
+@media (max-width: 640px) {
+  .header-inner {
+    padding: 0 14px;
   }
 
-  .app-header-inner {
-    flex-direction: column;
-    align-items: flex-start;
+  .brand-name {
+    display: none;
+  }
+
+  .role-badge,
+  .user-text,
+  .logout-btn {
+    display: none;
+  }
+
+  .user-block {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .mobile-menu-icon {
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-content {
+    padding: 1rem;
   }
 
   .app-toast-container {

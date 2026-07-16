@@ -7,13 +7,13 @@ import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiStatCardComponent } from '../../../shared/ui/components/ui-stat-card';
 import { filter, takeUntil } from 'rxjs/operators';
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-product-management',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProductEditorComponent, UiButtonComponent, UiCardComponent],
+  imports: [CommonModule, RouterModule, ProductEditorComponent, UiButtonComponent, UiCardComponent, UiStatCardComponent],
   templateUrl: './product-management.html',
   styleUrls: ['./product-management.css']
 })
@@ -23,7 +23,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   selectedProduct: any = null;
   showEditor = false;
 
-  constructor(private productService: ProductService, private authService: AuthService, private cd: ChangeDetectorRef) {}
+  constructor(private productService: ProductService, private authService: AuthService) {}
 
   ngOnInit() {
     // Try to load immediately (in case auth already set)
@@ -43,12 +43,10 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       next: (data: any[]) => {
         this.products = data || [];
         this.loading = false;
-        try { this.cd.detectChanges(); } catch(e) {}
       },
       error: (err) => {
         console.error('Failed to load products', err);
         this.loading = false;
-        try { this.cd.detectChanges(); } catch(e) {}
       }
     });
   }

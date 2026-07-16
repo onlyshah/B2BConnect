@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeTenantAlias } = require('./schemaHelpers');
 
 const productSchema = new mongoose.Schema({
   companyId: { type: String, required: true, index: true },
@@ -20,6 +21,7 @@ const productSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
+normalizeTenantAlias(productSchema);
 productSchema.index({ tenantId: 1, companyId: 1, sku: 1 });
 
 module.exports = mongoose.model('Product', productSchema);

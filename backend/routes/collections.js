@@ -8,10 +8,10 @@ const {
 
 const router = express.Router();
 
-router.get('/', authenticate, ensureTenant, authorize(['distributor-admin', 'distributor-staff']), getCollections);
+router.get('/', authenticate, ensureTenant, authorize(['super-admin', 'company-admin', 'distributor-admin', 'distributor-staff']), getCollections);
 
-router.get('/:id', authenticate, ensureTenant, authorize(['distributor-admin', 'distributor-staff']), getCollection);
+router.get('/:id', authenticate, ensureTenant, authorize(['super-admin', 'company-admin', 'distributor-admin', 'distributor-staff']), getCollection);
 
-router.post('/', authenticate, ensureTenant, authorize(['distributor-admin', 'distributor-staff', 'salesman']), createCollection);
+router.post('/', authenticate, ensureTenant, authorize(['super-admin', 'company-admin', 'distributor-admin', 'distributor-staff', 'salesman']), createCollection);
 
 module.exports = router;

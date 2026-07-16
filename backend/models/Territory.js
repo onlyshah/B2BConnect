@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeTenantAlias } = require('./schemaHelpers');
 
 const territorySchema = new mongoose.Schema({
   companyId: { type: String, required: true, index: true },
@@ -19,6 +20,7 @@ const territorySchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
+normalizeTenantAlias(territorySchema);
 territorySchema.index({ companyId: 1, 'location.state': 1, 'location.city': 1 });
 
 module.exports = mongoose.model('Territory', territorySchema);

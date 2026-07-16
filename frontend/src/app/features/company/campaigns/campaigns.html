@@ -39,7 +39,7 @@
 
   <!-- Campaign create modal -->
   <div *ngIf="campaignModalOpen" class="modal-backdrop d-flex align-items-center justify-content-center">
-    <ui-card class="p-3" style="min-width:320px; max-width:560px;">
+    <div class="card p-3" style="min-width:320px; max-width:560px;">
       <h5 class="mb-2">Create Campaign</h5>
       <div class="mb-2">
         <label class="form-label">Title</label>
@@ -61,6 +61,6 @@
         <ui-button variant="secondary" class="me-2" (clicked)="campaignModalOpen=false">Cancel</ui-button>
         <ui-button variant="primary" (clicked)="submitCreateCampaign()">Create</ui-button>
       </div>
-    </ui-card>
+    </div>
   </div>
 </div>

@@ -19,6 +19,7 @@ import { ResponseHandlerService } from '../response-handler.service';
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   private injector = inject(Injector);
+  private isLogoutInProgress = false;
 
   private get authService(): AuthService {
     return this.injector.get(AuthService);
@@ -32,9 +33,13 @@ export class ErrorInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    const isLogoutRequest = req.url.includes('/auth/logout');
+
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        this.handleError(error);
+        if (!isLogoutRequest && !this.authService.isLogoutActive()) {
+          this.handleError(error);
+        }
         return throwError(() => error);
       })
     );
@@ -95,6 +100,10 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   private handleUnauthorized(): void {
+    if (this.isLogoutInProgress || this.authService.isLogoutActive()) {
+      return;
+    }
+
     // Try to refresh token
     this.authService.refreshToken().subscribe({
       next: () => {
@@ -102,6 +111,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       },
       error: () => {
         // Token refresh failed, logout user
+        this.isLogoutInProgress = true;
         this.authService.logout().subscribe({
           next: () => {
             // Redirect to login will be handled by auth guard

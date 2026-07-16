@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeTenantAlias } = require('./schemaHelpers');
 
 const distributorSchema = new mongoose.Schema({
   companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
@@ -20,6 +21,7 @@ const distributorSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 }, { timestamps: true, versionKey: '__v' });
 
+normalizeTenantAlias(distributorSchema);
 distributorSchema.index({ companyId: 1, name: 1 });
 
 module.exports = mongoose.model('Distributor', distributorSchema);

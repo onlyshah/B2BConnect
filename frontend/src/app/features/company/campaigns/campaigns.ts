@@ -3,17 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CampaignService } from '../../../services/campaign.service';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
-import { UiCardComponent } from '../../../shared/ui/components/ui-card';
 import { AuthService } from '../../../services/auth.service';
 import { ResponseHandlerService } from '../../../services/response-handler.service';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-campaigns',
   standalone: true,
-  imports: [CommonModule, FormsModule, UiButtonComponent, UiCardComponent],
+  imports: [CommonModule, FormsModule, UiButtonComponent],
   templateUrl: './campaigns.html',
   styleUrls: ['./campaigns.css']
 })
@@ -26,7 +24,6 @@ export class CampaignsComponent implements OnInit, OnDestroy {
   constructor(
     private campaignService: CampaignService,
     private authService: AuthService,
-    private cd: ChangeDetectorRef,
     private responseHandler: ResponseHandlerService
   ) {}
 
@@ -44,13 +41,11 @@ export class CampaignsComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.campaigns = data || [];
         this.loading = false;
-        try { this.cd.detectChanges(); } catch(e) {}
       },
       error: (err) => {
         console.error('Failed to load campaigns', err);
         this.message = 'Unable to load campaigns.';
         this.loading = false;
-        try { this.cd.detectChanges(); } catch(e) {}
       }
     });
   }

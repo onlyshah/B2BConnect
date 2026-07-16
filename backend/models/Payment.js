@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeTenantAlias } = require('./schemaHelpers');
 
 const paymentSchema = new mongoose.Schema({
   companyId: { type: String, required: true, index: true },
@@ -19,6 +20,7 @@ const paymentSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
+normalizeTenantAlias(paymentSchema);
 paymentSchema.index({ companyId: 1, invoiceId: 1, paidAt: -1 });
 
 module.exports = mongoose.model('Payment', paymentSchema, 'payments');

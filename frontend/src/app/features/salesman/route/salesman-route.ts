@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { SalesmanService } from '../../../services/salesman.service';
@@ -11,7 +10,7 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-salesman-route',
   standalone: true,
-  imports: [CommonModule, RouterModule, UiButtonComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './salesman-route.html',
   styleUrls: ['./salesman-route.css']
 })

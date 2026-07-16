@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeTenantAlias } = require('./schemaHelpers');
 
 const companySchema = new mongoose.Schema({
   tenantId: { type: mongoose.Schema.Types.Mixed, default: null },
@@ -45,6 +46,14 @@ companySchema.pre('validate', function (next) {
   next();
 });
 
+companySchema.pre('save', function (next) {
+  if (!this.tenantId) {
+    this.tenantId = this._id;
+  }
+  next();
+});
+
+normalizeTenantAlias(companySchema);
 companySchema.index({ name: 1 });
 
 module.exports = mongoose.model('Company', companySchema);

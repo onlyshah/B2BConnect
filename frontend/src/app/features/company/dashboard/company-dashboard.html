@@ -6,34 +6,82 @@
       <p>Track distributor health, retailer approvals, stock pressure, and campaign readiness in one place.</p>
     </div>
     <div class="hero-actions">
-        <ui-button variant="primary" class="primary-action" routerLink="/company/distributors">Review distributors</ui-button>
-        <ui-button variant="ghost" class="secondary-action" routerLink="/company/analytics">Open analytics</ui-button>
+      <ui-button variant="primary" routerLink="/company/distributors">Review distributors</ui-button>
+      <ui-button variant="ghost" routerLink="/company/products">Open products</ui-button>
     </div>
   </section>
 
-  <ui-card class="card error" *ngIf="error && !loading">
-    <p>{{ error }}</p>
-  </ui-card>
-
-  <section *ngIf="!loading" class="metrics-grid">
-    <app-metric-card *ngFor="let metric of metrics" [metric]="metric"></app-metric-card>
+  <section *ngIf="loading" class="state-card">
+    <p>Loading company overview...</p>
   </section>
 
-  <div class="content-grid" *ngIf="!loading">
-    <ui-card class="card">
+  <section *ngIf="error && !loading" class="state-card error">
+    <p>{{ error }}</p>
+  </section>
+
+  <section *ngIf="!loading && !error" class="metrics-grid">
+    <ui-stat-card *ngFor="let metric of metrics" [label]="metric.label" [value]="metric.value" [trend]="metric.trend" [trendType]="metric.trendType || 'neutral'"></ui-stat-card>
+  </section>
+
+  <section *ngIf="!loading && !error" class="charts-grid">
+    <ui-card [elevated]="true" class="chart-card">
+      <div class="card-header">
+        <h3>Sales trend</h3>
+        <ui-badge type="info">Recent orders</ui-badge>
+      </div>
+      <p class="chart-copy">Recent sales by order value.</p>
+      <div class="chart-frame" *ngIf="trendPoints; else noSalesData">
+        <svg [attr.viewBox]="'0 0 ' + chartWidth + ' ' + chartHeight" preserveAspectRatio="none" class="trend-chart">
+          <line x1="0" [attr.y1]="chartHeight - 1" [attr.x2]="chartWidth" [attr.y2]="chartHeight - 1" class="axis"></line>
+          <polyline [attr.points]="trendPoints" class="trend-line"></polyline>
+        </svg>
+        <div class="sales-labels">
+          <span *ngFor="let label of salesLabels">{{ label }}</span>
+        </div>
+      </div>
+      <ng-template #noSalesData>
+        <p class="muted">Sales trend is not available yet.</p>
+      </ng-template>
+    </ui-card>
+
+    <ui-card [elevated]="true" class="chart-card">
+      <div class="card-header">
+        <h3>Inventory health</h3>
+        <ui-badge type="warning">Needs attention</ui-badge>
+      </div>
+      <p class="chart-copy">Top inventory items and stock levels.</p>
+      <div class="inventory-list" *ngIf="inventoryItems.length; else noInventoryData">
+        <div class="inventory-row" *ngFor="let item of inventoryItems">
+          <div>
+            <div class="inventory-name">{{ item.label }}</div>
+            <div class="inventory-meta">
+              <span>{{ item.stock }} on hand</span>
+              <span>{{ item.reorderLevel }} reorder</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #noInventoryData>
+        <p class="muted">Inventory metrics are not available yet.</p>
+      </ng-template>
+    </ui-card>
+  </section>
+
+  <div class="content-grid" *ngIf="!loading && !error">
+    <ui-card [elevated]="true">
       <div class="card-header">
         <h3>Immediate actions</h3>
-        <ui-button variant="ghost" routerLink="/company/retailers">Manage retailers</ui-button>
+        <a routerLink="/company/territories">Manage territory</a>
       </div>
       <div class="action-list">
-        <ui-button variant="ghost" class="action-item" routerLink="/company/products">Review products</ui-button>
-        <ui-button variant="ghost" class="action-item" routerLink="/company/distributors">Approve distributors</ui-button>
-        <ui-button variant="ghost" class="action-item" routerLink="/company/campaigns">Launch campaigns</ui-button>
-        <ui-button variant="ghost" class="action-item" routerLink="/company/analytics">Open analytics</ui-button>
+        <a class="action-item" routerLink="/company/products">Review products</a>
+        <a class="action-item" routerLink="/company/distributors">Approve distributors</a>
+        <a class="action-item" routerLink="/company/campaigns">Launch campaigns</a>
+        <a class="action-item" routerLink="/company/analytics">Open analytics</a>
       </div>
     </ui-card>
 
-    <ui-card class="card">
+    <ui-card [elevated]="true">
       <div class="card-header">
         <h3>Pending retailer approvals</h3>
       </div>
@@ -52,9 +100,10 @@
     </ui-card>
   </div>
 
-  <ui-card class="card" *ngIf="!loading">
+  <ui-card [elevated]="true" *ngIf="!loading && !error">
     <div class="card-header">
       <h3>Low stock alerts</h3>
+      <ui-badge type="danger">{{ lowStockItems.length }} alerts</ui-badge>
     </div>
     <div *ngIf="lowStockItems.length; else noLowStock">
       <div class="row-item" *ngFor="let item of lowStockItems">
@@ -62,7 +111,7 @@
           <strong>{{ item.product?.name || item.name || 'Inventory item' }}</strong>
           <p>{{ item.sku || item.product?.sku || 'SKU unavailable' }}</p>
         </div>
-        <ui-badge type="danger">{{ item.stockOnHand ?? item.stock ?? item.quantity ?? 0 }} in stock</ui-badge>
+        <ui-badge type="warning">{{ item.stockOnHand ?? item.stock ?? item.quantity ?? 0 }} in stock</ui-badge>
       </div>
     </div>
     <ng-template #noLowStock>

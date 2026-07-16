@@ -5,7 +5,7 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { map, tap, catchError } from 'rxjs/operators';
+import { map, tap, catchError, finalize } from 'rxjs/operators';
 import { ApiService, ApiResponse } from './api.service';
 import { API_ENDPOINTS } from '../constants/api-endpoints';
 import { StorageService } from './storage.service';
@@ -55,6 +55,7 @@ export class AuthService {
   public user$ = this.currentUser$; // Alias for backward compatibility
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasValidToken());
+  private isLogoutInProgress = false;
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   public isLoggedIn$ = this.isAuthenticated$; // Alias for backward compatibility
 
@@ -152,9 +153,12 @@ export class AuthService {
    * Logout user
    */
   logout(): Observable<any> {
+    this.isLogoutInProgress = true;
+
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
       this.clearAuthData();
+      this.isLogoutInProgress = false;
       return of({ message: 'Logged out' });
     }
 
@@ -162,7 +166,11 @@ export class AuthService {
       tap(() => this.clearAuthData()),
       map((response) => response?.data ?? response),
       catchError((error) => {
-        return throwError(() => error);
+        this.clearAuthData();
+        return of({ message: 'Logged out locally', error });
+      }),
+      finalize(() => {
+        this.isLogoutInProgress = false;
       })
     );
   }
@@ -345,6 +353,10 @@ export class AuthService {
 
   getRefreshToken(): string | null {
     return this.storageService.getItem(this.REFRESH_TOKEN_KEY);
+  }
+
+  isLogoutActive(): boolean {
+    return this.isLogoutInProgress;
   }
 
   private hasValidToken(): boolean {

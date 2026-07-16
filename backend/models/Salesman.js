@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeTenantAlias } = require('./schemaHelpers');
 
 const salesmanSchema = new mongoose.Schema({
   companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
@@ -37,6 +38,7 @@ const salesmanSchema = new mongoose.Schema({
   lastActive: { type: Date }
 }, { timestamps: true });
 
+normalizeTenantAlias(salesmanSchema);
 salesmanSchema.index({ companyId: 1, email: 1 });
 salesmanSchema.index({ companyId: 1, territories: 1 });
 salesmanSchema.index({ companyId: 1, status: 1 });

@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 
 @Component({
   selector: 'app-salesman-reports',
   standalone: true,
-  imports: [CommonModule, UiButtonComponent],
+  imports: [CommonModule],
   templateUrl: './salesman-reports.html',
   styleUrls: ['./salesman-reports.css']
 })

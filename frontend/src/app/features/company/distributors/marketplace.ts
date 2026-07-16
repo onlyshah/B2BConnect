@@ -6,7 +6,6 @@ import { DistributorService } from '../../../services/distributor.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-distributor-marketplace',
@@ -22,8 +21,7 @@ export class DistributorMarketplaceComponent implements OnInit, OnDestroy {
 
   constructor(
     private distributorService: DistributorService,
-    private authService: AuthService,
-    private cd: ChangeDetectorRef
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -41,8 +39,8 @@ export class DistributorMarketplaceComponent implements OnInit, OnDestroy {
   load() {
     this.loading = true;
     this.distributorService.list({ page: 1, limit: 50 }).subscribe({
-      next: (data: any[]) => { this.distributors = data || []; this.loading = false; try { this.cd.detectChanges(); } catch(e) {} },
-      error: (err) => { console.error('Failed to load distributors', err); this.loading = false; try { this.cd.detectChanges(); } catch(e) {} }
+      next: (data: any[]) => { this.distributors = data || []; this.loading = false; },
+      error: (err) => { console.error('Failed to load distributors', err); this.loading = false; }
     });
   }
 
