@@ -36,6 +36,21 @@ const buildAuthUser = (user) => ({
   salesmanId: user.salesmanId,
 });
 
+const getLoginCandidates = (email) => {
+  const normalized = String(email || '').trim().toLowerCase();
+  const candidates = [normalized];
+
+  if (normalized.endsWith('@arrvi.com')) {
+    candidates.push(normalized.replace('@arrvi.com', '@aarvi.com'));
+  }
+
+  if (normalized.endsWith('@aarvi.com')) {
+    candidates.push(normalized.replace('@aarvi.com', '@arrvi.com'));
+  }
+
+  return [...new Set(candidates)];
+};
+
 const createTokens = (user) => {
   const accessToken = jwt.sign(
     {
@@ -179,9 +194,15 @@ const initFallbackState = async () => {
 };
 
 const connectDatabase = async () => {
+  const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/b2bconnect';
+  console.log('Connecting to MongoDB at', mongoUri);
+
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/b2bconnect';
-    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 1500 });
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 5000,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
     mongoose.connection.on('connected', () => {
       console.log('MongoDB connected');
@@ -194,8 +215,12 @@ const connectDatabase = async () => {
     mongoose.connection.on('disconnected', () => {
       console.warn('MongoDB disconnected');
     });
+
+    return true;
   } catch (err) {
     console.warn('MongoDB unavailable, using local fallback data.');
+    console.warn(err.message);
+    return false;
   }
 };
 
@@ -214,7 +239,8 @@ app.use(async (req, res, next) => {
       return errorResponse(res, { status: 400, message: 'Email and password required' });
     }
 
-    const user = fallbackState.users.find((candidate) => candidate.email === String(email).toLowerCase());
+    const loginCandidates = getLoginCandidates(email);
+    const user = fallbackState.users.find((candidate) => loginCandidates.includes(candidate.email));
     if (!user || !(await bcryptjs.compare(String(password), user.passwordHash))) {
       return errorResponse(res, { status: 401, message: 'Invalid credentials' });
     }

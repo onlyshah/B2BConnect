@@ -34,6 +34,21 @@ const generateTokens = (user) => {
   return { accessToken, refreshToken };
 };
 
+const getLoginCandidates = (email) => {
+  const normalized = String(email || '').trim().toLowerCase();
+  const candidates = [normalized];
+
+  if (normalized.endsWith('@arrvi.com')) {
+    candidates.push(normalized.replace('@arrvi.com', '@aarvi.com'));
+  }
+
+  if (normalized.endsWith('@aarvi.com')) {
+    candidates.push(normalized.replace('@aarvi.com', '@arrvi.com'));
+  }
+
+  return [...new Set(candidates)];
+};
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -41,7 +56,12 @@ router.post('/login', async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email: email.toLowerCase() });
+    let user = null;
+    for (const candidate of getLoginCandidates(email)) {
+      user = await User.findOne({ email: candidate });
+      if (user) break;
+    }
+
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
