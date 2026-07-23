@@ -6,11 +6,13 @@ import { catchError, finalize } from 'rxjs/operators';
 import { SalesmanService } from '../../../services/salesman.service';
 import { RetailerService } from '../../../services/retailer.service';
 import { AuthService } from '../../../services/auth.service';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-salesman-route',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiCardComponent, UiPageShellComponent],
   templateUrl: './salesman-route.html',
   styleUrls: ['./salesman-route.css']
 })

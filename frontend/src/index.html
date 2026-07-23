@@ -1,51 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="/">
     <title>B2BConnect</title>
-    <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
   <body>
     <app-root></app-root>
-    <!-- Dev helper: auto-login seeded admin in local dev so company pages show data immediately. REMOVE in production. -->
-    <script>
-      (function() {
-        try {
-          const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-          if (!isLocal) return;
-          const TOKEN_KEY = 'auth_token';
-          const REFRESH_KEY = 'refresh_token';
-          const USER_KEY = 'user_profile';
-          if (localStorage.getItem(TOKEN_KEY)) return;
-
-          // Seeded dev credentials (local only)
-          const creds = { email: 'admin@arrvi.com', password: 'User@2026' };
-          fetch('http://localhost:4000/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(creds)
-          })
-            .then((r) => r.json())
-            .then((res) => {
-              const payload = res?.data || res;
-              if (!payload) return;
-              const token = payload.token || payload.accessToken || payload.authToken || payload.access_token;
-              const refresh = payload.refreshToken || payload.refresh_token || null;
-              const user = payload.user || payload.currentUser || payload;
-              if (token) localStorage.setItem(TOKEN_KEY, token);
-              if (refresh) localStorage.setItem(REFRESH_KEY, refresh);
-              if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
-              console.info('Dev auto-login applied.');
-              // Small delay then reload so Angular picks up auth state on startup
-              setTimeout(() => { if (!window.__dev_autologin_done) { window.__dev_autologin_done = true; location.reload(); } }, 600);
-            })
-            .catch((e) => console.warn('Dev auto-login failed', e));
-        } catch (e) {
-          console.warn('Dev auto-login error', e);
-        }
-      })();
-    </script>
   </body>
 </html>

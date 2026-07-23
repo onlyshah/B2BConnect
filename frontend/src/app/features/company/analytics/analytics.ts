@@ -5,11 +5,16 @@ import { catchError } from 'rxjs/operators';
 import { AnalyticsService } from '../../../services/analytics.service';
 import { MetricCardComponent, MetricData } from '../../../shared/components/metric-card';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
+import { UiListToolbarComponent } from '../../../shared/ui/components/ui-list-toolbar';
+import { UiFormFieldComponent } from '../../../shared/ui/components/ui-form-field';
 
 @Component({
   selector: 'app-company-analytics',
   standalone: true,
-  imports: [CommonModule, MetricCardComponent, UiButtonComponent],
+  imports: [CommonModule, MetricCardComponent, UiButtonComponent, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent, UiListToolbarComponent, UiFormFieldComponent],
   templateUrl: './analytics.html',
   styleUrls: ['./analytics.css']
 })

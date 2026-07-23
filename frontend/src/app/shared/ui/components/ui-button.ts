@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
       <ng-content></ng-content>
     </button>
   `,
-  styles: [":host{display:inline-block}.ui-button{border:0;border-radius:999px;padding:10px 14px;font-weight:600;cursor:pointer;background:var(--gradient-primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow)}.ui-button.secondary{background:var(--surface-elevated);color:var(--color-primary);border:1px solid var(--border);box-shadow:none}.ui-button.success{background:var(--color-success)}.ui-button.danger{background:var(--color-danger)}.ui-button.ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border);box-shadow:none}.ui-button:disabled{opacity:.7;cursor:not-allowed;transform:none}"]
+  styles: [":host{display:inline-block}.ui-button{border:0;border-radius:999px;padding:10px 14px;font-weight:600;cursor:pointer;background:var(--gradient-primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow);transition:transform .2s ease,box-shadow .2s ease}.ui-button:hover{transform:translateY(-1px)}.ui-button.secondary{background:var(--surface-elevated);color:var(--color-primary);border:1px solid var(--border);box-shadow:none}.ui-button.success{background:var(--color-success)}.ui-button.danger{background:var(--color-danger)}.ui-button.ghost{background:transparent;color:var(--text-muted);border:1px solid var(--border);box-shadow:none}.ui-button:disabled{opacity:.7;cursor:not-allowed;transform:none}"]
 })
 export class UiButtonComponent {
   @Input() variant: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost' = 'primary';

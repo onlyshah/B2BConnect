@@ -1,6 +1,18 @@
-<div class="support-list">
-  <div class="support-card" *ngFor="let item of supportItems">
-    <strong>{{ item.title }}</strong>
-    <p>{{ item.detail }}</p>
+<ui-page-shell title="Support" eyebrow="service" description="Keep assistance requests, tickets, and quick help channels visible for your team.">
+  <div class="module-shell">
+    <div class="module-hero">
+      <span class="module-tag">Fast response</span>
+      <h2>Get help without leaving your retail workflow</h2>
+      <p>Raise tickets, browse support articles, or reach your distributor partner instantly from a single place.</p>
+    </div>
+
+    <div class="module-grid">
+      <ui-card *ngFor="let item of supportItems" [title]="item.title" [subtitle]="item.detail">
+        <div class="module-metrics">
+          <span class="module-pill">⚡ Priority</span>
+          <span class="module-pill">24/7</span>
+        </div>
+      </ui-card>
+    </div>
   </div>
-</div>
+</ui-page-shell>\n

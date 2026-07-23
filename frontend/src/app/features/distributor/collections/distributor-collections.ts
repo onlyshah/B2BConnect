@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CollectionService } from '../../../services/collection.service';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-distributor-collections',
   standalone: true,
-  imports: [CommonModule, RouterModule, UiCardComponent],
+  imports: [CommonModule, RouterModule, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
   templateUrl: './distributor-collections.html',
   styleUrls: ['./distributor-collections.css']
 })

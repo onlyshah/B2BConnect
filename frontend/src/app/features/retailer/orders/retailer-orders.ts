@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-retailer-orders',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiCardComponent, UiPageShellComponent],
   templateUrl: './retailer-orders.html',
   styleUrls: ['./retailer-orders.css']
 })

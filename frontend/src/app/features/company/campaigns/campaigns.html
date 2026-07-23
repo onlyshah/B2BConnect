@@ -1,66 +1,49 @@
-<div class="campaigns">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <h3>Campaigns</h3>
-      <p class="text-muted mb-0">Create and manage marketing campaigns</p>
-    </div>
-    <div>
-      <ui-button variant="secondary" class="me-2" (clicked)="createCampaign()">Add Campaign</ui-button>
-      <ui-button variant="primary" (clicked)="loadCampaigns()">Refresh</ui-button>
-    </div>
-  </div>
+<ui-page-shell title="Campaigns" eyebrow="marketing" description="Create and review promotional campaigns across your channels.">
+  <ng-container slot="actions">
+    <ui-button variant="secondary">Filter</ui-button>
+    <ui-button (click)="createCampaign()">+ New campaign</ui-button>
+  </ng-container>
 
-  <div *ngIf="loading" class="text-center text-muted py-4">Loading campaigns...</div>
-  <div *ngIf="!loading && message" class="text-danger py-3">{{ message }}</div>
+  <ui-list-toolbar title="Campaign library" subtitle="Keep your promotions organised and easy to review."></ui-list-toolbar>
 
-  <table *ngIf="!loading && campaigns.length > 0" class="table table-striped">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Type</th>
-        <th>Status</th>
-        <th>Published</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let campaign of campaigns">
-        <td>{{ campaign.title || campaign.name || 'Untitled' }}</td>
-        <td>{{ campaign.adType || '-' }}</td>
-        <td>{{ campaign.status || '-' }}</td>
-        <td>{{ campaign.createdAt | date:'mediumDate' }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <ui-empty-state *ngIf="loading" title="Loading campaigns" description="Fetching the latest promotions and ad assets."></ui-empty-state>
+  <ui-empty-state *ngIf="message && !loading" title="We hit a snag" [description]="message" tone="error"></ui-empty-state>
 
-  <div *ngIf="!loading && !campaigns.length" class="text-center text-muted py-4">No campaigns found.</div>
-  <div *ngIf="!loading && !campaigns.length" class="text-center py-2">
-    <ui-button variant="ghost" (clicked)="createCampaign()">Create first campaign</ui-button>
-  </div>
+  <ui-form-field label="Search campaigns" hint="Use the shared field primitive for future filters">
+    <input type="text" placeholder="Search campaigns" />
+  </ui-form-field>
 
-  <!-- Campaign create modal -->
-  <div *ngIf="campaignModalOpen" class="modal-backdrop d-flex align-items-center justify-content-center">
-    <div class="card p-3" style="min-width:320px; max-width:560px;">
-      <h5 class="mb-2">Create Campaign</h5>
-      <div class="mb-2">
-        <label class="form-label">Title</label>
-        <input class="form-control form-control-sm" [(ngModel)]="newCampaignTitle" />
+  <div class="page-grid" *ngIf="!loading && !message">
+    <ui-card *ngFor="let campaign of campaigns" [title]="campaign.title || 'Untitled campaign'" [subtitle]="campaign.adType || 'Promotion'">
+      <div class="campaign-card__meta">
+        <span>{{ campaign.status || 'draft' }}</span>
+        <span>{{ campaign.mediaUrl || 'No media URL' }}</span>
       </div>
-      <div class="mb-2">
-        <label class="form-label">Ad Type</label>
-        <select class="form-select form-select-sm" [(ngModel)]="newCampaignAdType">
+    </ui-card>
+  </div>
+
+  <ui-card *ngIf="campaignModalOpen" title="Create campaign" subtitle="Launch a new promotion with media and status">
+    <div class="form-grid">
+      <label>
+        <span>Title</span>
+        <input [(ngModel)]="newCampaignTitle" />
+      </label>
+      <label>
+        <span>Ad type</span>
+        <select [(ngModel)]="newCampaignAdType">
           <option value="generic">Generic</option>
-          <option value="banner">Banner</option>
-          <option value="shelf">Shelf</option>
+          <option value="offer">Offer</option>
+          <option value="festival">Festival</option>
         </select>
-      </div>
-      <div class="mb-2">
-        <label class="form-label">Media URL (required)</label>
-        <input class="form-control form-control-sm" placeholder="https://..." [(ngModel)]="newCampaignMediaUrl" />
-      </div>
-      <div class="text-end">
-        <ui-button variant="secondary" class="me-2" (clicked)="campaignModalOpen=false">Cancel</ui-button>
-        <ui-button variant="primary" (clicked)="submitCreateCampaign()">Create</ui-button>
-      </div>
+      </label>
+      <label>
+        <span>Media URL</span>
+        <input [(ngModel)]="newCampaignMediaUrl" />
+      </label>
     </div>
-  </div>
-</div>
+    <div class="modal-actions">
+      <ui-button variant="secondary" (click)="campaignModalOpen = false">Cancel</ui-button>
+      <ui-button (click)="submitCreateCampaign()">Create campaign</ui-button>
+    </div>
+  </ui-card>
+</ui-page-shell>\n

@@ -1,6 +1,10 @@
-<div class="settings-card">
-  <h3>Settings</h3>
-  <p><strong>Offline mode:</strong> {{ settings.offlineMode ? 'On' : 'Off' }}</p>
-  <p><strong>GPS enabled:</strong> {{ settings.gpsEnabled ? 'Yes' : 'No' }}</p>
-  <p><strong>Notifications:</strong> {{ settings.notificationsEnabled ? 'Enabled' : 'Disabled' }}</p>
-</div>
+<ui-page-shell title="Settings" eyebrow="account" description="Update your profile, availability, and field preferences.">
+  <div class="module-shell">
+    <ui-card title="Field settings" subtitle="Personal preferences">
+      <div class="module-list">
+        <div class="module-row"><span>Availability</span><strong>Full day</strong></div>
+        <div class="module-row"><span>Route alerts</span><strong>Enabled</strong></div>
+      </div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

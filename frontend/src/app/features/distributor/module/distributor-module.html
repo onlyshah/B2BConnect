@@ -1,9 +1,24 @@
-<ui-card class="card">
-  <div class="card-header">
-    <div>
-      <p class="eyebrow">Distributor module</p>
-      <h3>{{ icon }} {{ title }}</h3>
+<ui-page-shell [title]="title" [eyebrow]="title.toLowerCase()" [description]="description">
+  <div class="module-shell">
+    <div class="module-hero">
+      <span class="module-tag">Operations module</span>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
+    </div>
+
+    <div class="module-grid">
+      <ui-card title="Ready for action" subtitle="Operational workflow">
+        <div class="module-metrics">
+          <span class="module-pill">⚙️ Configured</span>
+          <span class="module-pill">📦 Live</span>
+        </div>
+      </ui-card>
+
+      <ui-card title="Next steps" subtitle="Suggested follow-up">
+        <div class="module-card">
+          <p>Assign owners, publish updates, and connect this module to your current distributor cadence.</p>
+        </div>
+      </ui-card>
     </div>
   </div>
-  <p class="muted">{{ description }}</p>
-</ui-card>
+</ui-page-shell>\n

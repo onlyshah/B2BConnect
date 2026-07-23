@@ -1,133 +1,34 @@
-<div class="company-analytics">
-  <div class="page-header">
-    <div>
-      <p class="eyebrow">Analytics</p>
-      <h2>Company performance dashboard</h2>
-      <p class="text-muted">Live business metrics based on your company’s data.</p>
-    </div>
-    <div>
-      <ui-button variant="ghost" (clicked)="loadAnalytics()" [disabled]="loading">Refresh</ui-button>
-    </div>
+<ui-page-shell title="Analytics" eyebrow="insights" description="Review the operating health of products, orders, retailers, and finance at a glance.">
+  <ng-container slot="actions">
+    <ui-button variant="secondary">Download</ui-button>
+    <ui-button>Refresh</ui-button>
+  </ng-container>
+
+  <ui-list-toolbar title="Operating insights" subtitle="Review the health of your business in one view."></ui-list-toolbar>
+
+  <ui-empty-state *ngIf="loading" title="Loading analytics" description="Gathering the latest business signals."></ui-empty-state>
+  <ui-empty-state *ngIf="message && !loading" title="We hit a snag" [description]="message" tone="error"></ui-empty-state>
+
+  <ui-form-field label="Search metrics" hint="Use the shared field primitive for future filters">
+    <input type="text" placeholder="Search analytics" />
+  </ui-form-field>
+
+  <div class="page-grid" *ngIf="!loading && !message">
+    <ui-card *ngFor="let metric of metrics" [title]="metric.label" [subtitle]="metric.unit || 'Current state'">
+      <div class="metric-value">{{ metric.value }}</div>
+    </ui-card>
+
+    <ui-card title="Sales trend" subtitle="Recent order movement">
+      <svg class="chart" [attr.width]="chartWidth" [attr.height]="chartHeight" viewBox="0 0 420 180" aria-label="sales trend chart">
+        <polyline [attr.points]="trendPoints" fill="none" stroke="var(--color-primary)" stroke-width="3"></polyline>
+      </svg>
+    </ui-card>
+
+    <ui-card title="Inventory watchlist" subtitle="Items that need attention">
+      <div class="stack-list" *ngFor="let item of inventoryItems">
+        <span>{{ item.label }}</span>
+        <strong>{{ item.stock }} / {{ item.reorderLevel }}</strong>
+      </div>
+    </ui-card>
   </div>
-
-  <div *ngIf="loading" class="loading-panel card shadow-sm">
-    <div class="spinner-border text-primary" role="status"></div>
-    <span class="ms-3">Loading analytics data...</span>
-  </div>
-
-  <div *ngIf="message && !loading" class="alert alert-danger">{{ message }}</div>
-
-  <div *ngIf="!loading && !message" class="metrics-grid">
-    <app-metric-card *ngFor="let metric of metrics" [metric]="metric"></app-metric-card>
-  </div>
-
-  <section *ngIf="!loading && !message" class="charts-grid">
-    <div class="chart-card card shadow-sm">
-      <div class="card-body">
-        <h3>Sales Trend</h3>
-        <p class="text-muted">Recent sales by order value.</p>
-        <div class="chart-frame" *ngIf="trendPoints; else noSalesData">
-          <svg [attr.viewBox]="'0 0 ' + chartWidth + ' ' + chartHeight" preserveAspectRatio="none" class="trend-chart">
-            <line x1="0" [attr.y1]="chartHeight - 1" [attr.x2]="chartWidth" [attr.y2]="chartHeight - 1" class="axis"></line>
-            <polyline [attr.points]="trendPoints" class="trend-line"></polyline>
-          </svg>
-          <div class="sales-labels">
-            <span *ngFor="let label of salesLabels">{{ label }}</span>
-          </div>
-        </div>
-        <ng-template #noSalesData>
-          <p class="muted">Sales trend is not available yet.</p>
-        </ng-template>
-      </div>
-    </div>
-
-    <div class="chart-card card shadow-sm">
-      <div class="card-body">
-        <h3>Inventory Health</h3>
-        <p class="text-muted">Top inventory items and stock levels.</p>
-        <div class="inventory-list" *ngIf="inventoryItems.length; else noInventoryData">
-          <div class="inventory-row" *ngFor="let item of inventoryItems">
-            <div class="inventory-name">{{ item.label }}</div>
-            <div class="inventory-meta">
-              <span>{{ item.stock }} on hand</span>
-              <span>{{ item.reorderLevel }} reorder</span>
-            </div>
-          </div>
-        </div>
-        <ng-template #noInventoryData>
-          <p class="muted">Inventory metrics are not available yet.</p>
-        </ng-template>
-      </div>
-    </div>
-  </section>
-
-  <section *ngIf="!loading && !message" class="insights-grid">
-    <div class="insight-card card shadow-sm">
-      <div class="card-body">
-        <h3>Orders</h3>
-        <p class="text-muted">Pending and delivered order activity.</p>
-        <div class="kpi-row">
-          <div>
-            <span class="label">Pending</span>
-            <strong>{{ summary.orders?.pending ?? 0 }}</strong>
-          </div>
-          <div>
-            <span class="label">Delivered</span>
-            <strong>{{ summary.orders?.delivered ?? 0 }}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="insight-card card shadow-sm">
-      <div class="card-body">
-        <h3>Finance</h3>
-        <p class="text-muted">Invoice pressure and receivable amount.</p>
-        <div class="kpi-row">
-          <div>
-            <span class="label">Open invoices</span>
-            <strong>{{ summary.finance?.openInvoices ?? 0 }}</strong>
-          </div>
-          <div>
-            <span class="label">Outstanding</span>
-            <strong>₹{{ summary.finance?.outstandingAmount ?? 0 | number }}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="insight-card card shadow-sm">
-      <div class="card-body">
-        <h3>Workflows</h3>
-        <p class="text-muted">Pending samples and return requests.</p>
-        <div class="kpi-row">
-          <div>
-            <span class="label">Samples</span>
-            <strong>{{ summary.workflows?.pendingSamples ?? 0 }}</strong>
-          </div>
-          <div>
-            <span class="label">Returns</span>
-            <strong>{{ summary.workflows?.openReturns ?? 0 }}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="insight-card card shadow-sm">
-      <div class="card-body">
-        <h3>Campaigns & Schemes</h3>
-        <p class="text-muted">Active promotions and campaigns live now.</p>
-        <div class="kpi-row">
-          <div>
-            <span class="label">Campaigns</span>
-            <strong>{{ summary.campaigns?.active ?? 0 }}</strong>
-          </div>
-          <div>
-            <span class="label">Schemes</span>
-            <strong>{{ summary.schemes?.active ?? 0 }}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-</div>
+</ui-page-shell>\n

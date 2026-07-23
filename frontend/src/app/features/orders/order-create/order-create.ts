@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiFormFieldComponent } from '../../../shared/ui/components/ui-form-field';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { AuthService } from '../../../services/auth.service';
@@ -17,9 +19,64 @@ type OrderMode = 'retailer-order' | 'distributor-replenishment';
 @Component({
   selector: 'app-order-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, UiButtonComponent, UiCardComponent],
-  templateUrl: './order-create.html',
-  styleUrls: ['./order-create.css']
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, UiButtonComponent, UiCardComponent, UiFormFieldComponent, UiPageShellComponent],
+  template: `
+    <ui-page-shell title="Create order" eyebrow="operations" description="Launch a new order and keep the workflow organized from the first step.">
+      <ng-container slot="actions">
+        <ui-button variant="secondary" routerLink="/orders">Cancel</ui-button>
+        <ui-button (click)="submit()" [disabled]="submitting">Submit order</ui-button>
+      </ng-container>
+
+      <div class="module-shell">
+        <ui-card title="Order details" subtitle="Capture the core order context before submission">
+          <form [formGroup]="form" class="form-stack" (ngSubmit)="submit()">
+            <ui-form-field label="Order type" hint="Choose the workflow that matches your role">
+              <select formControlName="orderType">
+                <option value="retailer-order">Retailer order</option>
+                <option value="distributor-replenishment">Distributor replenishment</option>
+              </select>
+            </ui-form-field>
+
+            <ui-form-field label="Product" hint="Select the product you want to place on the order">
+              <select formControlName="productId">
+                <option value="" disabled>Select product</option>
+                <option *ngFor="let product of products" [value]="product._id">{{ product.name }}</option>
+              </select>
+            </ui-form-field>
+
+            <ui-form-field label="Retailer" hint="Required for retailer orders" *ngIf="form.get('orderType')?.value === 'retailer-order'">
+              <select formControlName="retailerId">
+                <option value="" disabled>Select retailer</option>
+                <option *ngFor="let retailer of retailers" [value]="retailer._id">{{ retailer.name || retailer.companyName || retailer._id }}</option>
+              </select>
+            </ui-form-field>
+
+            <ui-form-field label="Distributor" hint="Required for replenishment flows" *ngIf="form.get('orderType')?.value === 'distributor-replenishment'">
+              <select formControlName="distributorId">
+                <option value="" disabled>Select distributor</option>
+                <option *ngFor="let distributor of distributors" [value]="distributor._id">{{ distributor.name || distributor.companyName || distributor._id }}</option>
+              </select>
+            </ui-form-field>
+
+            <div class="form-inline">
+              <ui-form-field label="Quantity" hint="Item quantity">
+                <input type="number" formControlName="quantity" min="1" />
+              </ui-form-field>
+              <ui-form-field label="Unit price" hint="Price applied to the line">
+                <input type="number" formControlName="unitPrice" min="0" />
+              </ui-form-field>
+            </div>
+
+            <div class="message" *ngIf="message">{{ message }}</div>
+            <div class="message error" *ngIf="error">{{ error }}</div>
+          </form>
+        </ui-card>
+      </div>
+    </ui-page-shell>
+  `,
+  styles: [
+    `.form-stack{display:grid;gap:14px}.form-inline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.message{padding:10px 12px;border-radius:10px;background:var(--surface-alt);color:var(--text)}.message.error{background:rgba(231,76,60,.1);color:#c0392b}select,input{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface);color:var(--text)}@media (max-width: 640px){.form-inline{grid-template-columns:1fr}}`
+  ]
 })
 export class OrderCreateComponent implements OnInit {
   form: FormGroup;

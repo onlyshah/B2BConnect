@@ -1,41 +1,27 @@
-<div class="product-management">
-  <ui-card [elevated]="true" class="product-shell">
-    <div class="section-header">
-      <div>
-        <p class="eyebrow">Catalog operations</p>
-        <h3>Products</h3>
-        <p class="section-copy">Track packaged SKUs, prices, and product readiness for the company network.</p>
+<ui-page-shell title="Product management" eyebrow="catalog" description="Browse your product catalog and keep key details ready for updates.">
+  <ng-container slot="actions">
+    <ui-button variant="secondary">Import</ui-button>
+    <ui-button (click)="createProduct()">+ New product</ui-button>
+  </ng-container>
+
+  <ui-empty-state *ngIf="loading" title="Loading products" description="Fetching the latest catalog entries."></ui-empty-state>
+
+  <div class="page-grid" *ngIf="!loading">
+    <ui-card *ngFor="let product of products" [title]="product.name || 'Product'" [subtitle]="product.sku || 'SKU pending'">
+      <div class="product-card__meta">
+        <span>{{ product.brand || 'Brand pending' }}</span>
+        <strong>{{ product.mrp | currency:'INR':'symbol':'1.0-0' }}</strong>
       </div>
-      <div class="action-row">
-        <ui-button variant="secondary" (clicked)="loadProducts()">Refresh</ui-button>
-        <ui-button variant="primary" (clicked)="createProduct()">Add product</ui-button>
+      <div class="product-card__footer">
+        <span>{{ product.launchStatus || 'draft' }}</span>
+        <ui-button variant="secondary" (click)="editProduct(product)">Edit</ui-button>
       </div>
-    </div>
+    </ui-card>
+  </div>
 
-    <div class="stats-grid">
-      <ui-stat-card label="Products" [value]="products.length"></ui-stat-card>
-      <ui-stat-card label="Status" [value]="products.length ? 'Live' : 'No data'" [trendType]="products.length ? 'positive' : 'neutral'"></ui-stat-card>
-    </div>
+  <div class="empty-state" *ngIf="!loading && !products.length">
+    <p>No catalog entries are available yet. Create your first product to get started.</p>
+  </div>
 
-    <app-product-editor *ngIf="showEditor" [product]="selectedProduct" (saved)="onSaved()"></app-product-editor>
-
-    <div *ngIf="loading" class="state">Loading products...</div>
-
-    <div *ngIf="!loading && products.length > 0" class="table-shell">
-      <table>
-        <thead><tr><th>Name</th><th>SKU</th><th>Brand</th><th>MRP</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let p of products">
-            <td>{{p.name}}</td>
-            <td>{{p.sku}}</td>
-            <td>{{p.brand || '-'}}</td>
-            <td>{{p.mrp || '-'}}</td>
-            <td><ui-button type="button" variant="ghost" (clicked)="editProduct(p)">Edit</ui-button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div *ngIf="!loading && products.length === 0" class="state empty">No products have been added yet.</div>
-  </ui-card>
-</div>
+  <app-product-editor *ngIf="showEditor" [product]="selectedProduct" (saved)="onSaved()"></app-product-editor>
+</ui-page-shell>\n

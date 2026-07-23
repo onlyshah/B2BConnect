@@ -1,31 +1,34 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-super-admin-retailers',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiButtonComponent, UiCardComponent, UiPageShellComponent],
   template: `
-    <section class="page-card">
-      <div class="title-row">
-        <div>
-          <p class="eyebrow">Retail network</p>
-          <h2>Retailers</h2>
-        </div>
-        <button class="action-btn">View all</button>
+    <ui-page-shell title="Retailers" eyebrow="network" description="Track the retailer network across the platform.">
+      <ng-container slot="actions">
+        <ui-button variant="secondary">Export</ui-button>
+        <ui-button>+ Review</ui-button>
+      </ng-container>
+
+      <div class="page-grid">
+        <ui-card title="City Market" subtitle="High volume partner">
+          <div class="module-list">
+            <div class="module-row"><span>Performance</span><strong>Strong growth</strong></div>
+          </div>
+        </ui-card>
+        <ui-card title="North Star Stores" subtitle="Medium volume partner">
+          <div class="module-list">
+            <div class="module-row"><span>Performance</span><strong>Steady</strong></div>
+          </div>
+        </ui-card>
       </div>
-      <div class="list">
-        <article class="item">
-          <strong>City Market</strong>
-          <span>High volume</span>
-        </article>
-        <article class="item">
-          <strong>North Star Stores</strong>
-          <span>Medium volume</span>
-        </article>
-      </div>
-    </section>
+    </ui-page-shell>
   `,
-  styles: [`.page-card{background:white;border:1px solid #e2e8f0;border-radius:18px;padding:20px;box-shadow:0 8px 30px rgba(15,23,42,.04)}.title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;color:#64748b;margin:0 0 4px}.title-row h2{margin:0;font-size:1.2rem}.action-btn{background:#1d4ed8;color:white;border:none;padding:10px 12px;border-radius:10px;font-weight:600}.list{display:grid;gap:10px}.item{display:flex;justify-content:space-between;align-items:center;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;background:#f8fafc}.item span{color:#64748b}@media(max-width:760px){.title-row,.item{flex-direction:column;align-items:flex-start;gap:8px}}`] 
+  styles: [`.page-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.module-list{display:grid;gap:10px}.module-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}.module-row:last-child{border-bottom:0;padding-bottom:0}.module-row span{color:var(--text-muted)}`]
 })
 export class SuperAdminRetailersComponent {}

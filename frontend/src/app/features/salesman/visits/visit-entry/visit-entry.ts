@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UiButtonComponent } from '../../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../../shared/ui/components/ui-page-shell';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { VisitService } from '../../../../services/visit.service';
 
 @Component({
   selector: 'app-visit-entry',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, UiButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, UiCardComponent, UiPageShellComponent],
   templateUrl: './visit-entry.html',
   styleUrls: ['./visit-entry.scss']
 })

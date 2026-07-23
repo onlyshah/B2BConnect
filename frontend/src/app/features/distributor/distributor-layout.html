@@ -1,18 +1,7 @@
-<dashboard-layout
-  [appName]="appName"
-  [title]="title"
-  [subtitle]="subtitle"
-  [eyebrow]="eyebrow"
-  [roleLabel]="roleLabel"
-  [searchPlaceholder]="searchPlaceholder"
-  [storageKey]="storageKey"
-  [navGroups]="navGroups"
-  [mobileNavItems]="mobileNavItems"
+<app-workspace-layout
+  [role]="role"
 >
-  <div slot="header-actions" class="d-flex flex-wrap gap-2">
-    <ui-button variant="primary" class="btn-sm fw-semibold" routerLink="/distributor/orders/new">Create order</ui-button>
-    <ui-button variant="ghost" class="btn-sm fw-semibold" routerLink="/distributor/retailers">Review retailers</ui-button>
+  <div class="page-shell">
+    <router-outlet></router-outlet>
   </div>
-
-  <router-outlet></router-outlet>
-</dashboard-layout>
+</app-workspace-layout>\n

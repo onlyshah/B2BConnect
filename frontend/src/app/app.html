@@ -1,65 +1,24 @@
-<ion-app>
-  <ion-header class="app-header" *ngIf="isLoggedIn">
-    <ion-toolbar>
-      <div class="header-inner">
-        <div class="header-brand">
-          <ion-icon name="business-outline"></ion-icon>
-          <span class="brand-name">{{ title }}</span>
-        </div>
+<div class="app-shell">
+  <router-outlet></router-outlet>
 
-        <div class="header-actions">
-          <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
-          <span class="role-badge">{{ userRole }}</span>
-
-          <div class="user-block">
-            <div class="user-avatar">{{ userInitials }}</div>
-            <div class="user-text">
-              <p class="user-name">{{ userName }}</p>
-              <p class="user-title">{{ userTitle }}</p>
-            </div>
-          </div>
-
-          <ion-button fill="outline" size="small" class="logout-btn" (click)="logout()">
-            Log out
-          </ion-button>
-
-          <ion-icon name="ellipsis-vertical-outline" class="mobile-menu-icon" (click)="openMobileMenu()"></ion-icon>
-        </div>
-      </div>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-content [fullscreen]="true">
-    <div class="app-shell">
-      <main class="app-content">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
-  </ion-content>
-
-  <div class="loading-overlay" *ngIf="isLoading" aria-live="polite">
-    <div class="loading-panel card">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <span class="loading-text">Loading workspace data...</span>
+  <div class="toast-stack" *ngIf="responseHandler.toasts$ | async as toasts">
+    <div *ngFor="let toast of toasts; trackBy: trackByToast" class="toast" [class]="toast.type">
+      <div class="toast-title" *ngIf="toast.title">{{ toast.title }}</div>
+      <div class="toast-message">{{ toast.message }}</div>
+      <button type="button" class="toast-close" (click)="responseHandler.removeToast(toast.id)">×</button>
     </div>
   </div>
 
-  <div class="app-toast-container" *ngIf="(responseHandler.toasts$ | async) as toasts" aria-live="polite">
-    <div *ngFor="let toast of toasts" class="app-toast alert"
-      [ngClass]="{
-        'alert-success': toast.type === 'success',
-        'alert-danger': toast.type === 'error',
-        'alert-warning': toast.type === 'warning',
-        'alert-info': toast.type === 'info'
-      }"
-      role="alert">
-      <div>
-        <strong *ngIf="toast.title" class="toast-title">{{ toast.title }}</strong>
-        <span>{{ toast.message }}</span>
-      </div>
-      <button type="button" class="btn btn-icon btn-close" aria-label="Close" (click)="responseHandler.removeToast(toast.id)" *ngIf="toast.closeable !== false"></button>
-    </div>
-  </div>
-</ion-app>
+  <ui-confirm-dialog
+    *ngIf="responseHandler.confirm$ | async as confirmState"
+    [open]="confirmState.open"
+    [title]="confirmState.options?.title || 'Confirm action'"
+    [message]="confirmState.options?.message || 'Are you sure you want to continue?'"
+    [confirmText]="confirmState.options?.confirmText || 'Confirm'"
+    [cancelText]="confirmState.options?.cancelText || 'Cancel'"
+    [confirmVariant]="confirmState.options?.confirmVariant || 'danger'"
+    [icon]="confirmState.options?.icon"
+    (confirmed)="handleConfirm()"
+    (cancelled)="handleCancel()"
+  ></ui-confirm-dialog>
+</div>

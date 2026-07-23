@@ -1,6 +1,10 @@
-<div class="reward-list">
-  <div class="reward-card" *ngFor="let reward of rewards">
-    <strong>{{ reward.label }}</strong>
-    <p>{{ reward.value }}</p>
+<ui-page-shell title="Rewards" eyebrow="loyalty" description="Monitor loyalty points and reward progress for your store.">
+  <div class="module-shell">
+    <ui-card title="Reward balance" subtitle="Your current loyalty status">
+      <div class="module-list">
+        <div class="module-row"><span>Points available</span><strong>2,450</strong></div>
+        <div class="module-row"><span>Tier</span><strong>Gold</strong></div>
+      </div>
+    </ui-card>
   </div>
-</div>
+</ui-page-shell>\n

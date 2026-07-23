@@ -1,6 +1,10 @@
-<div class="notification-list">
-  <div class="notification-card" *ngFor="let item of items">
-    <strong>{{ item.title }}</strong>
-    <p>{{ item.body }}</p>
+<ui-page-shell title="Notifications" eyebrow="updates" description="Review account and order updates relevant to your retail operations.">
+  <div class="module-shell">
+    <ui-card title="Latest alerts" subtitle="Recent updates">
+      <div class="module-list">
+        <div class="module-row"><span>Order approved</span><strong>1</strong></div>
+        <div class="module-row"><span>Payment reminder</span><strong>1</strong></div>
+      </div>
+    </ui-card>
   </div>
-</div>
+</ui-page-shell>\n

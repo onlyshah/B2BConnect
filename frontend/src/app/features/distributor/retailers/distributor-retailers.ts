@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { RetailerService } from '../../../services/retailer.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-distributor-retailers',
   standalone: true,
-  imports: [CommonModule, RouterModule, UiCardComponent],
+  imports: [CommonModule, RouterModule, UiButtonComponent, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
   templateUrl: './distributor-retailers.html',
   styleUrls: ['./distributor-retailers.css']
 })

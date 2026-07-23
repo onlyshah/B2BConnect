@@ -1,20 +1,10 @@
-<div class="followup-shell">
-  <section class="followup-card">
-    <div class="panel-header">
-      <h3>Follow-ups</h3>
-      <button class="pill-btn">+ Add task</button>
-    </div>
-    <div class="followup-list">
-      <div class="followup-item" *ngFor="let followup of followups">
-        <div>
-          <strong>{{ followup.retailer }}</strong>
-          <p>{{ followup.type }}</p>
-        </div>
-        <div class="followup-meta">
-          <span class="priority">{{ followup.priority }}</span>
-          <span class="due">Due {{ followup.due }}</span>
-        </div>
+<ui-page-shell title="Follow-ups" eyebrow="customer care" description="Organize follow-up tasks and next actions for your retailer relationships.">
+  <div class="module-shell">
+    <ui-card title="Upcoming tasks" subtitle="Priority follow-ups">
+      <div class="module-list">
+        <div class="module-row"><span>Pending payments</span><strong>4</strong></div>
+        <div class="module-row"><span>New order requests</span><strong>2</strong></div>
       </div>
-    </div>
-  </section>
-</div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

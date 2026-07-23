@@ -1,75 +1,25 @@
-<div class="collections-page">
-  <header class="page-header">
-    <div>
-      <p class="eyebrow">Collections</p>
-      <h1>Collection management</h1>
-      <p class="page-subtitle">Track payments, verify receipts, and reconcile collections across retailers.</p>
-    </div>
-    <ui-button variant="primary" (clicked)="showForm = !showForm">
-      {{ showForm ? 'Cancel' : 'Record Collection' }}
-    </ui-button>
-  </header>
+<ui-page-shell title="Collections" eyebrow="finance" description="Review payments recorded across retailers and keep status tracking transparent.">
+  <ng-container slot="actions">
+    <ui-button variant="secondary">Filter</ui-button>
+    <ui-button>+ Record collection</ui-button>
+  </ng-container>
 
-  <section *ngIf="showForm" class="form-section">
-    <form [formGroup]="formData" (ngSubmit)="onSubmit()" class="collection-form">
-      <div class="form-group">
-        <label>Retailer</label>
-        <select formControlName="retailer" required>
-          <option value="">Select Retailer</option>
-          <option *ngFor="let retailer of retailers" [value]="retailer._id">
-            {{ retailer.shopName }}
-          </option>
-        </select>
+  <ui-empty-state *ngIf="isLoading" title="Loading collections" description="Fetching recent payment activity."></ui-empty-state>
+
+  <div class="page-grid" *ngIf="!isLoading">
+    <ui-card *ngFor="let item of filteredCollections" [title]="item.retailer?.name || item.retailer || 'Retailer'" [subtitle]="item.paymentMode || 'Cash'">
+      <div class="collection-card__meta">
+        <ui-badge [type]="item.status || 'pending'">{{ item.status || 'recorded' }}</ui-badge>
+        <span class="collection-card__value">{{ item.amountCollected || 0 | currency }}</span>
       </div>
-
-      <div class="form-group">
-        <label>Amount Collected</label>
-        <input type="number" formControlName="amountCollected" placeholder="Enter amount" required />
+      <div class="collection-card__footer">
+        <span>Reference: {{ item.referenceId || '—' }}</span>
+        <span>{{ item.collectedAt | date:'mediumDate' }}</span>
       </div>
-
-      <div class="form-group">
-        <label>Payment Mode</label>
-        <select formControlName="paymentMode" required>
-          <option value="">Select Payment Mode</option>
-          <option *ngFor="let mode of paymentModes" [value]="mode">{{ mode | titlecase }}</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Reference ID (Optional)</label>
-        <input type="text" formControlName="referenceId" placeholder="Cheque/Transaction number" />
-      </div>
-
-      <ui-button type="submit" variant="success" [disabled]="formData.invalid">Submit</ui-button>
-    </form>
-  </section>
-
-  <div class="filters">
-    <ui-button variant="ghost" class="filter-btn" (clicked)="onFilterChange('all')">All</ui-button>
-    <ui-button *ngFor="let status of statusOptions" variant="ghost" class="filter-btn" (clicked)="onFilterChange(status)">
-      {{ status | titlecase }}
-    </ui-button>
+    </ui-card>
   </div>
 
-  <div *ngIf="isLoading" class="loading">Loading...</div>
-
-  <section *ngIf="!isLoading && filteredCollections.length > 0" class="collections-list">
-    <div *ngFor="let collection of filteredCollections" class="collection-card">
-      <div class="card-header">
-        <h3>{{ collection.collectionId }}</h3>
-        <span class="status" [class]="'status-' + collection.status">{{ collection.status | titlecase }}</span>
-      </div>
-      <div class="card-body">
-        <p><strong>Retailer:</strong> {{ collection.retailer?.shopName }}</p>
-        <p><strong>Amount:</strong> ₹{{ collection.amountCollected | number:'1.2-2' }}</p>
-        <p><strong>Mode:</strong> {{ collection.paymentMode | titlecase }}</p>
-        <p><strong>Date:</strong> {{ collection.collectionDate | date:'short' }}</p>
-        <p *ngIf="collection.referenceId"><strong>Ref ID:</strong> {{ collection.referenceId }}</p>
-      </div>
-    </div>
-  </section>
-
-  <div *ngIf="!isLoading && filteredCollections.length === 0" class="no-data">
-    No collections found
+  <div class="state-card" *ngIf="!isLoading && !filteredCollections.length">
+    <p>No collection records are available yet.</p>
   </div>
-</div>
+</ui-page-shell>\n

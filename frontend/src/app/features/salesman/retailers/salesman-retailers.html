@@ -1,28 +1,21 @@
-<div class="retailer-shell">
-  <section class="retailer-card" *ngIf="loading">
-    <p class="muted">Loading assigned retailers...</p>
-  </section>
+<ui-page-shell title="Retailers" eyebrow="sales" description="Review assigned retailers, balances, and follow-up status.">
+  <ng-container slot="actions">
+    <ui-button variant="secondary">Export</ui-button>
+    <ui-button>+ Connect</ui-button>
+  </ng-container>
 
-  <section class="retailer-card" *ngIf="error && !loading">
-    <p class="error">{{ error }}</p>
-  </section>
+  <ui-empty-state *ngIf="loading" title="Loading retailers" description="Gathering the latest assigned retailer list."></ui-empty-state>
+  <ui-empty-state *ngIf="error && !loading" title="We hit a snag" [description]="error" tone="error"></ui-empty-state>
 
-  <section class="retailer-card" *ngIf="!loading">
-    <div class="panel-header">
-      <h3>Assigned retailers</h3>
-      <a class="pill-btn" routerLink="/register/retailer">Add retailer lead</a>
-    </div>
-    <div class="retailer-list">
-      <div class="retailer-row" *ngFor="let retailer of retailers">
-        <div>
-          <strong>{{ retailer.name }}</strong>
-          <p>{{ retailer.address }} • Last visit {{ retailer.lastVisit }}</p>
-        </div>
-        <div class="retailer-meta">
-          <span class="pill">{{ retailer.status }}</span>
-          <span class="outstanding">{{ retailer.outstanding }}</span>
-        </div>
+  <div class="page-grid" *ngIf="!loading && !error">
+    <ui-card *ngFor="let retailer of retailers" [title]="retailer.name" [subtitle]="retailer.address">
+      <div class="retailer-card__meta">
+        <ui-badge [type]="retailer.status === 'Active' ? 'success' : 'warning'">{{ retailer.status }}</ui-badge>
+        <span class="retailer-card__value">{{ retailer.outstanding }}</span>
       </div>
-    </div>
-  </section>
-</div>
+      <div class="retailer-card__footer">
+        <span>Last visit: {{ retailer.lastVisit }}</span>
+      </div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

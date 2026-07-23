@@ -1,5 +1,0 @@
-.order-list { display: grid; gap: 12px; }
-.order-actions { display: flex; justify-content: flex-end; }
-.order-card { background: white; border-radius: 16px; padding: 14px; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06); display: flex; justify-content: space-between; align-items: center; }
-.order-card p { margin: 4px 0 0; color: #64748b; }
-.pill-btn { display: inline-flex; align-items: center; justify-content: center; border: none; background: #0f172a; color: white; padding: 8px 12px; border-radius: 999px; text-decoration: none; }

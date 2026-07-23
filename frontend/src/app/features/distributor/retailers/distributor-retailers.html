@@ -1,22 +1,18 @@
-<ui-card class="card">
-  <div class="card-header">
-    <div>
-      <p class="eyebrow">Retailer management</p>
-      <h3>Retail network</h3>
-    </div>
-    <a class="primary-link" routerLink="/distributor/orders">Create order</a>
-  </div>
+<ui-page-shell title="Retailers" eyebrow="network" description="Review your distributor retail network and top-performing partners.">
+  <ng-container slot="actions">
+    <ui-button variant="secondary">Export</ui-button>
+    <ui-button>+ Add retailer</ui-button>
+  </ng-container>
 
-  <div *ngIf="loading">Loading retailers...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+  <ui-empty-state *ngIf="loading" title="Loading retailers" description="Gathering the latest retail partner data."></ui-empty-state>
+  <ui-empty-state *ngIf="error && !loading" title="We hit a snag" [description]="error" tone="error"></ui-empty-state>
 
-  <div class="list" *ngIf="!loading && !error">
-    <div class="list-item" *ngFor="let retailer of retailers">
-      <div>
-        <strong>{{ retailer.name || retailer.storeName || 'Retailer' }}</strong>
-        <p>{{ retailer.phone || retailer.mobile || 'No contact' }}</p>
+  <div class="page-grid" *ngIf="!loading && !error">
+    <ui-card *ngFor="let retailer of retailers" [title]="retailer?.name || 'Retailer'" [subtitle]="retailer?.city || 'Regional partner'">
+      <div class="retailer-card__meta">
+        <span>{{ retailer?.status || 'active' }}</span>
+        <strong>{{ retailer?.outstandingBalance || 0 | currency:'INR':'symbol':'1.0-0' }}</strong>
       </div>
-      <span class="pill">{{ retailer.status || 'pending' }}</span>
-    </div>
+    </ui-card>
   </div>
-</ui-card>
+</ui-page-shell>\n

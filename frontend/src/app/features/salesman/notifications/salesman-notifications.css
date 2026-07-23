@@ -1,9 +1,0 @@
-.notification-shell { display: grid; gap: 16px; }
-.notification-card { background: white; border-radius: 16px; padding: 14px; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06); }
-.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.notification-list { display: grid; gap: 10px; }
-.notification-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
-.notification-item:last-child { border-bottom: none; }
-.notification-item p { margin: 4px 0 0; color: #64748b; }
-.time { color: #64748b; font-size: 0.9rem; }
-.pill-btn { border: none; background: #0f172a; color: white; padding: 8px 12px; border-radius: 999px; }

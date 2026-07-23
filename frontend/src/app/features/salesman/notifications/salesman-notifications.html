@@ -1,17 +1,10 @@
-<div class="notification-shell">
-  <section class="notification-card">
-    <div class="panel-header">
-      <h3>Notifications</h3>
-      <button class="pill-btn">Mark all read</button>
-    </div>
-    <div class="notification-list">
-      <div class="notification-item" *ngFor="let item of notifications">
-        <div>
-          <strong>{{ item.title }}</strong>
-          <p>{{ item.detail }}</p>
-        </div>
-        <span class="time">{{ item.time }}</span>
+<ui-page-shell title="Notifications" eyebrow="updates" description="Stay informed about assignments, approvals, and account updates.">
+  <div class="module-shell">
+    <ui-card title="Recent updates" subtitle="Latest relevant alerts">
+      <div class="module-list">
+        <div class="module-row"><span>Assignment update</span><strong>New retailer assigned</strong></div>
+        <div class="module-row"><span>Approval</span><strong>Order confirmation received</strong></div>
       </div>
-    </div>
-  </section>
-</div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

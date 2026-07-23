@@ -6,14 +6,49 @@ import { AuthService } from '../../../services/auth.service';
 import { LocationService } from '../../../services/location.service';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
-import { UiBadgeComponent } from '../../../shared/ui/components/ui-badge';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-company-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, UiButtonComponent, UiCardComponent, UiBadgeComponent],
-  templateUrl: './company-profile.html',
-  styleUrls: ['./company-profile.css']
+  imports: [CommonModule, ReactiveFormsModule, UiButtonComponent, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
+  template: `
+    <ui-page-shell title="Company profile" eyebrow="workspace" description="Keep your company profile polished and aligned with your current business context.">
+      <ng-container slot="actions">
+        <ui-button variant="secondary">Edit</ui-button>
+        <ui-button>Save</ui-button>
+      </ng-container>
+
+      <ui-empty-state *ngIf="loading" title="Loading profile" description="Refreshing your company details and linked references."></ui-empty-state>
+
+      <div class="page-grid" *ngIf="!loading">
+        <ui-card title="Overview" [subtitle]="companyData?.name || 'Arrvi distribution network'">
+          <div class="profile-grid">
+            <div><span class="label">Company</span><strong>{{ companyData?.name || 'Arrvi' }}</strong></div>
+            <div><span class="label">Industry</span><strong>{{ companyData?.industry || 'FMCG' }}</strong></div>
+            <div><span class="label">Email</span><strong>{{ companyData?.email || 'contact@arrvi.com' }}</strong></div>
+            <div><span class="label">Phone</span><strong>{{ companyData?.phone || '+91 98765 43210' }}</strong></div>
+          </div>
+        </ui-card>
+
+        <ui-card title="Business snapshot" subtitle="Quick reference for current operations">
+          <div class="stack-list" *ngFor="let item of brands.slice(0, 3)">
+            <span>{{ item.name }}</span>
+            <strong>{{ item.status }}</strong>
+          </div>
+        </ui-card>
+
+        <ui-card title="Contacts & documents" subtitle="Key references at a glance">
+          <div class="stack-list" *ngFor="let contact of contacts.slice(0, 3)">
+            <span>{{ contact.name }}</span>
+            <strong>{{ contact.role }}</strong>
+          </div>
+        </ui-card>
+      </div>
+    </ui-page-shell>
+  `,
+  styles: []
 })
 export class CompanyProfileComponent implements OnInit {
   form!: FormGroup;

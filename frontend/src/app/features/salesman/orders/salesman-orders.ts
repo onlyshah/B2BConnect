@@ -2,13 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { OrderService } from '../../../services/order.service';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-salesman-orders',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './salesman-orders.html',
-  styleUrls: ['./salesman-orders.css']
+  imports: [CommonModule, RouterModule, UiCardComponent, UiPageShellComponent],
+  template: `
+    <ui-page-shell title="Orders" eyebrow="sales" description="See your recent sales orders and their current progress.">
+      <div class="module-shell">
+        <ui-card title="Order summary" subtitle="Current month">
+          <div class="module-list">
+            <div class="module-row"><span>Submitted</span><strong>11</strong></div>
+            <div class="module-row"><span>Approved</span><strong>8</strong></div>
+          </div>
+        </ui-card>
+      </div>
+    </ui-page-shell>
+  `,
+  styles: []
 })
 export class SalesmanOrdersComponent implements OnInit {
   orders = [

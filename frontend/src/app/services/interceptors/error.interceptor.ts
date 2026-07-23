@@ -11,15 +11,18 @@ import {
   HttpEvent,
   HttpErrorResponse,
 } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
 import { AuthService } from '../auth.service';
 import { ResponseHandlerService } from '../response-handler.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   private injector = inject(Injector);
+  private router = inject(Router);
   private isLogoutInProgress = false;
+  private isRefreshInProgress = false;
 
   private get authService(): AuthService {
     return this.injector.get(AuthService);
@@ -34,22 +37,24 @@ export class ErrorInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const isLogoutRequest = req.url.includes('/auth/logout');
+    const isRefreshRequest = req.url.includes('/auth/refresh');
+    const isLoginRequest = req.url.includes('/auth/login');
 
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         if (!isLogoutRequest && !this.authService.isLogoutActive()) {
-          this.handleError(error);
+          this.handleError(error, isRefreshRequest, isLoginRequest);
         }
         return throwError(() => error);
       })
     );
   }
 
-  private handleError(error: HttpErrorResponse): void {
+  private handleError(error: HttpErrorResponse, isRefreshRequest: boolean, isLoginRequest: boolean): void {
     switch (error.status) {
       case 401:
         // Unauthorized - token expired or invalid
-        this.handleUnauthorized();
+        this.handleUnauthorized(isRefreshRequest, isLoginRequest);
         break;
 
       case 403:
@@ -99,32 +104,89 @@ export class ErrorInterceptor implements HttpInterceptor {
     }
   }
 
-  private handleUnauthorized(): void {
+  private handleUnauthorized(isRefreshRequest: boolean, isLoginRequest: boolean): void {
     if (this.isLogoutInProgress || this.authService.isLogoutActive()) {
       return;
     }
 
+    if (isRefreshRequest) {
+      // Refresh token itself is invalid; force logout and clear auth state.
+      this.isLogoutInProgress = true;
+      this.authService.logout().pipe(
+        finalize(() => {
+          this.isLogoutInProgress = false;
+        })
+      ).subscribe({
+        next: () => {
+          this.responseHandler.showError('Session expired. Please login again.');
+          // schedule navigation outside current change-detection cycle
+          setTimeout(() => this.navigateToLogin(), 0);
+        },
+        error: () => {
+          this.responseHandler.showError('Session expired. Please login again.');
+          setTimeout(() => this.navigateToLogin(), 0);
+        },
+      });
+      return;
+    }
+
+    if (isLoginRequest) {
+      // Login failed with 401, do not retry refresh.
+      return;
+    }
+
+    if (this.isRefreshInProgress) {
+      return;
+    }
+
+    this.isRefreshInProgress = true;
+
     // Try to refresh token
-    this.authService.refreshToken().subscribe({
+    this.authService.refreshToken().pipe(
+      finalize(() => {
+        this.isRefreshInProgress = false;
+      })
+    ).subscribe({
       next: () => {
         // Token refreshed successfully
       },
       error: () => {
         // Token refresh failed, logout user
         this.isLogoutInProgress = true;
-        this.authService.logout().subscribe({
+        this.authService.logout().pipe(
+          finalize(() => {
+            this.isLogoutInProgress = false;
+          })
+        ).subscribe({
           next: () => {
-            // Redirect to login will be handled by auth guard
+            // schedule navigation outside current change-detection cycle
+            setTimeout(() => this.navigateToLogin(), 0);
           },
           error: () => {
-            // Even logout failed, still clear auth state
             this.responseHandler.showError(
               'Session expired. Please login again.'
             );
+            setTimeout(() => this.navigateToLogin(), 0);
           },
         });
       },
     });
+  }
+
+  private navigateToLogin(): void {
+    // Perform navigation in next tick to avoid change-detection conflicts
+    try {
+      if (!this.router.url.includes('/login')) {
+        this.router.navigate(['/login']);
+      }
+    } catch (e) {
+      // Fallback: ensure navigation happens even if router state isn't stable
+      setTimeout(() => {
+        if (!this.router.url.includes('/login')) {
+          this.router.navigate(['/login']);
+        }
+      }, 0);
+    }
   }
 
   private handleValidationError(error: HttpErrorResponse): void {

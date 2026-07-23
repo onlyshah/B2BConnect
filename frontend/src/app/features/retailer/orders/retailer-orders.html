@@ -1,12 +1,10 @@
-<div class="order-list">
-  <div class="order-actions">
-    <a class="pill-btn" routerLink="/retailer/orders/new">+ Create order</a>
+<ui-page-shell title="Orders" eyebrow="transactions" description="Track your store orders and confirm their progress.">
+  <div class="module-shell">
+    <ui-card title="Order status" subtitle="Recent orders">
+      <div class="module-list">
+        <div class="module-row"><span>Pending</span><strong>2</strong></div>
+        <div class="module-row"><span>Delivered</span><strong>5</strong></div>
+      </div>
+    </ui-card>
   </div>
-  <div class="order-card" *ngFor="let order of orders">
-    <div>
-      <strong>{{ order.id }}</strong>
-      <p>{{ order.status }}</p>
-    </div>
-    <span>{{ order.amount }}</span>
-  </div>
-</div>
+</ui-page-shell>\n

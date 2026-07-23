@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-salesman-samples',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiCardComponent, UiPageShellComponent],
   templateUrl: './salesman-samples.html',
   styleUrls: ['./salesman-samples.css']
 })

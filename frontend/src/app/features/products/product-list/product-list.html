@@ -1,42 +1,40 @@
-<div class="products-page">
-  <header class="page-header">
-    <div>
-      <p class="eyebrow">Product Catalog</p>
-      <h2>Available products</h2>
-      <p class="page-subtitle">Browse live inventory and place orders directly from the dashboard.</p>
-    </div>
-  </header>
+<ui-page-shell
+  title="Products"
+  eyebrow="catalog"
+  description="Track product availability, pricing, and launch status from one place."
+>
+  <ng-container slot="actions">
+    <ui-button variant="secondary">Export</ui-button>
+    <ui-button>+ Add product</ui-button>
+  </ng-container>
 
-  <div *ngIf="loading" class="loading">Loading products...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+  <ui-list-toolbar title="Catalog overview" subtitle="Manage products with a consistent action bar.">
+    <ng-container slot="actions">
+      <ui-button variant="secondary">Filter</ui-button>
+      <ui-button>+ New</ui-button>
+    </ng-container>
+  </ui-list-toolbar>
 
-  <div class="products-grid">
-    <article *ngFor="let product of products" class="product-card">
-      <div class="product-header">
-        <h3>{{ product.name }}</h3>
-        <span class="sku">{{ product.sku }}</span>
-      </div>
-
-      <div class="product-details">
-        <p><strong>MRP:</strong> ₹{{ product.mrp }}</p>
-        <p><strong>Pack Size:</strong> {{ product.packSize }}</p>
-        <p><strong>GST:</strong> {{ product.gst }}%</p>
-      </div>
-
-      <div class="product-benefits">
-        <p *ngIf="product.benefits?.length">
-          <strong>Benefits:</strong> {{ product.benefits.join(', ') }}
-        </p>
-      </div>
-
-      <div class="product-actions">
-        <ui-button variant="ghost" class="btn-view" [routerLink]="['/dashboard/products', product._id]">View Details</ui-button>
-        <ui-button variant="primary" class="btn-order" [routerLink]="['/dashboard/orders/new']" [queryParams]="{ productId: product._id, sku: product.sku }">Order Now</ui-button>
-      </div>
-    </article>
+  <div class="page-grid" *ngIf="!loading && !error">
+    <ui-kpi-card label="Visible products" [value]="products.length.toString()" hint="Live catalog count"></ui-kpi-card>
+    <ui-kpi-card label="Inventory focus" [value]="(products.length ? 'Ready' : 'Pending')" hint="Operational readiness"></ui-kpi-card>
   </div>
 
-  <div *ngIf="products.length === 0 && !loading" class="no-products">
-    No products available yet. Create a product first or contact your admin.
-  </div>
-</div>
+  <ui-form-field label="Search catalog" hint="Use this shared field pattern for future list screens">
+    <input type="text" placeholder="Search products" />
+  </ui-form-field>
+
+  <ui-data-table
+    title="Catalog overview"
+    subtitle="A reusable table for products and similar entity lists"
+    [columns]="overviewColumns"
+    [rows]="products"
+    [loading]="loading"
+    emptyTitle="No products yet"
+    emptyDescription="Add your first product to start building the catalog."
+  ></ui-data-table>
+
+  <ui-empty-state *ngIf="loading" title="Loading products" description="Fetching your catalog details."></ui-empty-state>
+  <ui-empty-state *ngIf="error" title="We hit a snag" [description]="error" tone="error"></ui-empty-state>
+  <ui-empty-state *ngIf="!loading && !error && !products.length" title="No products yet" description="Add your first product to start building the catalog." tone="neutral"></ui-empty-state>
+</ui-page-shell>\n

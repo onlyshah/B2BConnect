@@ -1,20 +1,15 @@
-<div class="collection-shell">
-  <section class="collection-card">
-    <div class="panel-header">
-      <h3>Collections</h3>
-      <button class="pill-btn">+ Record payment</button>
-    </div>
-    <div class="collection-list">
-      <div class="collection-item" *ngFor="let item of collections">
-        <div>
-          <strong>{{ item.retailer }}</strong>
-          <p>{{ item.mode }}</p>
-        </div>
-        <div class="collection-meta">
-          <span class="amount">{{ item.amount }}</span>
-          <span class="status">{{ item.status }}</span>
+<ui-page-shell title="Collections" eyebrow="field finance" description="Review collection progress and follow-up status for your assigned retailers.">
+  <div class="module-shell">
+    <ui-card title="Collection follow-up" subtitle="Current assigned retailers">
+      <div class="module-list" *ngIf="collections.length; else emptyState">
+        <div class="module-row" *ngFor="let item of collections">
+          <span>{{ item.retailer }}</span>
+          <strong>{{ item.amount }} · {{ item.status }}</strong>
         </div>
       </div>
-    </div>
-  </section>
-</div>
+      <ng-template #emptyState>
+        <ui-empty-state title="No collections yet" description="Collections will appear once follow-ups are recorded."></ui-empty-state>
+      </ng-template>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

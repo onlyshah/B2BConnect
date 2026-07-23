@@ -7,7 +7,9 @@ import { TerritoryService } from '../../../services/territory.service';
 import { LocationService } from '../../../services/location.service';
 import { ResponseHandlerService } from '../../../services/response-handler.service';
 import { AuthService } from '../../../services/auth.service';
-import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 interface City {
   _id?: string;
@@ -31,9 +33,32 @@ interface Territory {
 @Component({
   selector: 'app-territory-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, UiButtonComponent],
-  templateUrl: './territory-management.html',
-  styleUrls: ['./territory-management.css']
+  imports: [CommonModule, FormsModule, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
+  template: `
+    <ui-page-shell title="Territories" eyebrow="operations" description="Map territories, cities, and regional delivery zones for your business network.">
+      <div class="module-shell">
+        <div class="module-hero">
+          <span class="module-tag">Coverage planning</span>
+          <h2>Plan service regions with better visibility</h2>
+          <p>Use a simple territory view to structure cities and coverage areas for field operations.</p>
+        </div>
+
+        <ui-card title="Territory overview" subtitle="Current coverage structure">
+          <div class="module-list" *ngIf="territories.length; else emptyState">
+            <div class="module-row" *ngFor="let territory of territories">
+              <span>{{ territory.state }}</span>
+              <strong>{{ territory.cities.length || 0 }} cities</strong>
+            </div>
+          </div>
+
+          <ng-template #emptyState>
+            <ui-empty-state title="No territories yet" description="Create your first territory plan to start organizing regions."></ui-empty-state>
+          </ng-template>
+        </ui-card>
+      </div>
+    </ui-page-shell>
+  `,
+  styles: []
 })
 export class TerritoryManagementComponent implements OnInit {
   territories: Territory[] = [];
@@ -507,7 +532,20 @@ export class TerritoryManagementComponent implements OnInit {
     city.editName = city.name;
   }
 
-  removeState(state: Territory) {
+  async removeState(state: Territory) {
+    const confirmed = await this.responseHandler.confirm({
+      title: 'Delete territory',
+      message: `Delete the entire ${state.state} territory and its cities?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      confirmVariant: 'danger',
+      icon: '⚠️'
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
     const deleteRequests = [] as any[];
     if (state.id) {
       deleteRequests.push(this.territoryService.deleteTerritory(state.id));
@@ -538,7 +576,20 @@ export class TerritoryManagementComponent implements OnInit {
     }
   }
 
-  removeCity(state: Territory, city: City) {
+  async removeCity(state: Territory, city: City) {
+    const confirmed = await this.responseHandler.confirm({
+      title: 'Delete city',
+      message: `Delete ${city.name} from ${state.state}?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      confirmVariant: 'danger',
+      icon: '⚠️'
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
     if (!city._id) {
       state.cities = state.cities.filter((item) => item !== city);
       return;
@@ -572,7 +623,20 @@ export class TerritoryManagementComponent implements OnInit {
     );
   }
 
-  removeArea(city: City, areaIndex: number) {
+  async removeArea(city: City, areaIndex: number) {
+    const confirmed = await this.responseHandler.confirm({
+      title: 'Delete area',
+      message: 'Remove this territory area from the selected city?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      confirmVariant: 'danger',
+      icon: '⚠️'
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
     city.areas.splice(areaIndex, 1);
 
     if (!city._id) {

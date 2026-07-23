@@ -40,11 +40,7 @@ export interface DashboardNavGroup {
         <div class="sidebar-search" *ngIf="!isCollapsed">
           <label class="search-field search-field-sidebar">
             <span>⌕</span>
-            <input
-              type="search"
-              [(ngModel)]="searchTerm"
-              [placeholder]="searchPlaceholder"
-            />
+            <input type="search" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" />
           </label>
         </div>
 
@@ -84,19 +80,18 @@ export interface DashboardNavGroup {
       <div class="fortress-main">
         <header class="fortress-topbar">
           <div class="title-block">
-            <p class="eyebrow" *ngIf="eyebrow">{{ eyebrow }}</p>
-            <h1>{{ title }}</h1>
+            <div class="page-context">
+              <span class="page-context__pill" *ngIf="eyebrow">{{ eyebrow }}</span>
+              <span class="page-context__divider" *ngIf="eyebrow && title">/</span>
+              <span class="page-context__title">{{ title }}</span>
+            </div>
             <p class="subtitle" *ngIf="subtitle">{{ subtitle }}</p>
           </div>
 
           <div class="topbar-tools">
             <label class="search-field search-field-topbar">
               <span>⌕</span>
-              <input
-                type="search"
-                [(ngModel)]="searchTerm"
-                [placeholder]="searchPlaceholder"
-              />
+              <input type="search" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" />
             </label>
 
             <div class="topbar-actions">
@@ -114,7 +109,9 @@ export interface DashboardNavGroup {
         </header>
 
         <main class="fortress-content">
-          <ng-content></ng-content>
+          <section class="content-surface">
+            <ng-content></ng-content>
+          </section>
         </main>
       </div>
     </div>

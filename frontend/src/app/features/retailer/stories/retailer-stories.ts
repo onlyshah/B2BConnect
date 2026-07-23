@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-retailer-stories',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiCardComponent, UiPageShellComponent],
   templateUrl: './retailer-stories.html',
   styleUrls: ['./retailer-stories.css']
 })

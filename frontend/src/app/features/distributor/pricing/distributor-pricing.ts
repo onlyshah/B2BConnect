@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { PricingService } from '../../../services/pricing.service';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-distributor-pricing',
   standalone: true,
-  imports: [CommonModule, RouterModule, UiCardComponent],
+  imports: [CommonModule, RouterModule, UiCardComponent, UiPageShellComponent],
   templateUrl: './distributor-pricing.html',
   styleUrls: ['./distributor-pricing.css']
 })

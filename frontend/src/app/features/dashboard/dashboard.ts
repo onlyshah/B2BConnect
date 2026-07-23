@@ -7,10 +7,10 @@ import { DashboardSummary } from '../../models';
 import { MvpWorkflowService } from '../../services/mvp-workflow.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
-import { DashboardLayoutComponent, DashboardNavGroup, DashboardNavItem } from '../../shared/ui/layouts/dashboard-layout';
+import { DashboardNavGroup, DashboardNavItem } from '../../shared/ui/layouts/dashboard-layout';
 import { UiButtonComponent } from '../../shared/ui/components/ui-button';
 import { UiCardComponent } from '../../shared/ui/components/ui-card';
-import { MetricData } from '../../shared/components/metric-card';
+import { MetricCardComponent, MetricData } from '../../shared/components/metric-card';
 
 interface MenuItem {
   label: string;
@@ -29,7 +29,7 @@ interface CurrentUser {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, DashboardLayoutComponent, UiButtonComponent, UiCardComponent],
+  imports: [CommonModule, RouterModule, UiButtonComponent, UiCardComponent, MetricCardComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })

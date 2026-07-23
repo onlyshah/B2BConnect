@@ -1,227 +1,69 @@
 :host {
-  --header-primary: #3671e9;
-  --header-primary-tint: #eaf1fd;
-  --header-text-primary: #1a1a1a;
-  --header-text-secondary: #6b7280;
-  --header-border: #e5e7eb;
-  --header-surface: #ffffff;
-}
-
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.app-header ion-toolbar {
-  --background: var(--header-surface);
-  --border-color: var(--header-border);
-  --min-height: 60px;
-  --padding-start: 0;
-  --padding-end: 0;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.header-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.header-brand ion-icon {
-  font-size: 20px;
-  color: var(--header-primary);
-}
-
-.brand-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--header-text-primary);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.notif-icon {
-  font-size: 19px;
-  color: var(--header-text-secondary);
-  cursor: pointer;
-}
-
-.role-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: var(--header-primary-tint);
-  color: var(--header-primary);
-  white-space: nowrap;
-}
-
-.user-block {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-left: 16px;
-  border-left: 1px solid var(--header-border);
-}
-
-.user-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--header-primary);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.user-text {
-  line-height: 1.3;
-  white-space: nowrap;
-}
-
-.user-name {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--header-text-primary);
-}
-
-.user-title {
-  margin: 0;
-  font-size: 11px;
-  color: var(--header-text-secondary);
-}
-
-.logout-btn {
-  --border-radius: 8px;
-  --border-color: var(--header-border);
-  --color: var(--header-text-secondary);
-  --box-shadow: none;
-  height: 32px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: none;
-}
-
-.mobile-menu-icon {
-  display: none;
-  font-size: 20px;
-  color: var(--header-text-secondary);
-  cursor: pointer;
+  display: block;
 }
 
 .app-shell {
-  min-height: calc(100vh - 88px);
-  background: linear-gradient(180deg, #eff6ff 0%, #eef2ff 100%);
+  min-height: 100vh;
+  position: relative;
 }
 
-.app-content {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
-}
-
-.loading-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-}
-
-.loading-panel {
-  background: #ffffff;
-  border-radius: 1.5rem;
-  padding: 1.5rem 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.12);
-}
-
-.loading-text {
-  color: #475569;
-  font-weight: 600;
-}
-
-.app-toast-container {
+.toast-stack {
   position: fixed;
   right: 1rem;
   bottom: 1rem;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  z-index: 250;
-  max-width: min(420px, calc(100vw - 2rem));
+  max-width: min(24rem, calc(100vw - 2rem));
 }
 
-.app-toast {
-  border-radius: 1rem;
-  padding: 1rem 1rem;
-  margin: 0;
-  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.1);
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
+  background: var(--surface-elevated, #fff);
+  color: var(--text-primary, #111827);
+  border: 1px solid var(--border, #e5e7eb);
+}
+
+.toast.success {
+  border-color: rgba(16, 185, 129, 0.25);
+  background: rgba(236, 253, 245, 0.95);
+}
+
+.toast.error {
+  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(254, 242, 242, 0.95);
+}
+
+.toast.warning {
+  border-color: rgba(245, 158, 11, 0.25);
+  background: rgba(255, 247, 237, 0.95);
+}
+
+.toast.info {
+  border-color: rgba(59, 130, 246, 0.25);
+  background: rgba(239, 246, 255, 0.95);
 }
 
 .toast-title {
-  display: block;
-  margin-bottom: 0.35rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
 }
 
-@media (max-width: 640px) {
-  .header-inner {
-    padding: 0 14px;
-  }
-
-  .brand-name {
-    display: none;
-  }
-
-  .role-badge,
-  .user-text,
-  .logout-btn {
-    display: none;
-  }
-
-  .user-block {
-    padding-left: 0;
-    border-left: none;
-  }
-
-  .mobile-menu-icon {
-    display: block;
-  }
+.toast-message {
+  font-size: 0.95rem;
 }
 
-@media (max-width: 767px) {
-  .app-content {
-    padding: 1rem;
-  }
-
-  .app-toast-container {
-    left: 0.75rem;
-    right: 0.75rem;
-    bottom: 0.75rem;
-    max-width: none;
-  }
+.toast-close {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
 }

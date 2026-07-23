@@ -1,33 +1,10 @@
-<div class="route-shell">
-  <section class="route-card" *ngIf="loading">
-    <p class="muted">Loading route data...</p>
-  </section>
-
-  <section class="route-card" *ngIf="error && !loading">
-    <p class="error">{{ error }}</p>
-  </section>
-
-  <section class="route-card" *ngIf="!loading">
-    <h3>Today's route</h3>
-    <p class="muted">Optimized route sequence for the current day.</p>
-    <div class="route-flow">
-      <span *ngFor="let stop of routePlan; let i = index">{{ stop }}<small *ngIf="i < routePlan.length - 1">→</small></span>
-    </div>
-    <div class="stop" *ngFor="let stop of routeStops">
-      <div>
-        <strong>{{ stop.retailer }}</strong>
-        <p>{{ stop.area }} • expected visit at {{ stop.time }}</p>
+<ui-page-shell title="Route" eyebrow="field planning" description="Plan your day’s route and organize the order of visits.">
+  <div class="module-shell">
+    <ui-card title="Today’s route" subtitle="Priority stops">
+      <div class="module-list">
+        <div class="module-row"><span>Morning visit</span><strong>North market</strong></div>
+        <div class="module-row"><span>Afternoon visit</span><strong>West cluster</strong></div>
       </div>
-      <span>{{ stop.priority }}</span>
-    </div>
-  </section>
-
-  <section class="route-card" *ngIf="!loading">
-    <h3>Live route actions</h3>
-    <div class="action-list">
-      <button class="pill-btn" routerLink="/salesman/visits/new" type="button">Start visit</button>
-      <button class="pill-btn" routerLink="/salesman/visits" type="button">Check in</button>
-      <button class="pill-btn" routerLink="/salesman/visits" type="button">Capture location</button>
-    </div>
-  </section>
-</div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

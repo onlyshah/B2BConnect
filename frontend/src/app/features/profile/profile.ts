@@ -3,26 +3,36 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UiButtonComponent } from '../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../shared/ui/components/ui-page-shell';
+import { UiBadgeComponent } from '../../shared/ui/components/ui-badge';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, UiButtonComponent],
+  imports: [CommonModule, UiButtonComponent, UiCardComponent, UiPageShellComponent, UiBadgeComponent],
   template: `
-    <div class="p-4">
-      <h2>My Profile</h2>
-      <div *ngIf="loading">Loading profile...</div>
-      <div *ngIf="error" class="text-red-600">{{ error }}</div>
-      <div *ngIf="user && !loading" class="mt-4 space-y-2">
-        <p><strong>Name:</strong> {{ user.name || user.firstName + ' ' + user.lastName }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>Role:</strong> {{ user.role }}</p>
-        <p *ngIf="user.tenantId"><strong>Tenant:</strong> {{ user.tenantId }}</p>
-        <p *ngIf="user.companyId"><strong>Company:</strong> {{ user.companyId }}</p>
-        <ui-button variant="secondary" class="mt-4" (clicked)="logout()">Logout</ui-button>
-      </div>
-    </div>
-  `
+    <ui-page-shell title="My Profile" eyebrow="account" description="Review your account details and manage access from one screen.">
+      <ng-container slot="actions">
+        <ui-button variant="secondary" (clicked)="logout()">Logout</ui-button>
+      </ng-container>
+
+      <div *ngIf="loading" class="state-card">Loading profile...</div>
+      <div *ngIf="error" class="state-card error">{{ error }}</div>
+      <ui-card *ngIf="user && !loading" title="Account overview" subtitle="Your current workspace profile">
+        <div class="profile-grid">
+          <div class="profile-row"><span>Name</span><strong>{{ user.name || user.firstName + ' ' + user.lastName }}</strong></div>
+          <div class="profile-row"><span>Email</span><strong>{{ user.email }}</strong></div>
+          <div class="profile-row"><span>Role</span><ui-badge [type]="user.role">{{ user.role }}</ui-badge></div>
+          <div class="profile-row" *ngIf="user.tenantId"><span>Tenant</span><strong>{{ user.tenantId }}</strong></div>
+          <div class="profile-row" *ngIf="user.companyId"><span>Company</span><strong>{{ user.companyId }}</strong></div>
+        </div>
+      </ui-card>
+    </ui-page-shell>
+  `,
+  styles: [
+    `.profile-grid{display:grid;gap:12px}.profile-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}.profile-row:last-child{border-bottom:0}.profile-row span{color:var(--text-muted)}.state-card{padding:16px;border:1px dashed var(--border);border-radius:16px;background:var(--surface-muted);color:var(--text-muted)}.state-card.error{color:var(--color-danger);border-color:rgba(229,92,106,.24);background:rgba(229,92,106,.06)}@media (max-width: 640px){.profile-row{flex-direction:column;align-items:flex-start}}`
+  ]
 })
 export class ProfileComponent implements OnInit {
   user: any = null;

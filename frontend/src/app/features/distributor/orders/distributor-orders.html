@@ -1,25 +1,10 @@
-<ui-card class="card">
-  <div class="card-header">
-    <div>
-      <p class="eyebrow">Order management</p>
-      <h3>Retailer and salesman orders</h3>
-    </div>
-    <div class="header-actions">
-      <a class="primary-link" routerLink="/distributor/orders/new">Create order</a>
-      <a class="primary-link secondary" routerLink="/distributor/inventory">Manage inventory</a>
-    </div>
-  </div>
-
-  <div *ngIf="loading">Loading orders...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
-
-  <div class="list" *ngIf="!loading && !error">
-    <div class="list-item" *ngFor="let order of orders">
-      <div>
-        <strong>{{ order.orderNumber || 'Order' }}</strong>
-        <p>{{ order.retailerName || 'Retailer' }}</p>
+<ui-page-shell title="Orders" eyebrow="fulfillment" description="Track distributor orders and support smooth fulfillment for your retailers.">
+  <div class="module-shell">
+    <ui-card title="Live order activity" subtitle="Recent requests and pending action">
+      <div class="module-list">
+        <div class="module-row"><span>Pending dispatch</span><strong>12</strong></div>
+        <div class="module-row"><span>Delivered today</span><strong>8</strong></div>
       </div>
-      <span class="pill">{{ order.status || 'pending' }}</span>
-    </div>
+    </ui-card>
   </div>
-</ui-card>
+</ui-page-shell>\n

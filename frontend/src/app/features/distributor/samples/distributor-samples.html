@@ -1,22 +1,10 @@
-<ui-card class="card">
-  <div class="card-header">
-    <div>
-      <p class="eyebrow">Sample management</p>
-      <h3>Samples pending approval</h3>
-    </div>
-    <a class="primary-link" routerLink="/distributor/analytics">View analytics</a>
-  </div>
-
-  <div *ngIf="loading">Loading samples...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
-
-  <div class="list" *ngIf="!loading && !error">
-    <div class="list-item" *ngFor="let item of samples">
-      <div>
-        <strong>{{ item.productName || item.name || 'Sample' }}</strong>
-        <p>{{ item.retailerName || 'Retailer' }}</p>
+<ui-page-shell title="Samples" eyebrow="product trials" description="Review sample requests and product trial activity from retailers.">
+  <div class="module-shell">
+    <ui-card title="Sample requests" subtitle="This week">
+      <div class="module-list">
+        <div class="module-row"><span>Awaiting dispatch</span><strong>4</strong></div>
+        <div class="module-row"><span>Delivered</span><strong>9</strong></div>
       </div>
-      <span class="pill">{{ item.status || 'pending' }}</span>
-    </div>
+    </ui-card>
   </div>
-</ui-card>
+</ui-page-shell>\n

@@ -1,15 +1,10 @@
-<div class="stories-stack">
-  <div class="story-card" *ngFor="let story of stories">
-    <div class="story-head">
-      <strong>{{ story.title }}</strong>
-      <span>{{ story.type }}</span>
-    </div>
-    <p>{{ story.body }}</p>
-    <div class="story-actions">
-      <button>View</button>
-      <button>Like</button>
-      <button>Order</button>
-    </div>
-    <small>{{ story.likes }} likes</small>
+<ui-page-shell title="Stories" eyebrow="content" description="Read brand stories and product updates shared by your network.">
+  <div class="module-shell">
+    <ui-card title="Latest stories" subtitle="Fresh updates">
+      <div class="module-list">
+        <div class="module-row"><span>New launch</span><strong>Seasonal collection live</strong></div>
+        <div class="module-row"><span>Community update</span><strong>Store event coverage</strong></div>
+      </div>
+    </ui-card>
   </div>
-</div>
+</ui-page-shell>\n

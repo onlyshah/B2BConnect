@@ -1,51 +1,10 @@
-<div class="visit-list-container">
-  <div class="header">
-    <h2>Visit Management</h2>
-    <ui-button routerLink="/salesman/visits/new" variant="primary">+ New Visit</ui-button>
+<ui-page-shell title="Visit list" eyebrow="history" description="Review your prior visits and their outcomes.">
+  <div class="module-shell">
+    <ui-card title="Recent visits" subtitle="Latest entries">
+      <div class="module-list">
+        <div class="module-row"><span>North market</span><strong>Completed</strong></div>
+        <div class="module-row"><span>West cluster</span><strong>Completed</strong></div>
+      </div>
+    </ui-card>
   </div>
-
-  <div class="filters">
-    <select [(ngModel)]="filterStatus" (change)="onFilterChange()">
-      <option *ngFor="let status of statusOptions" [value]="status">
-        {{ status | titlecase }}
-      </option>
-    </select>
-  </div>
-
-  <div *ngIf="loading" class="loading">Loading visits...</div>
-
-  <table *ngIf="!loading && visits.length > 0" class="visits-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Retailer</th>
-        <th>Purpose</th>
-        <th>Outcome</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let visit of visits">
-        <td>{{ visit.visitDate | date: 'dd-MMM-yyyy' }}</td>
-        <td>{{ visit.retailer?.name }}</td>
-        <td>{{ visit.purpose }}</td>
-        <td>{{ visit.visitOutcome }}</td>
-        <td>
-          <span class="badge" [style.backgroundColor]="getStatusBadge(visit.status)">
-            {{ visit.status }}
-          </span>
-        </td>
-        <td>
-          <a [routerLink]="'/salesman/visits/' + visit._id" class="link">View</a>
-          |
-          <a [routerLink]="'/salesman/visits/' + visit._id + '/edit'" class="link">Edit</a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="!loading && visits.length === 0" class="no-data">
-    No visits found. <a routerLink="/salesman/visits/new">Create a new visit</a>
-  </div>
-</div>
+</ui-page-shell>\n

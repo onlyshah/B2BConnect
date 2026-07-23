@@ -1,21 +1,10 @@
-<div class="order-shell">
-  <section class="order-card">
-    <div class="panel-header">
-      <h3>Orders</h3>
-      <a class="pill-btn" routerLink="/salesman/orders/new">+ Create order</a>
-    </div>
-    <div class="order-list">
-      <div class="order-item" *ngFor="let order of orders">
-        <div>
-          <strong>{{ order.id }}</strong>
-          <p>{{ order.retailer }}</p>
-        </div>
-        <div class="order-meta">
-          <span class="amount">{{ order.amount }}</span>
-          <span class="status">{{ order.status }}</span>
-          <span class="delivery">{{ order.delivery }}</span>
-        </div>
+<ui-page-shell title="Orders" eyebrow="sales" description="See your recent sales orders and their current progress.">
+  <div class="module-shell">
+    <ui-card title="Order summary" subtitle="Current month">
+      <div class="module-list">
+        <div class="module-row"><span>Submitted</span><strong>11</strong></div>
+        <div class="module-row"><span>Approved</span><strong>8</strong></div>
       </div>
-    </div>
-  </section>
-</div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

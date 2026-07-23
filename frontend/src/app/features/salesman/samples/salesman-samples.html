@@ -1,17 +1,10 @@
-<div class="sample-shell">
-  <section class="sample-card">
-    <div class="panel-header">
-      <h3>Sample requests</h3>
-      <button class="pill-btn">+ Request sample</button>
-    </div>
-    <div class="sample-list">
-      <div class="sample-item" *ngFor="let sample of samples">
-        <div>
-          <strong>{{ sample.product }}</strong>
-          <p>{{ sample.retailer }} • {{ sample.qty }}</p>
-        </div>
-        <span class="status">{{ sample.status }}</span>
+<ui-page-shell title="Samples" eyebrow="product trials" description="Track sample requests and customer interest from the field.">
+  <div class="module-shell">
+    <ui-card title="Sample activity" subtitle="Current period">
+      <div class="module-list">
+        <div class="module-row"><span>Requested</span><strong>6</strong></div>
+        <div class="module-row"><span>Feedback received</span><strong>4</strong></div>
       </div>
-    </div>
-  </section>
-</div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

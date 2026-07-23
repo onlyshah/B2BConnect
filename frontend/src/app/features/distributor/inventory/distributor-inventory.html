@@ -1,22 +1,15 @@
-<ui-card class="card">
-  <div class="card-header">
-    <div>
-      <p class="eyebrow">Inventory operations</p>
-      <h3>Stock and replenishment</h3>
-    </div>
-    <a class="primary-link" routerLink="/distributor/orders">Create replenishment</a>
-  </div>
-
-  <div *ngIf="loading">Loading inventory...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
-
-  <div class="list" *ngIf="!loading && !error">
-    <div class="list-item" *ngFor="let item of inventory">
-      <div>
-        <strong>{{ item.productName || item.name || 'Inventory item' }}</strong>
-        <p>{{ item.batch || 'Available' }}</p>
+<ui-page-shell title="Inventory" eyebrow="operations" description="Monitor stock movement and restocking needs across your distributor network.">
+  <div class="module-shell">
+    <ui-card title="Stock overview" subtitle="Current inventory status">
+      <div class="module-list" *ngIf="inventory.length; else emptyState">
+        <div class="module-row" *ngFor="let item of inventory">
+          <span>{{ item.name || item.product?.name || 'Inventory item' }}</span>
+          <strong>{{ item.availableQty ?? item.quantity ?? 0 }} units</strong>
+        </div>
       </div>
-      <span class="pill">{{ item.stock || 0 }} in stock</span>
-    </div>
+      <ng-template #emptyState>
+        <ui-empty-state title="No inventory records" description="Inventory data will appear here once stock is synced."></ui-empty-state>
+      </ng-template>
+    </ui-card>
   </div>
-</ui-card>
+</ui-page-shell>\n

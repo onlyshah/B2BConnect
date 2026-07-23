@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SampleService } from '../../../services/sample.service';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-distributor-samples',
   standalone: true,
-  imports: [CommonModule, RouterModule, UiCardComponent],
+  imports: [CommonModule, RouterModule, UiCardComponent, UiPageShellComponent],
   templateUrl: './distributor-samples.html',
   styleUrls: ['./distributor-samples.css']
 })

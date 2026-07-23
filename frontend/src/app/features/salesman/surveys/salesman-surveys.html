@@ -1,6 +1,10 @@
-<div class="survey-list">
-  <div class="survey-card" *ngFor="let survey of surveys">
-    <strong>{{ survey.title }}</strong>
-    <p>{{ survey.status }}</p>
+<ui-page-shell title="Surveys" eyebrow="feedback" description="Gather post-visit feedback and survey insights from retailers.">
+  <div class="module-shell">
+    <ui-card title="Survey queue" subtitle="Pending response review">
+      <div class="module-list">
+        <div class="module-row"><span>Pending</span><strong>5</strong></div>
+        <div class="module-row"><span>Completed</span><strong>12</strong></div>
+      </div>
+    </ui-card>
   </div>
-</div>
+</ui-page-shell>\n

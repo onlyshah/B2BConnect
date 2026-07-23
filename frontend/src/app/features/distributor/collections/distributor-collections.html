@@ -1,22 +1,16 @@
-<ui-card class="card">
-  <div class="card-header">
-    <div>
-      <p class="eyebrow">Collection management</p>
-      <h3>Collections and payments</h3>
-    </div>
-    <a class="primary-link" routerLink="/distributor/outstanding">View outstanding</a>
-  </div>
-
-  <div *ngIf="loading">Loading collections...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
-
-  <div class="list" *ngIf="!loading && !error">
-    <div class="list-item" *ngFor="let item of collections">
-      <div>
-        <strong>{{ item.retailerName || 'Retailer' }}</strong>
-        <p>{{ item.referenceId || 'Collection' }}</p>
+<ui-page-shell title="Collections" eyebrow="finance" description="Monitor outstanding dues and follow up on collection progress across your retailer base.">
+  <div class="module-shell">
+    <ui-card title="Current collection queue" subtitle="Latest pending records">
+      <div class="module-list" *ngIf="collections.length; else emptyState">
+        <div class="module-row" *ngFor="let item of collections">
+          <span>{{ item.retailerName || item.retailer?.name || 'Retailer' }}</span>
+          <strong>{{ item.amount || item.totalAmount || '—' }}</strong>
+        </div>
       </div>
-      <span class="pill">₹{{ item.amountCollected || 0 }}</span>
-    </div>
+
+      <ng-template #emptyState>
+        <ui-empty-state title="No collection activity" description="There are no collection records to display right now."></ui-empty-state>
+      </ng-template>
+    </ui-card>
   </div>
-</ui-card>
+</ui-page-shell>\n

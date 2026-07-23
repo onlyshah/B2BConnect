@@ -1,7 +1,10 @@
-<div class="competitor-list">
-  <div class="competitor-card" *ngFor="let report of reports">
-    <strong>{{ report.brand }}</strong>
-    <p>{{ report.price }}</p>
-    <small>{{ report.remark }}</small>
+<ui-page-shell title="Competitors" eyebrow="market intelligence" description="Capture competitor movement and price awareness for your territory.">
+  <div class="module-shell">
+    <ui-card title="Intelligence snapshot" subtitle="Latest competitor notes">
+      <div class="module-list">
+        <div class="module-row"><span>Nearby competition</span><strong>3 active stores</strong></div>
+        <div class="module-row"><span>Observed offers</span><strong>2 promotional campaigns</strong></div>
+      </div>
+    </ui-card>
   </div>
-</div>
+</ui-page-shell>\n

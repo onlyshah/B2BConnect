@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { SalesmanLayoutComponent } from './salesman-layout';
-import { SalesmanDashboardComponent } from './dashboard/salesman-dashboard';
+import { DashboardComponent } from '../dashboard/dashboard';
 import { SalesmanRouteComponent } from './route/salesman-route';
 import { SalesmanRetailersComponent } from './retailers/salesman-retailers';
 import { SalesmanOrdersComponent } from './orders/salesman-orders';
@@ -25,25 +25,25 @@ export const salesmanRoutes: Routes = [
     path: '',
     component: SalesmanLayoutComponent,
     children: [
-      { path: '', component: SalesmanDashboardComponent },
-      { path: 'route', component: SalesmanRouteComponent },
-      { path: 'retailers', component: SalesmanRetailersComponent },
-      { path: 'orders/new', component: OrderCreateComponent },
-      { path: 'orders', component: SalesmanOrdersComponent },
-      { path: 'visits/new', component: VisitEntryComponent },
-      { path: 'visits', component: SalesmanVisitsComponent },
-      { path: 'followups', component: SalesmanFollowupsComponent },
-      { path: 'samples', component: SalesmanSamplesComponent },
-      { path: 'demos', component: SalesmanDemosComponent },
-      { path: 'collections', component: SalesmanCollectionsComponent },
-      { path: 'competitors', component: SalesmanCompetitorsComponent },
-      { path: 'surveys', component: SalesmanSurveysComponent },
-      { path: 'stories', component: SalesmanStoriesComponent },
-      { path: 'training', component: SalesmanTrainingComponent },
-      { path: 'reports', component: SalesmanReportsComponent },
-      { path: 'notifications', component: SalesmanNotificationsComponent },
-      { path: 'profile', component: SalesmanProfileComponent },
-      { path: 'settings', component: SalesmanSettingsComponent }
+      { path: '', component: DashboardComponent, data: { title: 'Dashboard', subtitle: 'Stay on top of your day, visits, and sales follow-up.', eyebrow: 'Sales execution workspace' } },
+      { path: 'route', component: SalesmanRouteComponent, data: { title: 'Today Route', subtitle: 'Plan your beat, retailers, and next actions.', eyebrow: 'Sales execution workspace' } },
+      { path: 'retailers', component: SalesmanRetailersComponent, data: { title: 'Retailers', subtitle: 'Manage your route and customer relationship progress.', eyebrow: 'Sales execution workspace' } },
+      { path: 'orders/new', component: OrderCreateComponent, data: { title: 'New Order', subtitle: 'Capture orders quickly while you are on the move.', eyebrow: 'Sales execution workspace' } },
+      { path: 'orders', component: SalesmanOrdersComponent, data: { title: 'Orders', subtitle: 'Review submitted orders and latest handoffs.', eyebrow: 'Sales execution workspace' } },
+      { path: 'visits/new', component: VisitEntryComponent, data: { title: 'New Visit', subtitle: 'Log a retailer visit with notes and next steps.', eyebrow: 'Sales execution workspace' } },
+      { path: 'visits', component: SalesmanVisitsComponent, data: { title: 'Visits', subtitle: 'Review your visit history and follow-up cadence.', eyebrow: 'Sales execution workspace' } },
+      { path: 'followups', component: SalesmanFollowupsComponent, data: { title: 'Follow-ups', subtitle: 'Keep promises and next actions visible.', eyebrow: 'Sales execution workspace' } },
+      { path: 'samples', component: SalesmanSamplesComponent, data: { title: 'Samples', subtitle: 'Distribute samples and track trial activity.', eyebrow: 'Sales execution workspace' } },
+      { path: 'demos', component: SalesmanDemosComponent, data: { title: 'Demos', subtitle: 'Coordinate product demonstrations and outcomes.', eyebrow: 'Sales execution workspace' } },
+      { path: 'collections', component: SalesmanCollectionsComponent, data: { title: 'Collections', subtitle: 'Record collections and move payment progress forward.', eyebrow: 'Sales execution workspace' } },
+      { path: 'competitors', component: SalesmanCompetitorsComponent, data: { title: 'Competitors', subtitle: 'Capture market observations and competitor notes.', eyebrow: 'Sales execution workspace' } },
+      { path: 'surveys', component: SalesmanSurveysComponent, data: { title: 'Surveys', subtitle: 'Collect field feedback and customer responses.', eyebrow: 'Sales execution workspace' } },
+      { path: 'stories', component: SalesmanStoriesComponent, data: { title: 'Stories', subtitle: 'Share field stories and local market updates.', eyebrow: 'Sales execution workspace' } },
+      { path: 'training', component: SalesmanTrainingComponent, data: { title: 'Training', subtitle: 'Keep product and process training up to date.', eyebrow: 'Sales execution workspace' } },
+      { path: 'reports', component: SalesmanReportsComponent, data: { title: 'Reports', subtitle: 'Submit insights, outcomes, and route summaries.', eyebrow: 'Sales execution workspace' } },
+      { path: 'notifications', component: SalesmanNotificationsComponent, data: { title: 'Notifications', subtitle: 'Stay aligned on approvals, alerts, and tasks.', eyebrow: 'Sales execution workspace' } },
+      { path: 'profile', component: SalesmanProfileComponent, data: { title: 'Profile', subtitle: 'Review your account details and field setup.', eyebrow: 'Sales execution workspace' } },
+      { path: 'settings', component: SalesmanSettingsComponent, data: { title: 'Settings', subtitle: 'Adjust preferences and account configuration.', eyebrow: 'Sales execution workspace' } }
     ]
   }
 ];

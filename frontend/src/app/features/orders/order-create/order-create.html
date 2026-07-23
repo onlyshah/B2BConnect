@@ -1,76 +1,52 @@
-<div class="order-create-shell">
-  <section class="hero-card">
-    <div>
-      <p class="eyebrow">Order workspace</p>
-      <h2>Create order</h2>
-      <p class="muted">Pick a product, choose the right account, and submit the order from the live catalog.</p>
-    </div>
-    <div class="status-chip" *ngIf="currentRole">{{ currentRole }}</div>
-  </section>
+<ui-page-shell title="Create order" eyebrow="operations" description="Launch a new order and keep the workflow organized from the first step.">
+  <ng-container slot="actions">
+    <ui-button variant="secondary" routerLink="/orders">Cancel</ui-button>
+    <ui-button (click)="submit()" [disabled]="submitting">Submit order</ui-button>
+  </ng-container>
 
-  <ui-card class="panel" [elevated]="true" *ngIf="loading">
-    <p class="muted">Loading product and account data...</p>
-  </ui-card>
+  <div class="module-shell">
+    <ui-card title="Order details" subtitle="Capture the core order context before submission">
+      <form [formGroup]="form" class="form-stack" (ngSubmit)="submit()">
+        <ui-form-field label="Order type" hint="Choose the workflow that matches your role">
+          <select formControlName="orderType">
+            <option value="retailer-order">Retailer order</option>
+            <option value="distributor-replenishment">Distributor replenishment</option>
+          </select>
+        </ui-form-field>
 
-  <ui-card class="panel" [elevated]="true" *ngIf="error && !loading">
-    <p class="error">{{ error }}</p>
-  </ui-card>
+        <ui-form-field label="Product" hint="Select the product you want to place on the order">
+          <select formControlName="productId">
+            <option value="" disabled>Select product</option>
+            <option *ngFor="let product of products" [value]="product._id">{{ product.name }}</option>
+          </select>
+        </ui-form-field>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
-    <ui-card class="panel form-grid" [elevated]="true">
-    <label>
-      <span>Order type</span>
-      <select formControlName="orderType">
-        <option value="retailer-order">Retailer order</option>
-        <option value="distributor-replenishment">Distributor replenishment</option>
-      </select>
-    </label>
+        <ui-form-field label="Retailer" hint="Required for retailer orders" *ngIf="form.get('orderType')?.value === 'retailer-order'">
+          <select formControlName="retailerId">
+            <option value="" disabled>Select retailer</option>
+            <option *ngFor="let retailer of retailers" [value]="retailer._id">{{ retailer.name || retailer.companyName || retailer._id }}</option>
+          </select>
+        </ui-form-field>
 
-    <label *ngIf="form.value.orderType === 'retailer-order'">
-      <span>Retailer</span>
-      <select formControlName="retailerId">
-        <option value="">Select retailer</option>
-        <option *ngFor="let retailer of retailers" [value]="retailer._id">{{ retailer.name || retailer.storeName || retailer.retailerName }}</option>
-      </select>
-    </label>
+        <ui-form-field label="Distributor" hint="Required for replenishment flows" *ngIf="form.get('orderType')?.value === 'distributor-replenishment'">
+          <select formControlName="distributorId">
+            <option value="" disabled>Select distributor</option>
+            <option *ngFor="let distributor of distributors" [value]="distributor._id">{{ distributor.name || distributor.companyName || distributor._id }}</option>
+          </select>
+        </ui-form-field>
 
-    <label *ngIf="form.value.orderType === 'distributor-replenishment'">
-      <span>Distributor</span>
-      <select formControlName="distributorId">
-        <option value="">Select distributor</option>
-        <option *ngFor="let distributor of distributors" [value]="distributor._id">{{ distributor.name }}</option>
-      </select>
-    </label>
+        <div class="form-inline">
+          <ui-form-field label="Quantity" hint="Item quantity">
+            <input type="number" formControlName="quantity" min="1" />
+          </ui-form-field>
+          <ui-form-field label="Unit price" hint="Price applied to the line">
+            <input type="number" formControlName="unitPrice" min="0" />
+          </ui-form-field>
+        </div>
 
-    <label class="wide">
-      <span>Product</span>
-      <select formControlName="productId">
-        <option value="">Select product</option>
-        <option *ngFor="let product of products" [value]="product._id">{{ product.name }} - ₹{{ product.mrp }}</option>
-      </select>
-    </label>
-
-    <label>
-      <span>Quantity</span>
-      <input type="number" min="1" formControlName="quantity" />
-    </label>
-
-    <label>
-      <span>Unit price</span>
-      <input type="number" min="0" formControlName="unitPrice" />
-    </label>
-
-    <div class="summary-row">
-      <div>
-        <span>Total</span>
-        <strong>₹{{ (form.value.quantity || 0) * (form.value.unitPrice || 0) }}</strong>
-      </div>
-      <ui-button type="submit" variant="primary" [disabled]="submitting">Create order</ui-button>
-    </div>
-  </ui-card>
-  </form>
-
-  <section class="panel" *ngIf="message">
-    <p class="success">{{ message }}</p>
-  </section>
-</div>
+        <div class="message" *ngIf="message">{{ message }}</div>
+        <div class="message error" *ngIf="error">{{ error }}</div>
+      </form>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

@@ -7,13 +7,14 @@ import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
-import { UiStatCardComponent } from '../../../shared/ui/components/ui-stat-card';
 import { filter, takeUntil } from 'rxjs/operators';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-product-management',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProductEditorComponent, UiButtonComponent, UiCardComponent, UiStatCardComponent],
+  imports: [CommonModule, RouterModule, ProductEditorComponent, UiButtonComponent, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
   templateUrl: './product-management.html',
   styleUrls: ['./product-management.css']
 })

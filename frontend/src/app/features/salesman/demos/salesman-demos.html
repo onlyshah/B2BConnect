@@ -1,17 +1,10 @@
-<div class="demo-shell">
-  <section class="demo-card">
-    <div class="panel-header">
-      <h3>Demo calendar</h3>
-      <button class="pill-btn">+ Schedule demo</button>
-    </div>
-    <div class="demo-list">
-      <div class="demo-item" *ngFor="let demo of demos">
-        <div>
-          <strong>{{ demo.title }}</strong>
-          <p>{{ demo.retailer }} • {{ demo.agenda }}</p>
-        </div>
-        <span class="status">{{ demo.status }}</span>
+<ui-page-shell title="Demos" eyebrow="engagement" description="Track demo activity and the response from retailers in your territory.">
+  <div class="module-shell">
+    <ui-card title="Demo pipeline" subtitle="Upcoming and recent activity">
+      <div class="module-list">
+        <div class="module-row"><span>Scheduled</span><strong>3</strong></div>
+        <div class="module-row"><span>Completed</span><strong>6</strong></div>
       </div>
-    </div>
-  </section>
-</div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

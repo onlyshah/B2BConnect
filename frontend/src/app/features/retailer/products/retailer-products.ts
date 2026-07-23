@@ -5,13 +5,26 @@ import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ProductService, Product } from '../../../services/product.service';
 import { AuthService } from '../../../services/auth.service';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-retailer-products',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './retailer-products.html',
-  styleUrls: ['./retailer-products.css']
+  imports: [CommonModule, RouterModule, UiCardComponent, UiPageShellComponent],
+  template: `
+    <ui-page-shell title="Products" eyebrow="catalog" description="Browse the catalog and see your recommended products at a glance.">
+      <div class="module-shell">
+        <ui-card title="Featured products" subtitle="Popular items for your store">
+          <div class="module-list">
+            <div class="module-row"><span>Daily essentials</span><strong>16 SKUs</strong></div>
+            <div class="module-row"><span>Fast movers</span><strong>8 SKUs</strong></div>
+          </div>
+        </ui-card>
+      </div>
+    </ui-page-shell>
+  `,
+  styles: []
 })
 export class RetailerProductsComponent implements OnInit {
   products: Product[] = [];

@@ -41,26 +41,27 @@ export interface MetricData {
   `,
   styles: [`
     .metric-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      transition: all 0.3s;
-      background: white;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--surface-elevated);
+      box-shadow: var(--shadow-soft);
     }
     
     .metric-card:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow);
       transform: translateY(-2px);
     }
     
-    .color-primary { border-left: 4px solid #1976d2; }
-    .color-success { border-left: 4px solid #4caf50; }
-    .color-warning { border-left: 4px solid #ff9800; }
-    .color-danger { border-left: 4px solid #f44336; }
-    .color-info { border-left: 4px solid #2196f3; }
+    .color-primary { border-left: 4px solid var(--color-primary); }
+    .color-success { border-left: 4px solid var(--color-success); }
+    .color-warning { border-left: 4px solid var(--color-warning); }
+    .color-danger { border-left: 4px solid var(--color-danger); }
+    .color-info { border-left: 4px solid var(--color-info); }
     
     .metric-header {
       display: flex;
@@ -70,15 +71,15 @@ export interface MetricData {
     
     .metric-label {
       margin: 0;
-      font-size: 13px;
-      font-weight: 600;
-      color: #666;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.16em;
     }
     
     .metric-icon {
-      font-size: 20px;
+      font-size: 1.1rem;
     }
     
     .metric-value-section {
@@ -88,35 +89,35 @@ export interface MetricData {
     }
     
     .metric-value {
-      font-size: 32px;
-      font-weight: bold;
-      color: #212121;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--text);
     }
     
     .metric-unit {
-      font-size: 14px;
-      color: #999;
-      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
     }
     
     .metric-trend {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
+      font-size: 0.8rem;
       font-weight: 600;
     }
     
     .trend-up {
-      color: #4caf50;
+      color: var(--color-success);
     }
     
     .trend-down {
-      color: #f44336;
+      color: var(--color-danger);
     }
     
     .trend-neutral {
-      color: #999;
+      color: var(--text-muted);
     }
     
     .trend-arrow {

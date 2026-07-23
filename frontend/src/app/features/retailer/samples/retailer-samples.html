@@ -1,6 +1,10 @@
-<div class="sample-list">
-  <div class="sample-card" *ngFor="let sample of samples">
-    <strong>{{ sample.name }}</strong>
-    <p>{{ sample.status }}</p>
+<ui-page-shell title="Samples" eyebrow="trials" description="Track sample requests and product trials for your store.">
+  <div class="module-shell">
+    <ui-card title="Sample requests" subtitle="Recent activity">
+      <div class="module-list">
+        <div class="module-row"><span>Awaiting response</span><strong>1</strong></div>
+        <div class="module-row"><span>Approved</span><strong>3</strong></div>
+      </div>
+    </ui-card>
   </div>
-</div>
+</ui-page-shell>\n

@@ -4,11 +4,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { ProductService } from '../../../services/product.service';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-product-editor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, UiButtonComponent, UiCardComponent],
+  imports: [CommonModule, ReactiveFormsModule, UiButtonComponent, UiCardComponent, UiPageShellComponent],
   templateUrl: './product-editor.html',
   styleUrls: ['./product-editor.css']
 })

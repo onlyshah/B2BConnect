@@ -5,12 +5,14 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { DashboardService } from '../../../services/dashboard.service';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
-import { MetricCardComponent, MetricData } from '../../../shared/components/metric-card';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
+import { MetricData } from '../../../shared/components/metric-card';
 
 @Component({
   selector: 'app-distributor-analytics',
   standalone: true,
-  imports: [CommonModule, RouterModule, MetricCardComponent, UiCardComponent],
+  imports: [CommonModule, RouterModule, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
   templateUrl: './distributor-analytics.html',
   styleUrls: ['./distributor-analytics.css']
 })

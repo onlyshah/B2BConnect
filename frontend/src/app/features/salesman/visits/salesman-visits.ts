@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VisitService } from '../../../services/visit.service';
 import { AuthService } from '../../../services/auth.service';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-salesman-visits',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiCardComponent, UiPageShellComponent],
   templateUrl: './salesman-visits.html',
   styleUrls: ['./salesman-visits.css']
 })

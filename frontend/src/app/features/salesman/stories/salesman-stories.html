@@ -1,7 +1,10 @@
-<div class="story-list">
-  <div class="story-card" *ngFor="let story of stories">
-    <strong>{{ story.title }}</strong>
-    <p>{{ story.detail }}</p>
-    <small>{{ story.type }}</small>
+<ui-page-shell title="Stories" eyebrow="content" description="Keep up with field stories and customer highlights.">
+  <div class="module-shell">
+    <ui-card title="Recent stories" subtitle="Latest shared updates">
+      <div class="module-list">
+        <div class="module-row"><span>New launch</span><strong>Seasonal offer live</strong></div>
+        <div class="module-row"><span>Customer highlight</span><strong>Repeat order milestone</strong></div>
+      </div>
+    </ui-card>
   </div>
-</div>
+</ui-page-shell>\n

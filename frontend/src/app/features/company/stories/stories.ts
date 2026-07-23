@@ -4,14 +4,38 @@ import { StoryService } from '../../../services/story.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-stories',
   standalone: true,
-  imports: [CommonModule, UiButtonComponent],
-  templateUrl: './stories.html',
-  styleUrls: ['./stories.css']
+  imports: [CommonModule, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
+  template: `
+    <ui-page-shell title="Stories" eyebrow="content" description="Publish and review stories, launches, and brand updates for your network.">
+      <div class="module-shell">
+        <div class="module-hero">
+          <span class="module-tag">Content pipeline</span>
+          <h2>Keep your network aligned with your latest stories</h2>
+          <p>Bring campaigns, launches, and customer highlights into one place for the whole team.</p>
+        </div>
+
+        <div class="module-grid" *ngIf="!loading && !message">
+          <ui-card *ngFor="let story of stories" [title]="story.title || 'Untitled story'" [subtitle]="story.category || 'Marketing'">
+            <div class="module-list">
+              <div class="module-row"><span>Status</span><strong>{{ story.status || 'draft' }}</strong></div>
+              <div class="module-row"><span>Published</span><strong>{{ story.publishedAt ? (story.publishedAt | date:'mediumDate') : 'Pending' }}</strong></div>
+            </div>
+          </ui-card>
+        </div>
+
+        <ui-empty-state *ngIf="loading" title="Loading stories" description="Fetching the latest content rollouts."></ui-empty-state>
+        <ui-empty-state *ngIf="message && !loading" title="We hit a snag" [description]="message" tone="error"></ui-empty-state>
+      </div>
+    </ui-page-shell>
+  `,
+  styles: []
 })
 export class StoriesComponent implements OnInit, OnDestroy {
   stories: any[] = [];

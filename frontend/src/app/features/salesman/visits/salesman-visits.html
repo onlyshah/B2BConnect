@@ -1,20 +1,10 @@
-<div class="visit-shell">
-  <section class="visit-card">
-    <div class="panel-header">
-      <h3>Visit queue</h3>
-      <button class="pill-btn">+ New visit</button>
-    </div>
-    <div class="visit-list">
-      <div class="visit-item" *ngFor="let visit of visits">
-        <div>
-          <strong>{{ visit.retailer }}</strong>
-          <p>{{ visit.note }}</p>
-        </div>
-        <div class="visit-meta">
-          <span class="time">{{ visit.time }}</span>
-          <span class="status">{{ visit.status }}</span>
-        </div>
+<ui-page-shell title="Visits" eyebrow="field execution" description="Manage visit plans, outcomes, and visit completion history.">
+  <div class="module-shell">
+    <ui-card title="Visit summary" subtitle="This week">
+      <div class="module-list">
+        <div class="module-row"><span>Planned</span><strong>14</strong></div>
+        <div class="module-row"><span>Completed</span><strong>11</strong></div>
       </div>
-    </div>
-  </section>
-</div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

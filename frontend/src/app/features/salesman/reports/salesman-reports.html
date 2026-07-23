@@ -1,17 +1,10 @@
-<div class="report-shell">
-  <section class="report-card">
-    <div class="panel-header">
-      <h3>Reports</h3>
-      <button class="pill-btn">+ Export</button>
-    </div>
-    <div class="report-list">
-      <div class="report-item" *ngFor="let report of reports">
-        <div>
-          <strong>{{ report.title }}</strong>
-          <p>{{ report.detail }}</p>
-        </div>
-        <span class="status">{{ report.value }}</span>
+<ui-page-shell title="Reports" eyebrow="performance" description="Summarize field visits, targets, and outcome trends.">
+  <div class="module-shell">
+    <ui-card title="Weekly report" subtitle="Performance snapshot">
+      <div class="module-list">
+        <div class="module-row"><span>Visits completed</span><strong>18</strong></div>
+        <div class="module-row"><span>Target progress</span><strong>82%</strong></div>
       </div>
-    </div>
-  </section>
-</div>
+    </ui-card>
+  </div>
+</ui-page-shell>\n

@@ -1,7 +1,10 @@
-<div class="offer-list">
-  <div class="offer-card" *ngFor="let offer of offers">
-    <strong>{{ offer.title }}</strong>
-    <p>{{ offer.detail }}</p>
-    <small>{{ offer.valid }}</small>
+<ui-page-shell title="Offers" eyebrow="promotions" description="Review active offers and promotional incentives for your store.">
+  <div class="module-shell">
+    <ui-card title="Active offers" subtitle="This month">
+      <div class="module-list">
+        <div class="module-row"><span>Festival discount</span><strong>15% off</strong></div>
+        <div class="module-row"><span>Bulk offer</span><strong>Buy 2 get 1</strong></div>
+      </div>
+    </ui-card>
   </div>
-</div>
+</ui-page-shell>\n

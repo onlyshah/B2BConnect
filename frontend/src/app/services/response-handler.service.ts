@@ -15,6 +15,15 @@ export interface Toast {
   closeable?: boolean;
 }
 
+export interface ConfirmOption {
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  confirmVariant?: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost';
+  icon?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +33,17 @@ export class ResponseHandlerService {
 
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
+
+  private confirmSubject = new BehaviorSubject<{ open: boolean; options: ConfirmOption | null }>({
+    open: false,
+    options: null
+  });
+  public confirm$ = this.confirmSubject.asObservable();
+  private pendingConfirmResolver?: (value: boolean) => void;
+
+  get currentConfirmState(): { open: boolean; options: ConfirmOption | null } {
+    return this.confirmSubject.value;
+  }
 
   private toastIdCounter = 0;
 
@@ -114,6 +134,24 @@ export class ResponseHandlerService {
    */
   isLoading(): boolean {
     return this.loadingSubject.value;
+  }
+
+  confirm(options: ConfirmOption): Promise<boolean> {
+    this.confirmSubject.next({ open: true, options });
+
+    return new Promise<boolean>((resolve) => {
+      this.pendingConfirmResolver = resolve;
+    });
+  }
+
+  resolveConfirm(result: boolean): void {
+    const resolver = this.pendingConfirmResolver;
+    this.pendingConfirmResolver = undefined;
+    this.confirmSubject.next({ open: false, options: null });
+
+    if (resolver) {
+      resolver(result);
+    }
   }
 
   /**

@@ -8,13 +8,51 @@ import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
 import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-schemes',
   standalone: true,
-  imports: [CommonModule, FormsModule, UiButtonComponent, UiCardComponent],
-  templateUrl: './schemes.html',
-  styleUrls: ['./schemes.css']
+  imports: [CommonModule, FormsModule, UiButtonComponent, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
+  template: `
+    <ui-page-shell title="Schemes" eyebrow="growth" description="Create, review, and manage promotional and incentive schemes for distributors and retailers.">
+      <ng-container slot="actions">
+        <ui-button variant="secondary">Filter</ui-button>
+        <ui-button (click)="createScheme()">+ New scheme</ui-button>
+      </ng-container>
+
+      <ui-empty-state *ngIf="loading" title="Loading schemes" description="Fetching the latest scheme activity."></ui-empty-state>
+      <ui-empty-state *ngIf="message && !loading" title="We hit a snag" [description]="message" tone="error"></ui-empty-state>
+
+      <div class="module-grid" *ngIf="!loading && !message">
+        <ui-card *ngFor="let scheme of schemes" [title]="scheme.title || 'Untitled scheme'" [subtitle]="scheme.status || 'draft'">
+          <div class="module-list">
+            <div class="module-row"><span>Expiry</span><strong>{{ scheme.expiresAt ? (scheme.expiresAt | date:'mediumDate') : 'No expiry' }}</strong></div>
+            <div class="module-row"><span>Audience</span><strong>{{ scheme.audience || 'All partners' }}</strong></div>
+          </div>
+        </ui-card>
+      </div>
+
+      <ui-card *ngIf="schemeModalOpen" title="Create scheme" subtitle="Launch a new incentive or promotion">
+        <div class="form-grid">
+          <label>
+            <span>Title</span>
+            <input [(ngModel)]="newSchemeTitle" />
+          </label>
+          <label>
+            <span>Expiry date</span>
+            <input type="date" [(ngModel)]="newSchemeExpiresAt" />
+          </label>
+        </div>
+        <div class="modal-actions">
+          <ui-button variant="secondary" (click)="schemeModalOpen = false">Cancel</ui-button>
+          <ui-button (click)="submitCreateScheme()">Create scheme</ui-button>
+        </div>
+      </ui-card>
+    </ui-page-shell>
+  `,
+  styles: []
 })
 export class SchemesComponent implements OnInit, OnDestroy {
   schemes: any[] = [];

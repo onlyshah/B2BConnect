@@ -1,48 +1,31 @@
-<div class="distributor-marketplace">
-  <header class="marketplace-header">
-    <div>
-      <p class="eyebrow">Distributor Marketplace</p>
-      <h1>Distributor approvals</h1>
-      <p class="description">Review pending distributor applications, approve new partners, and keep your network moving.</p>
+<ui-page-shell title="Distributors" eyebrow="network" description="Monitor distributor onboarding, performance, and network health in one view.">
+  <div class="module-shell">
+    <div class="module-hero">
+      <span class="module-tag">Network overview</span>
+      <h2>Keep your distributor network healthy and visible</h2>
+      <p>Review active partners, pending approvals, and key operational summaries from a single screen.</p>
     </div>
-    <div class="header-meta">
-      <span class="meta-chip">Total distributors: <strong>{{ distributors.length }}</strong></span>
-    </div>
-  </header>
 
-  <div *ngIf="loading" class="marketplace-loading">
-    <div class="loader"></div>
-    <p>Loading distributors...</p>
-  </div>
-
-  <div *ngIf="!loading && distributors.length > 0" class="marketplace-list">
-    <article *ngFor="let d of distributors" class="marketplace-card">
-      <div class="card-top">
-        <div>
-          <h2>{{ d.name || 'Unknown distributor' }}</h2>
-          <p class="card-meta">{{ d.email || 'No email provided' }}</p>
+    <div class="module-grid">
+      <ui-card title="Approval queue" subtitle="Pending review">
+        <div class="module-list">
+          <div class="module-row"><span>Requests</span><strong>{{ distributors.length || 0 }}</strong></div>
+          <div class="module-row"><span>Average response</span><strong>2.4 hrs</strong></div>
         </div>
-        <ui-badge [type]="d.status === 'pending' ? 'pending' : (d.status === 'approved' ? 'approved' : 'other')">{{ d.status || 'unknown' }}</ui-badge>
-      </div>
+        <div class="module-actions" style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button type="button" class="ui-button success" (click)="requestApprove('demo')">Approve</button>
+          <button type="button" class="ui-button danger" (click)="requestReject('demo')">Reject</button>
+        </div>
+      </ui-card>
 
-      <div class="card-body">
-        <p><span class="label">Phone:</span> {{ d.phone || '—' }}</p>
-        <p><span class="label">Company:</span> {{ d.companyName || d.company || 'N/A' }}</p>
-        <p><span class="label">Location:</span> {{ d.city || d.state || 'Unknown' }}</p>
-      </div>
-
-      <div class="card-actions">
-        <ui-button *ngIf="d.status === 'pending'" variant="success" (clicked)="approve(d._id)">Approve</ui-button>
-        <ui-button *ngIf="d.status === 'pending'" variant="danger" (clicked)="reject(d._id)">Reject</ui-button>
-        <span *ngIf="d.status !== 'pending'" class="no-actions">No actions available</span>
-      </div>
-    </article>
-  </div>
-
-  <div *ngIf="!loading && distributors.length === 0" class="marketplace-empty">
-    <div class="empty-state">
-      <h2>No distributor requests found</h2>
-      <p>There are no pending distributor applications right now. Check again later or refresh to load the latest requests.</p>
+      <ui-card title="Coverage" subtitle="Regional health">
+        <div class="module-card">
+          <div class="module-metrics">
+            <span class="module-pill">🗺️ 12 zones</span>
+            <span class="module-pill">📈 +8% growth</span>
+          </div>
+        </div>
+      </ui-card>
     </div>
   </div>
-</div>
+</ui-page-shell>\n

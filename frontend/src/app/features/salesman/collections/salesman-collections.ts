@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CollectionService } from '../../../services/collection.service';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-salesman-collections',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiCardComponent, UiEmptyStateComponent, UiPageShellComponent],
   templateUrl: './salesman-collections.html',
   styleUrls: ['./salesman-collections.css']
 })

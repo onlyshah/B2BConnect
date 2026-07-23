@@ -59,6 +59,11 @@ export class AuthService {
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   public isLoggedIn$ = this.isAuthenticated$; // Alias for backward compatibility
 
+  private authInitializationSubject = new BehaviorSubject<boolean>(false);
+  public authInitialization$ = this.authInitializationSubject.asObservable();
+  public authInitializationStarted = false;
+  public isAuthInitializationInProgress = false;
+
   constructor(
     private apiService: ApiService,
     private storageService: StorageService
@@ -68,20 +73,37 @@ export class AuthService {
    * Initialize auth state from stored data
    */
   public initializeAuthState(): void {
+    if (this.authInitializationStarted) {
+      return;
+    }
+
+    this.authInitializationStarted = true;
+    this.isAuthInitializationInProgress = true;
+    console.debug('[AuthService] initializeAuthState: start');
+    this.authInitializationSubject.next(false);
+
     const user = this.getUserFromStorage();
     const token = this.getToken();
     const refreshToken = this.getRefreshToken();
+
+    const finishInitialization = () => {
+      this.isAuthInitializationInProgress = false;
+      console.debug('[AuthService] initializeAuthState: finished');
+      this.authInitializationSubject.next(true);
+    };
 
     if (token && !this.isTokenExpired(token)) {
       if (user) {
         this.currentUserSubject.next(user);
         this.isAuthenticatedSubject.next(true);
+        finishInitialization();
         return;
       }
 
       this.getCurrentUser().subscribe({
         next: () => {
           this.isAuthenticatedSubject.next(true);
+          finishInitialization();
         },
         error: () => {
           if (refreshToken) {
@@ -90,15 +112,29 @@ export class AuthService {
                 const storedUser = this.getUserFromStorage();
                 if (storedUser) {
                   this.currentUserSubject.next(storedUser);
+                  this.isAuthenticatedSubject.next(true);
+                  finishInitialization();
+                } else {
+                  this.getCurrentUser().subscribe({
+                    next: () => {
+                      this.isAuthenticatedSubject.next(true);
+                      finishInitialization();
+                    },
+                    error: () => {
+                      this.clearAuthData();
+                      finishInitialization();
+                    }
+                  });
                 }
-                this.isAuthenticatedSubject.next(true);
               },
               error: () => {
                 this.clearAuthData();
+                finishInitialization();
               }
             });
           } else {
             this.clearAuthData();
+            finishInitialization();
           }
         }
       });
@@ -111,17 +147,31 @@ export class AuthService {
           const storedUser = this.getUserFromStorage();
           if (storedUser) {
             this.currentUserSubject.next(storedUser);
+            this.isAuthenticatedSubject.next(true);
+            finishInitialization();
+          } else {
+            this.getCurrentUser().subscribe({
+              next: () => {
+                this.isAuthenticatedSubject.next(true);
+                finishInitialization();
+              },
+              error: () => {
+                this.clearAuthData();
+                finishInitialization();
+              }
+            });
           }
-          this.isAuthenticatedSubject.next(true);
         },
         error: () => {
           this.clearAuthData();
+          finishInitialization();
         }
       });
       return;
     }
 
     this.clearAuthData();
+    finishInitialization();
   }
 
   /**
@@ -156,17 +206,16 @@ export class AuthService {
     this.isLogoutInProgress = true;
 
     const refreshToken = this.getRefreshToken();
+    this.clearAuthData();
+
     if (!refreshToken) {
-      this.clearAuthData();
       this.isLogoutInProgress = false;
       return of({ message: 'Logged out' });
     }
 
     return this.apiService.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken }).pipe(
-      tap(() => this.clearAuthData()),
       map((response) => response?.data ?? response),
       catchError((error) => {
-        this.clearAuthData();
         return of({ message: 'Logged out locally', error });
       }),
       finalize(() => {
@@ -201,6 +250,7 @@ export class AuthService {
     const refreshToken = this.getRefreshToken();
 
     if (!refreshToken) {
+      console.debug('[AuthService] refreshToken: no refresh token');
       return throwError(() => new Error('No refresh token available'));
     }
 
@@ -212,6 +262,7 @@ export class AuthService {
       .pipe(
         map((response: any) => (response?.data ? response.data : response)),
         tap((response: any) => {
+          console.debug('[AuthService] refreshToken: success');
           const token = response?.token ?? response?.accessToken;
           const nextRefreshToken = response?.refreshToken;
 
@@ -231,6 +282,7 @@ export class AuthService {
           this.isAuthenticatedSubject.next(true);
         }),
         catchError((error) => {
+          console.debug('[AuthService] refreshToken: failed', error?.message ?? error);
           this.clearAuthData();
           return throwError(() => error);
         })
@@ -304,6 +356,7 @@ export class AuthService {
       throw new Error('Authentication response missing access token');
     }
 
+    console.debug('[AuthService] setAuthData: storing tokens and user');
     this.setToken(token);
     this.setRefreshToken(response.refreshToken);
     this.storageService.setItem(this.USER_KEY, JSON.stringify(response.user));
@@ -316,6 +369,7 @@ export class AuthService {
    * Clear all auth data
    */
   private clearAuthData(): void {
+    console.debug('[AuthService] clearAuthData: clearing stored auth');
     const authKeys = [
       this.TOKEN_KEY,
       this.REFRESH_TOKEN_KEY,

@@ -1,52 +1,35 @@
-<div class="orders-page">
-  <header class="page-header">
-    <div>
-      <p class="eyebrow">Orders</p>
-      <h2>My Orders</h2>
-      <p class="page-subtitle">Review recent transactions and monitor current status at a glance.</p>
-    </div>
-    <div class="status-summary">
-      <div class="status-card">
-        <strong>{{ orders.length }}</strong>
-        <span>Total orders</span>
-      </div>
-      <div class="status-card" *ngFor="let status of ['pending', 'confirmed', 'shipped', 'delivered']">
-        <strong>{{ orderCounts[status] || 0 }}</strong>
-        <span>{{ status | titlecase }}</span>
-      </div>
-    </div>
-  </header>
+<ui-page-shell title="Orders" eyebrow="operations" description="Monitor the newest orders and their fulfillment state.">
+  <ng-container slot="actions">
+    <ui-button variant="secondary">Export</ui-button>
+    <ui-button>+ New order</ui-button>
+  </ng-container>
 
-  <div *ngIf="loading" class="loading">Loading orders...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+  <ui-list-toolbar title="Orders queue" subtitle="Review order progress and execution status.">
+    <ng-container slot="actions">
+      <ui-button variant="secondary">Filter</ui-button>
+      <ui-button>+ Create</ui-button>
+    </ng-container>
+  </ui-list-toolbar>
 
-  <div *ngIf="orders.length > 0" class="table-card">
-    <table class="orders-table">
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>Items</th>
-        <th>Total</th>
-        <th>Status</th>
-        <th>Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let order of orders">
-        <td>{{ order._id }}</td>
-        <td>{{ order.items.length }} items</td>
-        <td>₹{{ order.total }}</td>
-        <td>
-          <span class="status-badge" [style.backgroundColor]="getStatusColor(order.status)">
-            {{ order.status }}
-          </span>
-        </td>
-        <td>{{ order.createdAt | date: 'short' }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="orders.length === 0 && !loading" class="no-orders">
-    No orders yet
+  <div class="page-grid" *ngIf="!loading && !error">
+    <ui-kpi-card label="Open orders" [value]="orders.length.toString()" hint="Current queue size"></ui-kpi-card>
+    <ui-kpi-card label="Statuses tracked" [value]="(orderCounts | keyvalue).length.toString()" hint="Distinct progress states"></ui-kpi-card>
   </div>
-</div>
+
+  <ui-form-field label="Search orders" hint="Use shared form controls for list-driven workflows">
+    <input type="text" placeholder="Search orders" />
+  </ui-form-field>
+
+  <ui-data-table
+    title="Recent orders"
+    subtitle="A reusable table for operational lists"
+    [columns]="overviewColumns"
+    [rows]="orders"
+    [loading]="loading"
+    emptyTitle="No orders yet"
+    emptyDescription="Create your first order to start tracking fulfillment."
+  ></ui-data-table>
+
+  <ui-empty-state *ngIf="loading" title="Loading orders" description="Gathering your recent order activity."></ui-empty-state>
+  <ui-empty-state *ngIf="error" title="We hit a snag" [description]="error" tone="error"></ui-empty-state>
+</ui-page-shell>\n

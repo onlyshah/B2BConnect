@@ -6,11 +6,16 @@ import { catchError, finalize } from 'rxjs/operators';
 import { SalesmanService } from '../../../services/salesman.service';
 import { RetailerService } from '../../../services/retailer.service';
 import { AuthService } from '../../../services/auth.service';
+import { UiButtonComponent } from '../../../shared/ui/components/ui-button';
+import { UiCardComponent } from '../../../shared/ui/components/ui-card';
+import { UiBadgeComponent } from '../../../shared/ui/components/ui-badge';
+import { UiEmptyStateComponent } from '../../../shared/ui/components/ui-empty-state';
+import { UiPageShellComponent } from '../../../shared/ui/components/ui-page-shell';
 
 @Component({
   selector: 'app-salesman-retailers',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UiButtonComponent, UiCardComponent, UiBadgeComponent, UiEmptyStateComponent, UiPageShellComponent],
   templateUrl: './salesman-retailers.html',
   styleUrls: ['./salesman-retailers.css']
 })

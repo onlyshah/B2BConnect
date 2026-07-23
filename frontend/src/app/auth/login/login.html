@@ -1,74 +1,32 @@
 <div class="auth-shell">
-  <div class="auth-wrapper">
-    <aside class="auth-brand">
-      <div class="brand-logo">
-        <span class="brand-icon">⌂</span>
-        <span>B2BConnect</span>
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">B</div>
+      <div>
+        <div class="brand-title">B2BConnect</div>
+        <div class="brand-subtitle">Purple Admin experience</div>
       </div>
+    </div>
 
-      <div class="brand-message">
-        <h1>One platform for company, distributor and retailer</h1>
-        <p>Place orders, track deliveries, manage returns and billing in one place.</p>
-      </div>
+    <h1>Welcome back</h1>
+    <p class="auth-copy">Sign in to continue to your workspace.</p>
 
-      <p class="brand-footnote">Trusted by 200+ distributors</p>
-    </aside>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <label class="auth-field">
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="name@company.com" />
+      </label>
 
-    <section class="auth-form">
-      <h2>Log in to your account</h2>
-      <p class="subtitle">Enter your registered email and password to continue</p>
+      <label class="auth-field">
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="Enter your password" />
+      </label>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="auth-input">
-          <label for="email" class="form-label">Email</label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="Enter your email"
-            class="form-control"
-            [ngClass]="{ 'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched }"
-          />
-          <div class="invalid-feedback" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-            Please enter a valid email.
-          </div>
-        </div>
+      <button type="submit" class="auth-submit" [disabled]="loading">
+        {{ loading ? 'Signing in…' : 'Sign in' }}
+      </button>
 
-        <div class="auth-input">
-          <label for="password" class="form-label">Password</label>
-          <input
-            id="password"
-            type="password"
-            formControlName="password"
-            placeholder="Enter your password"
-            class="form-control"
-            [ngClass]="{ 'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched }"
-          />
-          <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-            Password must be at least 6 characters.
-          </div>
-        </div>
-
-        <div class="forgot-row">
-          <a href="#">Forgot password?</a>
-        </div>
-
-        <ui-button
-          type="submit"
-          variant="primary"
-          [disabled]="loginForm.invalid || loading"
-          class="primary-btn"
-          style="width:100%;display:block;text-align:center"
-        >
-          {{ loading ? 'Signing in...' : 'Sign in' }}
-        </ui-button>
-
-        <div *ngIf="error" class="alert alert-danger mt-4 mb-0" role="alert">
-          {{ error }}
-        </div>
-
-        <p class="switch-auth">New here? <a routerLink="/register">Create an account</a></p>
-      </form>
-    </section>
+      <p *ngIf="error" class="auth-error">{{ error }}</p>
+    </form>
   </div>
-</div>
+</div>\n
